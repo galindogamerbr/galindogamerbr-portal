@@ -28,22 +28,24 @@ export function ScheduleTabs() {
 
   return (
     <div>
-      <div role="tablist" aria-label="Escolha a semana" className="flex flex-wrap gap-2">
-        {schedule.weeks.map((w) => (
-          <button
-            key={w.cycleIndex}
-            type="button"
-            role="tab"
-            aria-selected={active === w.cycleIndex}
-            onClick={() => setActive(w.cycleIndex)}
-            className={`rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-wide transition ${
-              active === w.cycleIndex ? 'bg-gold text-bg' : 'bg-panel2 text-white/70 hover:text-white'
-            }`}
-          >
-            {cycleLabel(w.cycleIndex, schedule.weeks.length)}
-          </button>
-        ))}
-      </div>
+      {schedule.weeks.length > 1 && (
+        <div role="tablist" aria-label="Escolha a semana" className="flex flex-wrap gap-2">
+          {schedule.weeks.map((w) => (
+            <button
+              key={w.cycleIndex}
+              type="button"
+              role="tab"
+              aria-selected={active === w.cycleIndex}
+              onClick={() => setActive(w.cycleIndex)}
+              className={`rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-wide transition ${
+                active === w.cycleIndex ? 'bg-gold text-bg' : 'bg-panel2 text-white/70 hover:text-white'
+              }`}
+            >
+              {cycleLabel(w.cycleIndex, schedule.weeks.length)}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="mt-4 divide-y divide-line rounded-md border border-line bg-panel">
         {DAYS.map((day) => {

@@ -4,6 +4,7 @@ import { Container } from '../../components/ui/Container'
 import { Eyebrow } from '../../components/ui/Eyebrow'
 import { Button } from '../../components/ui/Button'
 import { useSession } from '../../hooks/useSession'
+import { logout } from '../../lib/api/auth'
 import { DAYS } from '../../data/days'
 import {
   createVersion,
@@ -11,21 +12,19 @@ import {
   listVersions,
   publishVersion,
   saveBlocks,
+  updateVersion,
   type ScheduleBlock,
 } from '../../lib/api/schedule'
 import { ScheduleExportButton } from '../../components/shared/ScheduleExportButton'
 
-const LETTERS = 'ABCDEFGHIJ'
-
-// Editor no-code da programação — v1 edita direto a versão publicada
-// (não expõe rascunhos/histórico na UI ainda, embora o backend já suporte
+// Editor no-code da programação — puramente semanal (sem Semana A/B), pra
+// ajustar toda semana com facilidade. v1 edita direto a versão publicada
+// (não expõe rascunhos/histórico na UI ainda, embora o backend ainda suporte
 // múltiplas versões via schedule_versions/schedule_blocks).
 export function Schedule() {
-  const { email, loading: sessionLoading } = useSession()
+  const { email, loading: sessionLoading, refresh } = useSession()
   const [versionId, setVersionId] = useState<number | null>(null)
-  const [cycleLength, setCycleLength] = useState(2)
   const [blocks, setBlocks] = useState<ScheduleBlock[]>([])
-  const [activeCycle, setActiveCycle] = useState(0)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
@@ -42,22 +41,34 @@ export function Schedule() {
       let published = versions.find((v) => v.isPublished)
 
       if (!published) {
-        const { id } = await createVersion('Programação', 2)
+        const { id } = await createVersion('Programação', 1)
         await publishVersion(id)
-        published = { id, label: 'Programação', cycleLength: 2, isPublished: true, createdAt: '' }
+        published = { id, label: 'Programação', cycleLength: 1, isPublished: true, createdAt: '' }
       }
 
       const detail = await getVersion(published.id)
+
+      // Migra versões antigas de Semana A/B (cycle_length > 1) pra uma
+      // única semana, descartando os blocos de ciclos extras.
+      const weekBlocks = detail.blocks.filter((b) => b.cycleIndex === 0)
+      if (detail.cycleLength !== 1) {
+        await updateVersion(detail.id, { cycleLength: 1, label: 'Programação' })
+      }
+
       setVersionId(detail.id)
-      setCycleLength(detail.cycleLength)
-      setBlocks(detail.blocks)
+      setBlocks(weekBlocks)
     } finally {
       setLoading(false)
     }
   }
 
-  function addBlock(dayOfWeek: number) {
-    setBlocks((prev) => [...prev, { cycleIndex: activeCycle, dayOfWeek, startTime: '09:00', endTime: '12:00', note: null }])
+  function addBlock(dayOfWeek: number, startTime: string, endTime: string) {
+    setBlocks((prev) => [...prev, { cycleIndex: 0, dayOfWeek, startTime, endTime, note: null }])
+  }
+
+  async function handleLogout() {
+    await logout()
+    refresh()
   }
 
   function updateBlock(index: number, field: 'startTime' | 'endTime', value: string) {
@@ -74,54 +85,54 @@ export function Schedule() {
     setMessage(null)
     try {
       await saveBlocks(versionId, blocks)
-      setMessage('Programação salva — já está no ar em /programacao.')
+      setMessage('Programação salva — já está no ar na home.')
     } finally {
       setSaving(false)
     }
   }
 
-  if (sessionLoading || loading) return null
+  if (sessionLoading) return null
   if (!email) return <Navigate to="/admin/login" replace />
+  if (loading) return null
 
   return (
     <section className="py-16 sm:py-24">
       <Container>
         <Eyebrow>Admin</Eyebrow>
         <h1 className="text-4xl">EDITOR DE PROGRAMAÇÃO</h1>
-        <p className="mt-2 text-sm text-muted">Logado como {email}.</p>
-
-        <div className="mt-8 flex flex-wrap gap-2">
-          {Array.from({ length: cycleLength }, (_, cycleIndex) => (
-            <button
-              key={cycleIndex}
-              type="button"
-              onClick={() => setActiveCycle(cycleIndex)}
-              className={`rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-wide transition ${
-                activeCycle === cycleIndex ? 'bg-gold text-bg' : 'bg-panel2 text-white/70 hover:text-white'
-              }`}
-            >
-              Semana {LETTERS[cycleIndex] ?? cycleIndex + 1}
-            </button>
-          ))}
+        <div className="mt-2 flex items-center justify-between">
+          <p className="text-sm text-muted">Logado como {email}.</p>
+          <button type="button" onClick={handleLogout} className="text-xs font-semibold uppercase text-white/50 hover:text-red">
+            Sair
+          </button>
         </div>
 
         <div className="mt-4 space-y-3">
           {DAYS.map((day) => {
             const dayBlocks = blocks
               .map((block, index) => ({ block, index }))
-              .filter(({ block }) => block.cycleIndex === activeCycle && block.dayOfWeek === day.value)
+              .filter(({ block }) => block.dayOfWeek === day.value)
 
             return (
               <div key={day.value} className="rounded-md border border-line bg-panel p-4">
                 <div className="flex items-center justify-between">
                   <b className="text-sm uppercase tracking-wide">{day.label}</b>
-                  <button
-                    type="button"
-                    onClick={() => addBlock(day.value)}
-                    className="text-xs font-semibold uppercase text-gold hover:underline"
-                  >
-                    + adicionar horário
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => addBlock(day.value, '08:00', '12:00')}
+                      className="text-xs font-semibold uppercase text-gold hover:underline"
+                    >
+                      + manhã
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addBlock(day.value, '14:00', '18:00')}
+                      className="text-xs font-semibold uppercase text-gold hover:underline"
+                    >
+                      + tarde
+                    </button>
+                  </div>
                 </div>
 
                 {dayBlocks.length === 0 ? (
@@ -164,7 +175,7 @@ export function Schedule() {
           <Button variant="gold" onClick={handleSave} disabled={saving}>
             {saving ? 'Salvando...' : 'Salvar programação'}
           </Button>
-          <ScheduleExportButton cycleLength={cycleLength} blocks={blocks} />
+          <ScheduleExportButton blocks={blocks} />
           {message && <span className="text-sm text-muted">{message}</span>}
         </div>
       </Container>

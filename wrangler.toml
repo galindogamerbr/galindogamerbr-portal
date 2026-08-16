@@ -13,6 +13,3 @@ SESSION_COOKIE_NAME = "ggb_session"
 OTP_EXPIRY_MINUTES = "10"
 ENVIRONMENT = "production"
 YOUTUBE_CHANNEL_ID = "UCZGlbfvpoitCSFTsWVWVAow"
-# Trocar pelo domínio real assim que o Pages/domínio customizado existir —
-# usado pra montar a callback URL do WebSub (functions/lib/websub.ts).
-PUBLIC_BASE_URL = "https://galindogamerbr-hub-portal.pages.dev"

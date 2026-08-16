@@ -51,6 +51,13 @@ export function createVersion(label: string, cycleLength: number) {
   })
 }
 
+export function updateVersion(versionId: number, params: { label?: string; cycleLength?: number }) {
+  return adminJson<{ ok: true }>(`/api/admin/schedule/versions/${versionId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(params),
+  })
+}
+
 export function saveBlocks(versionId: number, blocks: ScheduleBlock[]) {
   return adminJson<{ ok: true; count: number }>(`/api/admin/schedule/versions/${versionId}/blocks`, {
     method: 'PUT',

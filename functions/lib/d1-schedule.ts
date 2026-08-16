@@ -76,6 +76,22 @@ export async function replaceBlocks(db: D1Database, versionId: number, blocks: S
   await db.batch(statements)
 }
 
+export async function updateVersion(
+  db: D1Database,
+  versionId: number,
+  params: { label?: string; cycleLength?: number },
+): Promise<void> {
+  if (params.label !== undefined) {
+    await db.prepare('UPDATE schedule_versions SET label = ? WHERE id = ?').bind(params.label, versionId).run()
+  }
+  if (params.cycleLength !== undefined) {
+    await db.prepare('UPDATE schedule_versions SET cycle_length = ? WHERE id = ?').bind(params.cycleLength, versionId).run()
+    // Blocos de ciclos que deixaram de existir (ex.: reduzir de 2 semanas pra 1)
+    // ficariam órfãos e reapareceriam se o cycle_length voltar a subir depois.
+    await db.prepare('DELETE FROM schedule_blocks WHERE version_id = ? AND cycle_index >= ?').bind(versionId, params.cycleLength).run()
+  }
+}
+
 export async function publishVersion(db: D1Database, versionId: number): Promise<void> {
   await db.batch([
     db.prepare('UPDATE schedule_versions SET is_published = 0 WHERE is_published = 1'),

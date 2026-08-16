@@ -20,7 +20,12 @@ export function Footer() {
           ))}
         </nav>
       </Container>
-      <p className="mt-6 text-center text-xs text-muted">© 2026 GalindoGamerBR — Todos os direitos reservados.</p>
+      <p className="mt-6 text-center text-xs text-muted">
+        © 2026 GalindoGamerBR — Todos os direitos reservados.{' '}
+        <Link to="/admin/programacao" className="text-white/20 hover:text-white/50">
+          admin
+        </Link>
+      </p>
     </footer>
   )
 }

@@ -5,11 +5,10 @@ import { exportScheduleImage } from '../../lib/exportScheduleImage'
 import type { ScheduleBlock } from '../../lib/api/schedule'
 
 type ScheduleExportButtonProps = {
-  cycleLength: number
   blocks: ScheduleBlock[]
 }
 
-export function ScheduleExportButton({ cycleLength, blocks }: ScheduleExportButtonProps) {
+export function ScheduleExportButton({ blocks }: ScheduleExportButtonProps) {
   const templateRef = useRef<HTMLDivElement>(null)
   const [exporting, setExporting] = useState(false)
 
@@ -30,7 +29,7 @@ export function ScheduleExportButton({ cycleLength, blocks }: ScheduleExportButt
       </Button>
       {/* Renderizado fora da tela (não display:none — html-to-image precisa de layout real pra capturar). */}
       <div style={{ position: 'fixed', top: 0, left: -9999, pointerEvents: 'none' }} aria-hidden="true">
-        <ScheduleExportTemplate ref={templateRef} cycleLength={cycleLength} blocks={blocks} />
+        <ScheduleExportTemplate ref={templateRef} blocks={blocks} />
       </div>
     </>
   )

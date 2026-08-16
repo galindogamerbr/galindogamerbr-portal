@@ -31,7 +31,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       const codeHash = await hashCode(code, env.OTP_PEPPER)
       const expiresAt = sqliteDatetimePlus(Number(env.OTP_EXPIRY_MINUTES) * 60_000)
       await insertOtpCode(env.DB, { email, codeHash, expiresAt, requestIp: ip })
-      await sendOtpEmail(env, email, code)
+      try {
+        await sendOtpEmail(env, email, code)
+      } catch (err) {
+        // Não deixa uma falha no envio (ex.: domínio ainda não verificado
+        // na Resend) quebrar a resposta — o código já foi salvo no D1 e
+        // a resposta genérica não deve variar por causa disso.
+        console.error('Falha ao enviar e-mail de OTP', err)
+      }
     }
     // E-mail fora da allowlist ou rate limit estourado: nenhuma ação além
     // daqui — sem insert, sem envio. A resposta é idêntica em todos os

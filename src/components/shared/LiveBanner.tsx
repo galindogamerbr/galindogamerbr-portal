@@ -5,8 +5,9 @@ import { Eyebrow } from '../ui/Eyebrow'
 
 const POLL_INTERVAL_MS = 60_000
 
-// Estado da live domina a home quando ao vivo (Fase 2) — fora do ar,
-// cai pro fallback estático com link direto pros canais.
+// Estado da live domina a home quando ao vivo (Fase 2) — offline, embeda o
+// último vídeo publicado (sem Shorts, ver functions/lib/youtube.ts); só cai
+// pro fallback genérico se nem isso for encontrado.
 export function LiveBanner() {
   const [status, setStatus] = useState<LiveStatus | null>(null)
 
@@ -25,24 +26,37 @@ export function LiveBanner() {
     }
   }, [])
 
-  if (status?.isLive && status.videoId) {
+  if (status?.videoId) {
     return (
-      <div className="flex flex-col justify-between rounded-lg border border-red bg-panel p-6 sm:p-8">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
-          </span>
-          <h3 className="mt-3 text-2xl">{status.title}</h3>
+      <div className="overflow-hidden rounded-lg border border-line bg-panel">
+        <iframe
+          src={`https://www.youtube.com/embed/${status.videoId}`}
+          title={status.title ?? 'GalindoGamerBR'}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="aspect-video w-full border-0"
+        />
+        <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
+          <div>
+            {status.isLive ? (
+              <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
+              </span>
+            ) : (
+              <Eyebrow>Último vídeo</Eyebrow>
+            )}
+            <h3 className="mt-2 text-xl">{status.title}</h3>
+          </div>
+          <LinkButton
+            variant="red"
+            href={`https://www.youtube.com/watch?v=${status.videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0"
+          >
+            Ver no YouTube ↗
+          </LinkButton>
         </div>
-        <LinkButton
-          variant="red"
-          href={`https://www.youtube.com/watch?v=${status.videoId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6"
-        >
-          Assistir agora ↗
-        </LinkButton>
       </div>
     )
   }

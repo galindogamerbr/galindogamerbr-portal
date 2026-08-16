@@ -7,10 +7,12 @@ import { LinkButton, NavButton } from '../components/ui/Button'
 import { HubLink } from '../components/shared/HubLink'
 import { VipSteps } from '../components/shared/VipSteps'
 import { ScheduleTabs } from '../components/shared/ScheduleTabs'
+import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
 import { FAZENDA_NOVA_ALIANCA } from '../data/games'
 import { useParallax } from '../hooks/useParallax'
 import { useTilt } from '../hooks/useTilt'
+import { useFlagshipVideos } from '../hooks/useFlagshipVideo'
 
 const HUB_TEASER = [
   {
@@ -124,18 +126,22 @@ function TransmissoesTeaser() {
     <section className="pb-16 sm:pb-24">
       <Reveal>
         <Container>
-          <SectionHead
-            eyebrow="Transmissões"
-            title="AO VIVO E EM DESTAQUE"
-            action={
-              <NavButton to="/programacao" variant="default">
-                Ver programação
-              </NavButton>
-            }
-          />
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <LiveBanner />
-            <ScheduleTabs />
+          <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
+          <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch">
+            <div className="flex-1">
+              <LiveBanner />
+            </div>
+            <div className="w-full lg:max-w-md lg:shrink-0">
+              <ScheduleTabs />
+              <div className="mt-4">
+                <PublicScheduleExportButton />
+              </div>
+              <p className="mt-4 rounded-md border border-line bg-panel p-4 text-sm text-muted">
+                <strong className="text-white">Importante:</strong> por causa do trabalho na cidade, o cronograma
+                pode sofrer alterações. Todos os domingos, a programação é atualizada no TikTok, Instagram e
+                YouTube.
+              </p>
+            </div>
           </div>
         </Container>
       </Reveal>
@@ -147,6 +153,8 @@ function TransmissoesTeaser() {
 // ganha destaque próprio na home, não só mais um item entre outros jogos.
 function JogosTeaser() {
   const tiltRef = useTilt<HTMLDivElement>()
+  const [flagship] = useFlagshipVideos()
+  const flagshipHref = flagship?.videoId ? `https://www.youtube.com/watch?v=${flagship.videoId}` : FAZENDA_NOVA_ALIANCA.href
 
   return (
     <section className="pb-16 sm:pb-24">
@@ -154,18 +162,21 @@ function JogosTeaser() {
         <Container>
           <div
             ref={tiltRef}
-            className="relative overflow-hidden rounded-lg border-2 border-gold shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)]"
+            className="grid grid-cols-1 overflow-hidden rounded-lg border-2 border-gold shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:grid-cols-2"
           >
-            <img src={FAZENDA_NOVA_ALIANCA.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
-            <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-bg/55" />
-            <div className="relative flex flex-col items-start gap-3 p-6 sm:p-10">
+            <img
+              src={flagship?.thumbnailUrl ?? FAZENDA_NOVA_ALIANCA.image}
+              alt=""
+              className="aspect-video w-full object-cover lg:aspect-auto lg:h-full"
+            />
+            <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
               <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
                 🚜 Carro-chefe do canal
               </span>
               <h2 className="text-2xl sm:text-3xl">FARMING SIMULATOR 25 — FAZENDA NOVA ALIANÇA</h2>
               <p className="max-w-xl text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
               <div className="mt-2 flex flex-wrap gap-3">
-                <LinkButton variant="green" href={FAZENDA_NOVA_ALIANCA.href} target="_blank" rel="noopener noreferrer">
+                <LinkButton variant="green" href={flagshipHref} target="_blank" rel="noopener noreferrer">
                   Assistir no YouTube
                 </LinkButton>
                 <NavButton to="/jogos" variant="default">

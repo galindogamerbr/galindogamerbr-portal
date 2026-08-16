@@ -6,9 +6,7 @@ export type Env = {
   SESSION_COOKIE_NAME: string
   OTP_EXPIRY_MINUTES: string
   ENVIRONMENT: string
-  // Fase 2 — automação de live (ver functions/lib/youtube.ts, functions/lib/websub.ts)
-  YOUTUBE_API_KEY: string
+  // Automação de live (ver functions/lib/youtube.ts) — checagem direta e
+  // keyless a cada request, sem API key, sem D1, sem cron externo.
   YOUTUBE_CHANNEL_ID: string
-  PUBLIC_BASE_URL: string
-  INTERNAL_API_SECRET: string
 }

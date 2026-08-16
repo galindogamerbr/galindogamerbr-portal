@@ -1,18 +1,20 @@
 import type { Env } from '../lib/env'
-import { getLiveState } from '../lib/d1-live'
+import { resolveChannelLiveState } from '../lib/youtube'
 import { json } from '../lib/http'
 
+// Checa direto no YouTube a cada request — sem cache em D1. O check é
+// keyless e barato (ver functions/lib/youtube.ts), então não precisa de
+// webhook/cron pra manter um estado "morno" por fora.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const state = await getLiveState(context.env.DB)
-  if (!state || !state.video_id) {
-    return json({ isLive: false, videoId: null, title: null, thumbnailUrl: null, updatedAt: state?.updated_at ?? null })
+  const state = await resolveChannelLiveState(context.env)
+  if (!state) {
+    return json({ isLive: false, videoId: null, title: null, thumbnailUrl: null })
   }
 
   return json({
-    isLive: state.is_live === 1,
-    videoId: state.video_id,
+    isLive: state.isLive,
+    videoId: state.videoId,
     title: state.title,
-    thumbnailUrl: state.thumbnail_url,
-    updatedAt: state.updated_at,
+    thumbnailUrl: state.thumbnailUrl,
   })
 }

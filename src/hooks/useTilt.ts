@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
 
-const MAX_TILT_DEG = 8
+// Mesmo fator do script.js atual (comentário lá: "sem exagero") — a versão
+// anterior deste hook usava um multiplicador ~7x maior por engano.
+const TILT_DEG = 2.2
 
 // Tilt 3D por ponteiro, igual ao efeito de .game/.platform-card/.stat/
 // .live-card-art do script.js atual — pulado em touch e reduced-motion.
@@ -15,10 +17,10 @@ export function useTilt<T extends HTMLElement>() {
 
     function handleMove(event: PointerEvent) {
       const rect = node!.getBoundingClientRect()
-      const px = (event.clientX - rect.left) / rect.width
-      const py = (event.clientY - rect.top) / rect.height
-      const ry = (px - 0.5) * MAX_TILT_DEG * 2
-      const rx = (0.5 - py) * MAX_TILT_DEG * 2
+      const x = (event.clientX - rect.left) / rect.width - 0.5
+      const y = (event.clientY - rect.top) / rect.height - 0.5
+      const ry = x * TILT_DEG
+      const rx = -y * TILT_DEG
       node!.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`
     }
 

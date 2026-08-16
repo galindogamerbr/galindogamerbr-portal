@@ -1,7 +1,10 @@
 import type { Env } from './env'
 import { otpEmailHtml } from './emailTemplates'
 
-const FROM_ADDRESS = 'GalindoGamerBR <acesso@galindogamerbr.com.br>'
+// Provisório: usando o domínio pessoal do Pedro (phmoreira.dev) até o
+// galindogamerbr.com.br ser verificado na Resend (precisa de acesso ao
+// Registro.br pra configurar os DNS records). Trocar quando isso sair.
+const FROM_ADDRESS = 'GalindoGamerBR <acesso@phmoreira.dev>'
 
 export async function sendOtpEmail(env: Env, to: string, code: string): Promise<void> {
   if (env.ENVIRONMENT === 'development') {

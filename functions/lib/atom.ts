@@ -1,12 +1,7 @@
-// Parser mínimo do feed Atom que o YouTube manda via WebSub — evita
-// puxar uma dependência de parser XML completo só pra extrair um campo.
-// Payload de exemplo: https://developers.google.com/youtube/v3/guides/push_notifications
-export function extractVideoId(atomXml: string): string | null {
-  const match = atomXml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)
-  return match ? match[1] : null
-}
-
-export function extractChannelId(atomXml: string): string | null {
-  const match = atomXml.match(/<yt:channelId>([^<]+)<\/yt:channelId>/)
-  return match ? match[1] : null
+// Parser mínimo do feed Atom público do canal — evita puxar uma dependência
+// de parser XML completo só pra extrair os vídeos. Vem ordenado do mais
+// novo pro mais antigo; retorna todos pra quem for filtrando (ex.: pulando
+// Shorts) precisar olhar além da primeira entrada.
+export function extractVideoIds(atomXml: string): string[] {
+  return Array.from(atomXml.matchAll(/<yt:videoId>([^<]+)<\/yt:videoId>/g), (m) => m[1])
 }

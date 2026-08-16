@@ -1,95 +1,115 @@
 import { forwardRef } from 'react'
-import { theme, fontStack } from '../../styles/theme'
-import { DAYS } from '../../data/days'
+import { fontStack } from '../../styles/theme'
 import type { ScheduleBlock } from '../../lib/api/schedule'
 
-const LETTERS = 'ABCDEFGHIJ'
+// Resolução nativa do template de fundo (public/assets/schedule-export-template.png).
+const IMG_W = 864
+const IMG_H = 1821
+
+const FULL_DAY_NAMES: Record<number, string> = {
+  1: 'SEGUNDA',
+  2: 'TERÇA',
+  3: 'QUARTA',
+  4: 'QUINTA',
+  5: 'SEXTA',
+  6: 'SÁBADO',
+  7: 'DOMINGO',
+}
+
+// Posição de cada slot de horário (em px, na resolução nativa 864x1821) —
+// medida via varredura de pixel nas bordas dos cards do template, não é
+// um chute visual. Ver conversa/memória do projeto pra reproduzir se o
+// template.png for atualizado.
+const DAY_ROWS: Array<{ day: number; top: number; height: number }> = [
+  { day: 1, top: 813, height: 84 },
+  { day: 2, top: 908, height: 83 },
+  { day: 3, top: 1003, height: 83 },
+  { day: 4, top: 1097, height: 82 },
+  { day: 5, top: 1192, height: 84 },
+  { day: 6, top: 1287, height: 84 },
+  { day: 7, top: 1382, height: 88 },
+]
+
+const BOX_LEFT = 314
+const BOX_RIGHT = 758
+
+// Rótulo do bloco pela ordem cronológica no dia — convenção do design
+// original (1º horário = "LIVE", 2º = "TARDE"), não vem dos dados.
+const BLOCK_LABELS = ['LIVE', 'TARDE', 'NOITE']
+
+const LABEL_BLUE = '#5A8FF0'
+const OFFLINE_GREEN = '#8FBF1F'
 
 type ScheduleExportTemplateProps = {
-  cycleLength: number
   blocks: ScheduleBlock[]
 }
 
-// Template offscreen renderizado pra exportação de imagem (ScheduleExportButton).
-// Usa valores literais de theme.ts em vez de classes Tailwind — o
-// html-to-image precisa que os estilos computados sejam resolvidos de
-// forma previsível no clone do DOM, então evitamos depender do pipeline
-// de utilitários aqui (ver plano, Fase 3).
+// Template offscreen renderizado pra exportação de imagem (ScheduleExportButton
+// / PublicScheduleExportButton). Usa a arte de fundo pronta (template.png) e só
+// sobrepõe o texto de cada dia nas posições medidas acima — mais simples e mais
+// fiel ao design de referência do que recriar o layout inteiro em CSS.
 export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportTemplateProps>(function ScheduleExportTemplate(
-  { cycleLength, blocks },
+  { blocks },
   ref,
 ) {
   return (
     <div
       ref={ref}
       style={{
-        width: 1080,
-        padding: 56,
-        backgroundColor: theme.colors.bg,
-        color: theme.colors.white,
+        position: 'relative',
+        width: IMG_W,
+        height: IMG_H,
+        backgroundImage: 'url(/assets/schedule-export-template.png)',
+        backgroundSize: `${IMG_W}px ${IMG_H}px`,
         fontFamily: fontStack('body'),
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 40 }}>
-        <img src="/assets/logos/galindogamerbr.webp" alt="" width={56} height={56} />
-        <div>
-          <div style={{ fontFamily: fontStack('display'), fontSize: 28, letterSpacing: 1 }}>
-            GALINDO<span style={{ color: theme.colors.gold }}>GAMERBR</span>
-          </div>
-          <div style={{ fontSize: 16, color: theme.colors.muted, textTransform: 'uppercase', letterSpacing: 2 }}>
-            Programação semanal
-          </div>
-        </div>
-      </div>
+      {DAY_ROWS.map(({ day, top, height }) => {
+        const dayBlocks = blocks
+          .filter((b) => b.dayOfWeek === day)
+          .slice()
+          .sort((a, b) => a.startTime.localeCompare(b.startTime))
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-        {Array.from({ length: cycleLength }, (_, cycleIndex) => (
-          <div key={cycleIndex}>
-            <div
-              style={{
-                fontFamily: fontStack('display'),
-                fontSize: 24,
-                color: theme.colors.gold,
-                marginBottom: 12,
-                letterSpacing: 1,
-              }}
-            >
-              SEMANA {LETTERS[cycleIndex] ?? cycleIndex + 1}
-            </div>
-            <div style={{ border: `1px solid ${theme.colors.line}`, borderRadius: 10, overflow: 'hidden' }}>
-              {DAYS.map((day, dayIndex) => {
-                const dayBlocks = blocks.filter((b) => b.cycleIndex === cycleIndex && b.dayOfWeek === day.value)
-                return (
-                  <div
-                    key={day.value}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      padding: '14px 20px',
-                      backgroundColor: theme.colors.panel,
-                      borderTop: dayIndex === 0 ? 'none' : `1px solid ${theme.colors.line}`,
-                      fontSize: 18,
-                    }}
-                  >
-                    <b>{day.label}</b>
-                    {dayBlocks.length > 0 ? (
-                      <span style={{ color: theme.colors.muted }}>
-                        {dayBlocks.map((b) => `${b.startTime}–${b.endTime}`).join(' | ')}
-                      </span>
-                    ) : (
-                      <span style={{ color: 'rgba(255,255,255,0.3)' }}>OFFLINE</span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+        return (
+          <div
+            key={day}
+            aria-label={FULL_DAY_NAMES[day]}
+            style={{
+              position: 'absolute',
+              left: BOX_LEFT,
+              top,
+              width: BOX_RIGHT - BOX_LEFT,
+              height,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: 4,
+              paddingLeft: 14,
+              boxSizing: 'border-box',
+            }}
+          >
+            {dayBlocks.length === 0 ? (
+              <>
+                <div style={{ fontSize: 22, fontWeight: 800, color: OFFLINE_GREEN, letterSpacing: 1 }}>OFF-LINE</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#f3f5f7', lineHeight: 1.35 }}>
+                  DESCANSO E PREPARAÇÃO
+                  <br />
+                  PARA NOVAS LIVES!
+                </div>
+              </>
+            ) : (
+              dayBlocks.map((block, index) => (
+                <div key={index} style={{ fontSize: 19, fontWeight: 700, letterSpacing: 0.3 }}>
+                  <span style={{ color: LABEL_BLUE }}>{BLOCK_LABELS[index] ?? BLOCK_LABELS[BLOCK_LABELS.length - 1]}</span>{' '}
+                  <span style={{ color: '#f3f5f7' }}>
+                    DAS {block.startTime} ÀS {block.endTime}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
-        ))}
-      </div>
-
-      <div style={{ marginTop: 40, fontSize: 14, color: theme.colors.muted, textAlign: 'center' }}>
-        Horários de Brasília (GMT-3) • youtube.com/@galindogamerbr
-      </div>
+        )
+      })}
     </div>
   )
 })

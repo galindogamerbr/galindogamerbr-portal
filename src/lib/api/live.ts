@@ -3,7 +3,6 @@ export type LiveStatus = {
   videoId: string | null
   title: string | null
   thumbnailUrl: string | null
-  updatedAt: string | null
 }
 
 export async function getLiveStatus(): Promise<LiveStatus> {

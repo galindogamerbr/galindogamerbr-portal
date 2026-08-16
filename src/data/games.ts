@@ -59,10 +59,11 @@ export const GAMES: Game[] = [
 ]
 
 export const FAZENDA_NOVA_ALIANCA = {
-  episodeLabel: 'Episódio 192',
-  title: 'COMPRANDO MAIS TERRAS E EXPANDINDO A FAZENDA',
+  // Episódio/thumbnail reais vêm de /api/flagship (src/hooks/useFlagshipVideo.ts),
+  // sempre o mais recente da playlist — os campos abaixo são só o fallback
+  // enquanto isso carrega (ou se a busca falhar).
   description:
-    'Farming Simulator 25 com produção, máquinas, mods, decisões de gestão e histórias construídas ao longo da série.',
+    'Uma saga que já passa de 200 episódios: a Fazenda Nova Aliança nasceu pequena e virou um verdadeiro império rural, construído pouco a pouco, transmissão após transmissão — decisões de gestão, novas máquinas, expansão de terras e os imprevistos do campo, tudo ao vivo com a comunidade acompanhando cada passo da história.',
   image: '/assets/farm-live.webp',
-  href: 'https://www.youtube.com/@galindogamerbr',
+  href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN',
 }
