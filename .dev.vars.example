@@ -1,0 +1,15 @@
+# Copie para .dev.vars (gitignored) e preencha para rodar `wrangler pages dev` localmente.
+RESEND_API_KEY=
+SESSION_SECRET=dev-secret-troque-em-producao
+OTP_PEPPER=dev-pepper-troque-em-producao
+
+# Fase 2 — automação de live. Sem YOUTUBE_API_KEY as chamadas à API do
+# YouTube falham (esperado offline); o resto do fluxo (D1, parsing do
+# webhook) continua testável sem ela.
+YOUTUBE_API_KEY=
+INTERNAL_API_SECRET=dev-internal-secret-troque-em-producao
+PUBLIC_BASE_URL=http://localhost:8788
+
+# Sobrescreve o ENVIRONMENT="production" do wrangler.toml só localmente —
+# em dev, resend.ts faz console.log do código OTP em vez de enviar e-mail.
+ENVIRONMENT=development

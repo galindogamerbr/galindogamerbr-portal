@@ -1,0 +1,18 @@
+name = "galindogamerbr-hub-portal"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-05-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "galindogamerbr_hub"
+database_id = "00000000-0000-0000-0000-000000000000" # placeholder — id real só no working tree local, nunca commitado (skip-worktree ativo)
+migrations_dir = "migrations"
+
+[vars]
+SESSION_COOKIE_NAME = "ggb_session"
+OTP_EXPIRY_MINUTES = "10"
+ENVIRONMENT = "production"
+YOUTUBE_CHANNEL_ID = "UCZGlbfvpoitCSFTsWVWVAow"
+# Trocar pelo domínio real assim que o Pages/domínio customizado existir —
+# usado pra montar a callback URL do WebSub (functions/lib/websub.ts).
+PUBLIC_BASE_URL = "https://galindogamerbr-hub-portal.pages.dev"

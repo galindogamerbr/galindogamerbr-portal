@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-white font-body antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-display tracking-wide;
+}
+
+a {
+  color: inherit;
+}
+
+/* Gradiente de contraste do hero — fiel ao .hero-bg-fade do site atual
+   (style.css), inclusive o breakpoint que troca pra um fade vertical
+   quando o retrato (hero-portrait) some abaixo de 900px. */
+.hero-fade {
+  background:
+    linear-gradient(90deg, #03070be8 0%, #03070bb0 28%, #03070b40 52%, transparent 72%),
+    linear-gradient(0deg, #03070bf0 0%, #03070b55 22%, transparent 46%);
+}
+@media (max-width: 900px) {
+  .hero-fade {
+    background: linear-gradient(0deg, #03070bf5 10%, #03070b8a 55%, #03070b40 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
