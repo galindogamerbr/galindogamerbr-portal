@@ -112,27 +112,37 @@ export function Schedule() {
             const dayBlocks = blocks
               .map((block, index) => ({ block, index }))
               .filter(({ block }) => block.dayOfWeek === day.value)
+              .sort((a, b) => a.block.startTime.localeCompare(b.block.startTime))
+            const canAddMore = dayBlocks.length < 2
+            const hasMorning = dayBlocks.some(({ block }) => block.startTime < '12:00')
+            const hasAfternoon = dayBlocks.some(({ block }) => block.startTime >= '12:00')
 
             return (
               <div key={day.value} className="rounded-md border border-line bg-panel p-4">
                 <div className="flex items-center justify-between">
                   <b className="text-sm uppercase tracking-wide">{day.label}</b>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => addBlock(day.value, '08:00', '12:00')}
-                      className="text-xs font-semibold uppercase text-gold hover:underline"
-                    >
-                      + manhã
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addBlock(day.value, '14:00', '18:00')}
-                      className="text-xs font-semibold uppercase text-gold hover:underline"
-                    >
-                      + tarde
-                    </button>
-                  </div>
+                  {canAddMore && (!hasMorning || !hasAfternoon) && (
+                    <div className="flex gap-3">
+                      {!hasMorning && (
+                        <button
+                          type="button"
+                          onClick={() => addBlock(day.value, '08:00', '12:00')}
+                          className="text-xs font-semibold uppercase text-gold hover:underline"
+                        >
+                          + manhã
+                        </button>
+                      )}
+                      {!hasAfternoon && (
+                        <button
+                          type="button"
+                          onClick={() => addBlock(day.value, '14:00', '18:00')}
+                          className="text-xs font-semibold uppercase text-gold hover:underline"
+                        >
+                          + tarde
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {dayBlocks.length === 0 ? (
