@@ -1,3 +1,29 @@
+export type FlagshipVideoCacheRow = {
+  video_id: string
+  title: string
+  thumbnail_url: string
+}
+
+export async function getFlagshipVideoCache(db: D1Database): Promise<FlagshipVideoCacheRow | null> {
+  const row = await db.prepare('SELECT video_id, title, thumbnail_url FROM flagship_video_cache WHERE id = 1').first<FlagshipVideoCacheRow>()
+  return row ?? null
+}
+
+export async function upsertFlagshipVideoCache(
+  db: D1Database,
+  params: { videoId: string; title: string; thumbnailUrl: string },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO flagship_video_cache (id, video_id, title, thumbnail_url, updated_at)
+       VALUES (1, ?, ?, ?, datetime('now'))
+       ON CONFLICT (id) DO UPDATE SET video_id = excluded.video_id, title = excluded.title,
+         thumbnail_url = excluded.thumbnail_url, updated_at = excluded.updated_at`,
+    )
+    .bind(params.videoId, params.title, params.thumbnailUrl)
+    .run()
+}
+
 export type OtpCodeRow = {
   id: number
   email: string

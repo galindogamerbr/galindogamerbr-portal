@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { SectionHead } from '../components/ui/SectionHead'
@@ -38,6 +39,7 @@ export function Home() {
       <Hero />
       <ComeceAquiTeaser />
       <TransmissoesTeaser />
+      <JogosBannerCta />
       <JogosTeaser />
       <ComunidadeTeaser />
       <SobreTeaser />
@@ -152,6 +154,32 @@ function TransmissoesTeaser() {
   )
 }
 
+// Chamada de largura cheia pra /jogos, logo abaixo do vídeo — antes do
+// destaque específico da Fazenda Nova Aliança (JogosTeaser).
+function JogosBannerCta() {
+  return (
+    <section className="pb-16 sm:pb-24">
+      <Reveal>
+        <Container>
+          <Link to="/conteudos" className="group relative block overflow-hidden rounded-lg border border-line">
+            <img
+              src="/assets/banners/jogos-banner.webp"
+              alt=""
+              className="aspect-[21/9] w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
+            <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-6 sm:p-10">
+              <Eyebrow>Todos os conteúdos do canal</Eyebrow>
+              <h2 className="text-2xl sm:text-4xl">CONHEÇA OS CONTEÚDOS DO CANAL</h2>
+              <span className="text-sm font-semibold uppercase tracking-wide text-gold">Ver todos →</span>
+            </div>
+          </Link>
+        </Container>
+      </Reveal>
+    </section>
+  )
+}
+
 // Farming Simulator 25 / Fazenda Nova Aliança é o carro-chefe do canal —
 // ganha destaque próprio na home, não só mais um item entre outros jogos.
 function JogosTeaser() {
@@ -168,7 +196,7 @@ function JogosTeaser() {
             className="grid grid-cols-1 overflow-hidden rounded-lg border-2 border-gold shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:grid-cols-2"
           >
             <img
-              src={flagship?.thumbnailUrl ?? FAZENDA_NOVA_ALIANCA.image}
+              src={flagship?.thumbnailUrl}
               alt=""
               className="aspect-video w-full object-cover lg:aspect-auto lg:h-full"
             />
@@ -177,13 +205,13 @@ function JogosTeaser() {
                 🚜 Carro-chefe do canal
               </span>
               <h2 className="text-2xl sm:text-3xl">FARMING SIMULATOR 25 — FAZENDA NOVA ALIANÇA</h2>
-              <p className="max-w-xl text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
+              <p className="max-w-xl text-justify text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
               <div className="mt-2 flex flex-wrap gap-3">
                 <LinkButton variant="green" href={flagshipHref} target="_blank" rel="noopener noreferrer">
                   Assistir no YouTube
                 </LinkButton>
-                <NavButton to="/jogos" variant="default">
-                  Ver todos os jogos →
+                <NavButton to="/conteudos" variant="default">
+                  Ver todos os conteúdos →
                 </NavButton>
               </div>
             </div>

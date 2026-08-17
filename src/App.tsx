@@ -2,7 +2,7 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Home } from './routes/Home'
 import { ComeceAqui } from './routes/ComeceAqui'
-import { Jogos } from './routes/Jogos'
+import { Conteudos } from './routes/Conteudos'
 import { Comunidade } from './routes/Comunidade'
 import { Sobre } from './routes/Sobre'
 import { Parceiros } from './routes/Parceiros'
@@ -19,7 +19,8 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/comece-aqui', element: <ComeceAqui /> },
-      { path: '/jogos', element: <Jogos /> },
+      { path: '/conteudos', element: <Conteudos /> },
+      { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
       { path: '/comunidade', element: <Comunidade /> },
       { path: '/sobre', element: <Sobre /> },
       { path: '/parceiros', element: <Parceiros /> },

@@ -49,8 +49,8 @@ export function ComeceAqui() {
           <NavButton variant="blue" to="/comunidade">
             Ver hub da comunidade →
           </NavButton>
-          <NavButton variant="default" to="/jogos">
-            Conhecer os jogos →
+          <NavButton variant="default" to="/conteudos">
+            Conhecer os conteúdos →
           </NavButton>
         </div>
       </Container>

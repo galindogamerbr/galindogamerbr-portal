@@ -59,11 +59,46 @@ export const GAMES: Game[] = [
 ]
 
 export const FAZENDA_NOVA_ALIANCA = {
-  // Episódio/thumbnail reais vêm de /api/flagship (src/hooks/useFlagshipVideo.ts),
-  // sempre o mais recente da playlist — os campos abaixo são só o fallback
-  // enquanto isso carrega (ou se a busca falhar).
+  // Thumbnail/vídeo reais vêm de /api/flagship (src/hooks/useFlagshipVideo.ts),
+  // sempre o mais recente da playlist — com fallback pro último vídeo salvo
+  // em D1 se a busca ao vivo falhar (ver functions/api/flagship.ts). Sem
+  // imagem estática fixa aqui — não há garantia de imagem antes do primeiro
+  // request bem-sucedido, mas isso é aceitável (self-heal na próxima visita).
   description:
-    'Uma saga que já passa de 200 episódios: a Fazenda Nova Aliança nasceu pequena e virou um verdadeiro império rural, construído pouco a pouco, transmissão após transmissão — decisões de gestão, novas máquinas, expansão de terras e os imprevistos do campo, tudo ao vivo com a comunidade acompanhando cada passo da história.',
-  image: '/assets/farm-live.webp',
+    'A Fazenda Nova Aliança é um gameplay num servidor dedicado, jogado ao vivo ao lado de parceiros do canal e membros VIP da comunidade. A história começou do zero: só um fordinho velho e um sonho grande demais pra caber numa live só. Antes de conseguir comprar nosso primeiro terreno de verdade, fechamos contrato atrás de contrato com os vizinhos, plantando, colhendo e prestando serviço pra juntar cada centavo. Máquina por máquina, hectare por hectare, transmissão após transmissão, aquele projeto pequeno virou algo muito maior do que qualquer um de nós imaginou. Hoje, depois de muito suor (e alguns imprevistos daqueles que só o campo sabe dar), somos donos de uma fazenda enorme, e a comunidade acompanha ao vivo cada decisão, cada expansão e cada capítulo novo dessa saga.',
   href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN',
+}
+
+export const FURIA_REBORN = {
+  // Vídeos recentes reais vêm de /api/furia (src/hooks/useFuriaVideos.ts).
+  description:
+    'Bem-vindo ao universo Fúria Reborn! Perseguições de tirar o fôlego, missões insanas, guerra de facções e histórias que só existem porque a comunidade tá junto ao vivo. Cada transmissão escreve um capítulo novo dessa cidade sem lei.',
+  image: '/assets/banners/furia-reborn.webp',
+  href: 'https://www.youtube.com/playlist?list=PLJtoEQhBWmWI',
+}
+
+export const DICAS = {
+  // Vídeos recentes reais vêm de /api/dicas (src/hooks/useDicasVideos.ts).
+  description:
+    'Quer jogar melhor sem sofrer sozinho? Aqui tem truque, configuração, otimização e solução rápida pra tirar o máximo de cada jogo. Um espaço pensado pra ajudar a comunidade inteira a evoluir junto.',
+  image: '/assets/banners/dicas-banner.webp',
+  href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUmOBGsW2WBorqwszTEJihie',
+}
+
+export const ETS2 = {
+  // Vídeos recentes reais vêm de /api/ets2 (src/hooks/useEts2Videos.ts).
+  description:
+    'Bota o caminhão na estrada e relaxa! Viagens longas, paisagens reais e entregas que testam paciência e planejamento. Um dos simuladores mais tranquilos (e viciantes) do canal, onde a estrada é a verdadeira protagonista.',
+  image: '/assets/banners/ets2-banner.webp',
+  href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUkbejSJ6f1D0eob6leKJAur',
+}
+
+export const SNOWRUNNER = {
+  // Vídeos recentes reais vêm de /api/snowrunner (src/hooks/useSnowrunnerVideos.ts).
+  // image separado do usado no card pequeno (snowrunner.webp é retrato,
+  // pensado pro grid de "outros jogos" — este é o banner largo dedicado.
+  description:
+    'Neve, lama e muita adrenalina! Expedições off-road brutais em terrenos que parecem impossíveis de atravessar, resgates de veículos presos e um inverno hostil que não perdoa. Cada transmissão é um novo duelo contra a natureza.',
+  image: '/assets/banners/snowrunner-banner.webp',
+  href: 'https://www.youtube.com/playlist?list=PLDv3gOgRACDY',
 }
