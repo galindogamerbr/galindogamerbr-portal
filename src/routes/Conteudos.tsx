@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { SectionHead } from '../components/ui/SectionHead'
 import { Eyebrow } from '../components/ui/Eyebrow'
@@ -12,20 +13,41 @@ import { useFuriaVideos } from '../hooks/useFuriaVideos'
 import { useDicasVideos } from '../hooks/useDicasVideos'
 import { useEts2Videos } from '../hooks/useEts2Videos'
 import { useSnowrunnerVideos } from '../hooks/useSnowrunnerVideos'
+import { getLiveStatus, type LiveStatus } from '../lib/api/live'
 
 const OTHER_GAMES = GAMES.filter(
   (game) =>
     !game.flagship && game.slug !== 'furia-reborn-rp' && game.slug !== 'dicas' && game.slug !== 'ets2' && game.slug !== 'snowrunner',
 )
 
+const LIVE_POLL_INTERVAL_MS = 60_000
+
 export function Conteudos() {
   const tiltRef = useTilt<HTMLDivElement>()
   const [flagship, ...recent] = useFlagshipVideos()
+  const [live, setLive] = useState<LiveStatus | null>(null)
   const flagshipHref = flagship?.videoId ? `https://www.youtube.com/watch?v=${flagship.videoId}` : FAZENDA_NOVA_ALIANCA.href
   const furiaVideos = useFuriaVideos()
   const dicasVideos = useDicasVideos()
   const ets2Videos = useEts2Videos()
   const snowrunnerVideos = useSnowrunnerVideos()
+
+  useEffect(() => {
+    let active = true
+    function load() {
+      getLiveStatus().then((s) => {
+        if (active) setLive(s)
+      })
+    }
+    load()
+    const interval = setInterval(load, LIVE_POLL_INTERVAL_MS)
+    return () => {
+      active = false
+      clearInterval(interval)
+    }
+  }, [])
+
+  const isLiveNow = live?.isLive && live.videoId === flagship?.videoId
 
   return (
     <>
@@ -46,7 +68,15 @@ export function Conteudos() {
                 className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5"
               >
                 <div className="relative aspect-video w-full">
-                  {flagship?.thumbnailUrl ? (
+                  {isLiveNow && flagship?.videoId ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${flagship.videoId}?autoplay=1&mute=1`}
+                      title={flagship.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="h-full w-full border-0"
+                    />
+                  ) : flagship?.thumbnailUrl ? (
                     <img src={flagship.thumbnailUrl} alt="Fazenda Nova Aliança" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-panel2">
@@ -58,6 +88,11 @@ export function Conteudos() {
                   <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
                     🚜 Carro-chefe do canal
                   </span>
+                  {isLiveNow && (
+                    <span className="ml-2 inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
+                    </span>
+                  )}
                   <h2 className="mt-3 text-2xl sm:text-3xl">Farming Simulator 25 — Fazenda Nova Aliança</h2>
                   {flagship?.title && (
                     <span className="mt-1 block text-xs font-semibold uppercase tracking-widest text-gold">

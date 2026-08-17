@@ -11,13 +11,28 @@ export type VideoState = {
 
 type OEmbedResponse = { title: string }
 
-// Sem API key: usa o mesmo truque que ferramentas como yt-dlp usam — a
-// URL /channel/{id}/live só redireciona pra /watch?v=ID quando o canal
-// está ao vivo agora. Ausência de "v=" no destino final = não está ao vivo.
+// Sem API key: busca a página /channel/{id}/live e olha o HTML — o YouTube
+// não faz mais redirect HTTP de verdade pra essa URL (é servida como SPA).
+// O <link rel="canonical"> da página aponta pro vídeo ao vivo quando o
+// canal está transmitindo, e pro próprio canal (sem "v=") quando não está
+// — mais confiável que o marcador "isLiveNow" embutido no JSON, que na
+// prática se mostrou inconsistente (testado ao vivo, várias respostas).
+// User-Agent de navegador de verdade + cache desligado: sem isso o YouTube
+// pode servir algo diferente do que um navegador vê, e o Cloudflare pode
+// cachear a resposta (ficando presa no estado de antes da live).
 async function getLiveVideoId(channelId: string): Promise<string | null> {
-  const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, { redirect: 'follow' })
-  const match = res.url.match(/[?&]v=([^&]+)/)
-  return match ? match[1] : null
+  const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
+    redirect: 'follow',
+    headers: {
+      'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    },
+    cf: { cacheTtl: 0, cacheEverything: false },
+  })
+  const body = await res.text()
+  const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
+  const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
+  return videoId ? videoId[1] : null
 }
 
 // Sem API key: um Short de verdade é servido direto em /shorts/{id} (200);
