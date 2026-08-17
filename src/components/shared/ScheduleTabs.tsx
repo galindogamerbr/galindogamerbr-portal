@@ -10,6 +10,13 @@ function cycleLabel(index: number, total: number): string {
   return total <= LETTERS.length ? `Semana ${LETTERS[index]}` : `Semana ${index + 1}`
 }
 
+// Domingo=0 no JS Date; convertido pra 1=segunda..7=domingo (mesma
+// convenção ISO usada em DAYS/schedule_blocks.day_of_week).
+function todayIso(): number {
+  const day = new Date().getDay()
+  return day === 0 ? 7 : day
+}
+
 // Reusado no teaser da Home e na página completa de Programação — busca
 // direto de /api/schedule (editor no-code da Fase 3 escreve nesses dados).
 export function ScheduleTabs() {
@@ -25,6 +32,7 @@ export function ScheduleTabs() {
   }
 
   const week = schedule.weeks.find((w) => w.cycleIndex === active) ?? schedule.weeks[0]
+  const today = todayIso()
 
   return (
     <div>
@@ -50,16 +58,32 @@ export function ScheduleTabs() {
       <div className="mt-4 divide-y divide-line rounded-md border border-line bg-panel">
         {DAYS.map((day) => {
           const dayBlocks = week.blocks.filter((b) => b.dayOfWeek === day.value)
+          const isToday = day.value === today
+          const isOffline = dayBlocks.length === 0
+
           return (
-            <div key={day.value} className="flex items-center justify-between px-4 py-3 text-sm">
-              <b className="text-white">{day.label}</b>
-              {dayBlocks.length > 0 ? (
-                <span className="text-muted">
-                  {dayBlocks.map((b) => `${b.startTime}–${b.endTime}`).join(' | ')}
-                </span>
+            <div key={day.value} className={`flex items-center gap-3 px-4 py-3 text-sm ${isToday ? 'bg-gold/10' : ''}`}>
+              <span
+                className={`flex w-11 shrink-0 items-center justify-center rounded-md py-1 text-xs font-bold tracking-wide ${
+                  isToday ? 'bg-gold text-bg' : 'bg-panel2 text-white/70'
+                }`}
+              >
+                {day.label}
+              </span>
+
+              {isOffline ? (
+                <span className="text-xs font-semibold uppercase tracking-wide text-white/30">Sem transmissão</span>
               ) : (
-                <span className="text-white/30">OFFLINE</span>
+                <div className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                  {dayBlocks.map((b, index) => (
+                    <span key={index} className="text-white">
+                      {b.startTime}–{b.endTime}
+                    </span>
+                  ))}
+                </div>
               )}
+
+              {isToday && <span className="ml-auto shrink-0 text-xs font-bold uppercase tracking-widest text-gold">Hoje</span>}
             </div>
           )
         })}

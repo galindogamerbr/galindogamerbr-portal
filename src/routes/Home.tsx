@@ -9,6 +9,7 @@ import { VipSteps } from '../components/shared/VipSteps'
 import { ScheduleTabs } from '../components/shared/ScheduleTabs'
 import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
+import { LiveNowBadge } from '../components/shared/LiveNowBadge'
 import { FAZENDA_NOVA_ALIANCA } from '../data/games'
 import { useParallax } from '../hooks/useParallax'
 import { useTilt } from '../hooks/useTilt'
@@ -127,16 +128,18 @@ function TransmissoesTeaser() {
       <Reveal>
         <Container>
           <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
+          <LiveNowBadge />
           <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch">
             <div className="flex-1">
               <LiveBanner />
             </div>
             <div className="w-full lg:max-w-md lg:shrink-0">
+              <h3 className="mb-4 text-2xl">Programação da semana</h3>
               <ScheduleTabs />
               <div className="mt-4">
                 <PublicScheduleExportButton />
               </div>
-              <p className="mt-4 rounded-md border border-line bg-panel p-4 text-sm text-muted">
+              <p className="mt-4 rounded-md border border-line bg-panel p-4 text-sm text-muted sm:p-5">
                 <strong className="text-white">Importante:</strong> por causa do trabalho na cidade, o cronograma
                 pode sofrer alterações. Todos os domingos, a programação é atualizada no TikTok, Instagram e
                 YouTube.
