@@ -173,9 +173,9 @@ function JogosBannerCta() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
             <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-6 sm:p-10">
-              <Eyebrow className="text-base sm:text-lg">Todos os conteúdos do canal</Eyebrow>
-              <h2 className="text-3xl sm:text-5xl">CONHEÇA OS CONTEÚDOS DO CANAL</h2>
-              <span className="text-base font-semibold uppercase tracking-wide text-gold">Ver todos →</span>
+              <Eyebrow className="text-sm sm:text-lg">Todos os conteúdos do canal</Eyebrow>
+              <h2 className="text-2xl sm:text-5xl">CONHEÇA OS CONTEÚDOS DO CANAL</h2>
+              <span className="text-sm font-semibold uppercase tracking-wide text-gold sm:text-base">Ver todos →</span>
             </div>
           </Link>
         </Container>
