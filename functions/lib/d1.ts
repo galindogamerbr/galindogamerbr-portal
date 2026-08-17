@@ -68,7 +68,7 @@ export async function getLatestValidOtp(db: D1Database, email: string): Promise<
 }
 
 export async function consumeOtpCode(db: D1Database, id: number): Promise<void> {
-  await db.prepare("UPDATE otp_codes SET consumed_at = datetime('now') WHERE id = ?").bind(id).run()
+  await db.prepare('DELETE FROM otp_codes WHERE id = ?').bind(id).run()
 }
 
 export async function incrementOtpAttempt(db: D1Database, id: number): Promise<void> {

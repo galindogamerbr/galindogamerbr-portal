@@ -37,7 +37,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false })
   }
 
-  // Uso único: marca consumido no primeiro sucesso, mesmo dentro da validade.
+  // Uso único: apaga no primeiro sucesso, mesmo dentro da validade.
   await consumeOtpCode(env.DB, otp.id)
 
   const sessionId = createSessionId()
