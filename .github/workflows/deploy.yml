@@ -29,6 +29,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Injetar D1 database_id
+        run: sed -i "s/00000000-0000-0000-0000-000000000000/${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}/" wrangler.toml
+
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:

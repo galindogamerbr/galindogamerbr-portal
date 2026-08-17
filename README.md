@@ -66,12 +66,13 @@ Abre o PR no GitHub, revisa, e **merge pra `main`** — isso dispara o deploy au
 
 ### Produção (automático)
 
-Todo merge/push em `main` roda o workflow do GitHub Actions: typecheck → build → `wrangler pages deploy` com `--branch=main`, publicando em produção (o domínio real).
+Todo merge/push em `main` roda o workflow do GitHub Actions: typecheck → build → aplica migrations do D1 → `wrangler pages deploy` com `--branch=main`, publicando em produção (o domínio real).
 
 Precisa desses secrets configurados no repositório (Settings → Secrets and variables → Actions):
 
-- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages
+- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages e D1
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
+- `CLOUDFLARE_D1_DATABASE_ID` — id do banco D1 de produção; o workflow substitui o placeholder do `wrangler.toml` por esse valor antes de aplicar migrations/deployar (o id real nunca fica commitado — só nesse secret e no working tree local, via `skip-worktree`)
 
 ### Banco remoto (D1)
 
