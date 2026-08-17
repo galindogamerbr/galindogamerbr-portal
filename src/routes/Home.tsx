@@ -195,11 +195,15 @@ function JogosTeaser() {
             ref={tiltRef}
             className="grid grid-cols-1 overflow-hidden rounded-lg border-2 border-gold shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:grid-cols-2"
           >
-            <img
-              src={flagship?.thumbnailUrl}
-              alt=""
-              className="aspect-video w-full object-cover lg:aspect-auto lg:h-full"
-            />
+            <div className="relative aspect-video w-full lg:aspect-auto lg:h-full">
+              {flagship?.thumbnailUrl ? (
+                <img src={flagship.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-panel2">
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-white" />
+                </div>
+              )}
+            </div>
             <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
               <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
                 🚜 Carro-chefe do canal

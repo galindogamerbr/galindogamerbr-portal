@@ -45,11 +45,15 @@ export function Conteudos() {
                 ref={tiltRef}
                 className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5"
               >
-                <img
-                  src={flagship?.thumbnailUrl}
-                  alt="Fazenda Nova Aliança"
-                  className="aspect-video w-full object-cover"
-                />
+                <div className="relative aspect-video w-full">
+                  {flagship?.thumbnailUrl ? (
+                    <img src={flagship.thumbnailUrl} alt="Fazenda Nova Aliança" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-panel2">
+                      <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-white" />
+                    </div>
+                  )}
+                </div>
                 <div className="p-5 sm:p-6">
                   <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
                     🚜 Carro-chefe do canal
