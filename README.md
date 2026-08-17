@@ -84,6 +84,8 @@ O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê
 
 O e-mail de OTP em preview também sai de um remetente separado (`acesso-preview@galindogamerbr.com.br`, ver `functions/lib/resend.ts`), pra não misturar com o remetente de produção.
 
+**As URLs de preview (`*.pages.dev`) exigem login na conta Cloudflare pra abrir** — tem uma Cloudflare Access Application protegendo elas por padrão. Isso é intencional por ora: removê-la exige ativar o Zero Trust na conta, que pede cadastro de cartão mesmo no plano free. Só quem tem acesso à conta Cloudflare consegue ver os previews; pra liberar pra qualquer um (ex.: mandar link pra alguém de fora revisar), seria preciso ativar o Zero Trust e apagar/editar a Access Application em Zero Trust → Access → Applications.
+
 Pra rodar um preview manualmente a partir de outra branch, sem esperar o push:
 
 ```
