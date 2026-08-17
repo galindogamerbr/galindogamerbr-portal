@@ -16,7 +16,7 @@ export const GAMES: Game[] = [
     tag: 'Carro-chefe',
     icon: '/assets/logos/trator.webp',
     description: 'Fazendas, máquinas, produção, mods e histórias da comunidade — inclui a série Fazenda Nova Aliança.',
-    image: '/assets/games/fs25.webp',
+    image: '/assets/banners/fs25.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN',
     flagship: true,
   },
@@ -26,7 +26,7 @@ export const GAMES: Game[] = [
     tag: 'Roleplay',
     icon: '/assets/logos/furia_reborn_rp.webp',
     description: 'Roleplay imersivo, histórias e experiências na comunidade.',
-    image: '/assets/games/furia_rp.webp',
+    image: '/assets/banners/furia_rp.webp',
     href: 'https://www.youtube.com/playlist?list=PLJtoEQhBWmWI',
   },
   {
@@ -35,7 +35,7 @@ export const GAMES: Game[] = [
     tag: 'Simulação',
     icon: '/assets/logos/caminhao.webp',
     description: 'Expedições, lama, carga pesada e desafios extremos.',
-    image: '/assets/games/snowrunner.webp',
+    image: '/assets/banners/snowrunner.webp',
     href: 'https://www.youtube.com/playlist?list=PLDv3gOgRACDY',
   },
   {
@@ -44,7 +44,7 @@ export const GAMES: Game[] = [
     tag: 'Estradas',
     icon: '/assets/logos/cavalo.webp',
     description: 'Viagens, caminhões e muita estrada.',
-    image: '/assets/games/ets2.webp',
+    image: '/assets/banners/ets2.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUkbejSJ6f1D0eob6leKJAur',
   },
   {
@@ -53,7 +53,7 @@ export const GAMES: Game[] = [
     tag: 'Tutoriais',
     icon: null,
     description: 'Tutoriais, truques, configurações e dicas que fazem a diferença.',
-    image: '/assets/games/dicas.webp',
+    image: '/assets/banners/dicas.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUmOBGsW2WBorqwszTEJihie',
   },
 ]
