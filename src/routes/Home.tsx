@@ -11,10 +11,7 @@ import { ScheduleTabs } from '../components/shared/ScheduleTabs'
 import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
 import { LiveNowBadge } from '../components/shared/LiveNowBadge'
-import { FAZENDA_NOVA_ALIANCA } from '../data/games'
 import { useParallax } from '../hooks/useParallax'
-import { useTilt } from '../hooks/useTilt'
-import { useFlagshipVideos } from '../hooks/useFlagshipVideo'
 
 const HUB_TEASER = [
   {
@@ -40,7 +37,6 @@ export function Home() {
       <ComeceAquiTeaser />
       <TransmissoesTeaser />
       <JogosBannerCta />
-      <JogosTeaser />
       <ComunidadeTeaser />
       <SobreTeaser />
       <ParceirosTeaser />
@@ -57,11 +53,18 @@ function Hero() {
 
   return (
     <section id="inicio" className="relative isolate min-h-[560px] overflow-hidden bg-bg xl:aspect-[2365/665] xl:min-h-0">
-      <img ref={parallaxRef} src="/assets/background.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <img
+        ref={parallaxRef}
+        src="/assets/background.webp"
+        alt=""
+        fetchPriority="high"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
       <div className="hero-fade absolute inset-0" />
       <img
         src="/assets/galindo.webp"
         alt="Galindo, criador do GalindoGamerBR"
+        fetchPriority="high"
         className="pointer-events-none absolute bottom-0 left-[62%] hidden h-[96%] w-auto max-w-[44%] -translate-x-1/2 object-contain object-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,0.65)] lg:block xl:max-w-[34%]"
       />
       <Container className="relative z-10 flex h-full flex-col justify-center gap-4 py-16 xl:py-0">
@@ -165,6 +168,7 @@ function JogosBannerCta() {
             <img
               src="/assets/banners/jogos-banner.webp"
               alt=""
+              loading="lazy"
               className="aspect-[21/9] w-full object-cover transition duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
@@ -174,52 +178,6 @@ function JogosBannerCta() {
               <span className="text-base font-semibold uppercase tracking-wide text-gold">Ver todos →</span>
             </div>
           </Link>
-        </Container>
-      </Reveal>
-    </section>
-  )
-}
-
-// Farming Simulator 25 / Fazenda Nova Aliança é o carro-chefe do canal —
-// ganha destaque próprio na home, não só mais um item entre outros jogos.
-function JogosTeaser() {
-  const tiltRef = useTilt<HTMLDivElement>()
-  const [flagship] = useFlagshipVideos()
-  const flagshipHref = flagship?.videoId ? `https://www.youtube.com/watch?v=${flagship.videoId}` : FAZENDA_NOVA_ALIANCA.href
-
-  return (
-    <section className="pb-16 sm:pb-24">
-      <Reveal>
-        <Container>
-          <div
-            ref={tiltRef}
-            className="grid grid-cols-1 overflow-hidden rounded-lg border-2 border-gold shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:grid-cols-2"
-          >
-            <div className="relative aspect-video w-full lg:aspect-auto lg:h-full">
-              {flagship?.thumbnailUrl ? (
-                <img src={flagship.thumbnailUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-panel2">
-                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-white" />
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
-              <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
-                🚜 Carro-chefe do canal
-              </span>
-              <h2 className="text-2xl sm:text-3xl">FARMING SIMULATOR 25 — FAZENDA NOVA ALIANÇA</h2>
-              <p className="max-w-xl text-justify text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
-              <div className="mt-2 flex flex-wrap gap-3">
-                <LinkButton variant="green" href={flagshipHref} target="_blank" rel="noopener noreferrer">
-                  Assistir no YouTube
-                </LinkButton>
-                <NavButton to="/conteudos" variant="default">
-                  Ver todos os conteúdos →
-                </NavButton>
-              </div>
-            </div>
-          </div>
         </Container>
       </Reveal>
     </section>
@@ -259,7 +217,12 @@ function SobreTeaser() {
     <section className="pb-16 sm:pb-24">
       <Reveal>
         <Container className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
-          <img src="/assets/about-galindo.webp" alt="GalindoGamerBR" className="w-full rounded-lg border border-line object-cover" />
+          <img
+            src="/assets/about-galindo.webp"
+            alt="GalindoGamerBR"
+            loading="lazy"
+            className="w-full rounded-lg border border-line object-cover"
+          />
           <div>
             <Eyebrow>Sobre o Galindo</Eyebrow>
             <h2 className="text-3xl sm:text-4xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h2>
