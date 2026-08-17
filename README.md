@@ -73,20 +73,11 @@ Precisa desses secrets configurados no repositório (Settings → Secrets and va
 - `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
 
-### Preview manual (outras branches)
-
-Pra ver uma branch/PR no ar antes de mergear, sem mexer em produção, roda local a partir dessa branch:
-
-```
-git checkout minha-mudanca
-npm run deploy
-```
-
-Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-hub-portal` **sem** `--branch` fixo — o wrangler detecta sozinho o branch git atual e publica como *preview deployment* (URL própria tipo `<hash>.galindogamerbr-hub-portal.pages.dev`), sem tocar na URL de produção. Precisa estar logado (`wrangler login`) ou ter `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` no ambiente local.
-
 ### Banco remoto (D1)
 
-Migrations novas em `/migrations` não sobem sozinhas — depois que o schema mudar, aplica manualmente:
+Migrations novas em `/migrations` sobem sozinhas: o workflow de deploy aplica `wrangler d1 migrations apply --remote` antes de publicar. Não precisa rodar nada manualmente depois de um merge em `main`.
+
+Pra aplicar numa situação fora do fluxo normal de deploy:
 
 ```
 npm run db:migrate:remote

@@ -6,3 +6,7 @@ OTP_PEPPER=dev-pepper-troque-em-producao
 # Sobrescreve o ENVIRONMENT="production" do wrangler.toml só localmente —
 # em dev, resend.ts faz console.log do código OTP em vez de enviar e-mail.
 ENVIRONMENT=development
+
+# Não é secreto (id público do canal), mas fica fora do wrangler.toml pra
+# não commitar config de ambiente junto do código — mesmo valor em produção.
+YOUTUBE_CHANNEL_ID=UCZGlbfvpoitCSFTsWVWVAow
