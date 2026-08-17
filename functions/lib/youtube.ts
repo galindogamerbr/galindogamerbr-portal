@@ -26,6 +26,8 @@ async function getLiveVideoId(channelId: string): Promise<string | null> {
     },
     cf: { cacheTtl: 0, cacheEverything: false },
   })
+  // eslint-disable-next-line no-console
+  console.log('[live-debug]', res.status, res.redirected, res.url)
   const match = res.url.match(/[?&]v=([^&]+)/)
   return match ? match[1] : null
 }
