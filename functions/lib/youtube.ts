@@ -14,8 +14,18 @@ type OEmbedResponse = { title: string }
 // Sem API key: usa o mesmo truque que ferramentas como yt-dlp usam — a
 // URL /channel/{id}/live só redireciona pra /watch?v=ID quando o canal
 // está ao vivo agora. Ausência de "v=" no destino final = não está ao vivo.
+// User-Agent de navegador de verdade + cache desligado: sem isso o YouTube
+// pode servir uma página de consentimento em vez do redirect, e o Cloudflare
+// pode cachear esse redirect (ficando preso no estado de antes da live).
 async function getLiveVideoId(channelId: string): Promise<string | null> {
-  const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, { redirect: 'follow' })
+  const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
+    redirect: 'follow',
+    headers: {
+      'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    },
+    cf: { cacheTtl: 0, cacheEverything: false },
+  })
   const match = res.url.match(/[?&]v=([^&]+)/)
   return match ? match[1] : null
 }
