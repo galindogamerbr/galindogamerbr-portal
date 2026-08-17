@@ -66,27 +66,40 @@ Abre o PR no GitHub, revisa, e **merge pra `main`** — isso dispara o deploy au
 
 ### Produção (automático)
 
-Todo merge/push em `main` roda o workflow do GitHub Actions: typecheck → build → `wrangler pages deploy` com `--branch=main`, publicando em produção (o domínio real).
+Todo merge/push em `main` roda o workflow do GitHub Actions: typecheck → build → aplica migrations do D1 → `wrangler pages deploy` com `--branch=main`, publicando em produção (o domínio real).
 
 Precisa desses secrets configurados no repositório (Settings → Secrets and variables → Actions):
 
-- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages
+- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages e D1
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
+- `CLOUDFLARE_D1_DATABASE_ID` — id do banco D1 de produção; o workflow substitui o placeholder do `wrangler.toml` por esse valor antes de aplicar migrations/deployar (o id real nunca fica commitado — só nesse secret e no working tree local, via `skip-worktree`)
 
-### Preview manual (outras branches)
+### Preview (manual, outras branches)
 
-Pra ver uma branch/PR no ar antes de mergear, sem mexer em produção, roda local a partir dessa branch:
+O workflow `deploy-preview.yml` roda sob demanda (Actions → Deploy Preview → Run workflow, escolhendo a branch) — não dispara sozinho a cada push. Mesmos passos do deploy de produção (typecheck → build → migrations → deploy), mas publicando como *preview deployment* daquela branch, sem tocar produção.
+
+O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê/escreve no banco de produção. Cloudflare Pages ignora seções `[env.preview]` no `wrangler.toml` (isso é coisa de Workers, não de Pages — confirmado testando), então o workflow sobrescreve com `sed` o `database_id` e o `ENVIRONMENT` do bloco de topo antes de buildar, só nesse job (nunca fica commitado assim). Também precisa de:
+
+- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` — id do banco D1 de preview
+
+O e-mail de OTP em preview também sai de um remetente separado (`acesso-preview@galindogamerbr.com.br`, ver `functions/lib/resend.ts`), pra não misturar com o remetente de produção.
+
+**As URLs de preview (`*.pages.dev`) exigem login na conta Cloudflare pra abrir** — tem uma Cloudflare Access Application protegendo elas por padrão. Isso é intencional por ora: removê-la exige ativar o Zero Trust na conta, que pede cadastro de cartão mesmo no plano free. Só quem tem acesso à conta Cloudflare consegue ver os previews; pra liberar pra qualquer um (ex.: mandar link pra alguém de fora revisar), seria preciso ativar o Zero Trust e apagar/editar a Access Application em Zero Trust → Access → Applications.
+
+Pra rodar um preview manualmente a partir de outra branch, sem esperar o push:
 
 ```
 git checkout minha-mudanca
 npm run deploy
 ```
 
-Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-hub-portal` **sem** `--branch` fixo — o wrangler detecta sozinho o branch git atual e publica como *preview deployment* (URL própria tipo `<hash>.galindogamerbr-hub-portal.pages.dev`), sem tocar na URL de produção. Precisa estar logado (`wrangler login`) ou ter `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` no ambiente local.
+Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-portal` **sem** `--branch` fixo — o wrangler detecta o branch git atual e publica como preview. Só que localmente o `wrangler.toml` tem o `database_id` de produção no `[[d1_databases]]` de topo (é o que o `skip-worktree` guarda) — então um deploy manual local com esse comando ainda aponta o binding padrão pro banco de produção; prefira deixar o `deploy-preview.yml` cuidar disso.
 
 ### Banco remoto (D1)
 
-Migrations novas em `/migrations` não sobem sozinhas — depois que o schema mudar, aplica manualmente:
+Migrations novas em `/migrations` sobem sozinhas: o workflow de deploy aplica `wrangler d1 migrations apply --remote` antes de publicar. Não precisa rodar nada manualmente depois de um merge em `main`.
+
+Pra aplicar numa situação fora do fluxo normal de deploy:
 
 ```
 npm run db:migrate:remote

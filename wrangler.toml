@@ -1,4 +1,4 @@
-name = "galindogamerbr-hub-portal"
+name = "galindogamerbr-portal"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-05-01"
 
@@ -12,4 +12,3 @@ migrations_dir = "migrations"
 SESSION_COOKIE_NAME = "ggb_session"
 OTP_EXPIRY_MINUTES = "10"
 ENVIRONMENT = "production"
-YOUTUBE_CHANNEL_ID = "UCZGlbfvpoitCSFTsWVWVAow"
