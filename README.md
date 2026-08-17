@@ -74,6 +74,25 @@ Precisa desses secrets configurados no repositório (Settings → Secrets and va
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
 - `CLOUDFLARE_D1_DATABASE_ID` — id do banco D1 de produção; o workflow substitui o placeholder do `wrangler.toml` por esse valor antes de aplicar migrations/deployar (o id real nunca fica commitado — só nesse secret e no working tree local, via `skip-worktree`)
 
+### Preview (automático, outras branches)
+
+Todo push numa branch que não seja `main` roda o workflow `deploy-preview.yml`: mesmos passos (typecheck → build → migrations → deploy), mas publicando como *preview deployment* daquela branch, sem tocar produção.
+
+O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê/escreve no banco de produção. Cloudflare Pages ignora seções `[env.preview]` no `wrangler.toml` (isso é coisa de Workers, não de Pages — confirmado testando), então o workflow sobrescreve com `sed` o `database_id` e o `ENVIRONMENT` do bloco de topo antes de buildar, só nesse job (nunca fica commitado assim). Também precisa de:
+
+- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` — id do banco D1 de preview
+
+O e-mail de OTP em preview também sai de um remetente separado (`acesso-preview@galindogamerbr.com.br`, ver `functions/lib/resend.ts`), pra não misturar com o remetente de produção.
+
+Pra rodar um preview manualmente a partir de outra branch, sem esperar o push:
+
+```
+git checkout minha-mudanca
+npm run deploy
+```
+
+Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-portal` **sem** `--branch` fixo — o wrangler detecta o branch git atual e publica como preview. Só que localmente o `wrangler.toml` tem o `database_id` de produção no `[[d1_databases]]` de topo (é o que o `skip-worktree` guarda) — então um deploy manual local com esse comando ainda aponta o binding padrão pro banco de produção; prefira deixar o `deploy-preview.yml` cuidar disso.
+
 ### Banco remoto (D1)
 
 Migrations novas em `/migrations` sobem sozinhas: o workflow de deploy aplica `wrangler d1 migrations apply --remote` antes de publicar. Não precisa rodar nada manualmente depois de um merge em `main`.

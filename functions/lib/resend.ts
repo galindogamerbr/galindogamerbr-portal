@@ -2,6 +2,7 @@ import type { Env } from './env'
 import { otpEmailHtml } from './emailTemplates'
 
 const FROM_ADDRESS = 'GalindoGamerBR <acesso@galindogamerbr.com.br>'
+const FROM_ADDRESS_PREVIEW = 'GalindoGamerBR (preview) <acesso-preview@galindogamerbr.com.br>'
 
 export async function sendOtpEmail(env: Env, to: string, code: string): Promise<void> {
   if (env.ENVIRONMENT === 'development') {
@@ -17,7 +18,7 @@ export async function sendOtpEmail(env: Env, to: string, code: string): Promise<
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      from: FROM_ADDRESS,
+      from: env.ENVIRONMENT === 'preview' ? FROM_ADDRESS_PREVIEW : FROM_ADDRESS,
       to,
       subject: 'Seu código de acesso — GalindoGamerBR',
       html: otpEmailHtml(code, env.OTP_EXPIRY_MINUTES),
