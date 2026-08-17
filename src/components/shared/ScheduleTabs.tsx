@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DAYS } from '../../data/days'
 import { getPublicSchedule, type PublicSchedule } from '../../lib/api/schedule'
+import { blockIconKind } from '../../lib/blockIcon'
 
 const LETTERS = 'ABCDEFGHIJ'
 
@@ -74,9 +75,18 @@ export function ScheduleTabs() {
               {isOffline ? (
                 <span className="text-xs font-semibold uppercase tracking-wide text-white/30">Sem transmissão</span>
               ) : (
-                <div className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                <div className="flex flex-1 flex-col items-start gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4 sm:gap-y-1">
                   {dayBlocks.map((b, index) => (
-                    <span key={index} className="text-white">
+                    <span key={index} className="inline-flex items-center gap-1.5 text-white">
+                      <img
+                        src={
+                          blockIconKind(b.startTime) === 'sun'
+                            ? '/assets/icons/schedule-icon-sun.png'
+                            : '/assets/icons/schedule-icon-sunset.png'
+                        }
+                        alt=""
+                        className="h-4 w-4"
+                      />
                       {b.startTime}–{b.endTime}
                     </span>
                   ))}

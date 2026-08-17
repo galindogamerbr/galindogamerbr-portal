@@ -3,7 +3,7 @@ import { fontStack } from '../../styles/theme'
 import type { ScheduleBlock } from '../../lib/api/schedule'
 import { blockIconKind, type BlockIconKind } from '../../lib/blockIcon'
 
-// Resolução nativa do template de fundo (public/assets/schedule-export-template.png).
+// Resolução nativa do template de fundo (public/assets/programacao/schedule-export-template.png).
 const IMG_W = 1024
 const IMG_H = 1536
 
@@ -55,7 +55,7 @@ const DAY_ICON_SIZE = 128
 function TimeIcon({ kind }: { kind: BlockIconKind }) {
   return (
     <img
-      src={kind === 'sun' ? '/assets/schedule-icon-sun.png' : '/assets/schedule-icon-sunset.png'}
+      src={kind === 'sun' ? '/assets/icons/schedule-icon-sun.png' : '/assets/icons/schedule-icon-sunset.png'}
       alt=""
       style={{ width: ICON_SIZE, height: ICON_SIZE, flexShrink: 0 }}
     />
@@ -81,7 +81,7 @@ export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportT
         position: 'relative',
         width: IMG_W,
         height: IMG_H,
-        backgroundImage: 'url(/assets/schedule-export-template.png)',
+        backgroundImage: 'url(/assets/programacao/schedule-export-template.png)',
         backgroundSize: `${IMG_W}px ${IMG_H}px`,
         fontFamily: fontStack('body'),
       }}
@@ -96,7 +96,7 @@ export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportT
         return (
           <div key={day} style={{ transform: nudge ? `translateY(${nudge}px)` : undefined }}>
             <img
-              src={isOffline ? '/assets/schedule-icon-offline.png' : '/assets/schedule-icon-calendar.png'}
+              src={isOffline ? '/assets/icons/schedule-icon-offline.png' : '/assets/icons/schedule-icon-calendar.png'}
               alt=""
               style={{
                 position: 'absolute',
