@@ -74,9 +74,9 @@ Precisa desses secrets configurados no repositório (Settings → Secrets and va
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
 - `CLOUDFLARE_D1_DATABASE_ID` — id do banco D1 de produção; o workflow substitui o placeholder do `wrangler.toml` por esse valor antes de aplicar migrations/deployar (o id real nunca fica commitado — só nesse secret e no working tree local, via `skip-worktree`)
 
-### Preview (automático, outras branches)
+### Preview (manual, outras branches)
 
-Todo push numa branch que não seja `main` roda o workflow `deploy-preview.yml`: mesmos passos (typecheck → build → migrations → deploy), mas publicando como *preview deployment* daquela branch, sem tocar produção.
+O workflow `deploy-preview.yml` roda sob demanda (Actions → Deploy Preview → Run workflow, escolhendo a branch) — não dispara sozinho a cada push. Mesmos passos do deploy de produção (typecheck → build → migrations → deploy), mas publicando como *preview deployment* daquela branch, sem tocar produção.
 
 O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê/escreve no banco de produção. Cloudflare Pages ignora seções `[env.preview]` no `wrangler.toml` (isso é coisa de Workers, não de Pages — confirmado testando), então o workflow sobrescreve com `sed` o `database_id` e o `ENVIRONMENT` do bloco de topo antes de buildar, só nesse job (nunca fica commitado assim). Também precisa de:
 
