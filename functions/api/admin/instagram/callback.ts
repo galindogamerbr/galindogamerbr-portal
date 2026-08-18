@@ -76,22 +76,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     )
   }
 
-  // Passo 4: busca o @ da conta comercial do Instagram — só pra exibir no
-  // painel qual conta está conectada, uma falha aqui não deve travar a
-  // conexão.
+  // Passo 4: busca o @ e a foto da conta comercial do Instagram — só pra
+  // exibir no painel qual conta está conectada, uma falha aqui não deve
+  // travar a conexão.
   const igUserId = page.instagram_business_account.id
-  const usernameUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/${igUserId}`)
-  usernameUrl.searchParams.set('fields', 'username')
-  usernameUrl.searchParams.set('access_token', page.access_token)
-  const usernameRes = await fetch(usernameUrl.toString())
-  const usernameData = usernameRes.ok ? ((await usernameRes.json()) as { username?: string }) : null
+  const profileUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/${igUserId}`)
+  profileUrl.searchParams.set('fields', 'username,profile_picture_url')
+  profileUrl.searchParams.set('access_token', page.access_token)
+  const profileRes = await fetch(profileUrl.toString())
+  const profileData = profileRes.ok
+    ? ((await profileRes.json()) as { username?: string; profile_picture_url?: string })
+    : null
 
   const expiresAt = new Date(Date.now() + longLived.expires_in * 1000).toISOString()
   await upsertInstagramToken(context.env.DB, {
     accessToken: page.access_token,
     igUserId,
     expiresAt,
-    username: usernameData?.username,
+    username: profileData?.username,
+    avatarUrl: profileData?.profile_picture_url,
   })
 
   return new Response(null, {

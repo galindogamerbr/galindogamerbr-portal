@@ -40,14 +40,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   // Só pra exibir no painel qual conta está conectada — não afeta o fluxo
-  // de stats, então uma falha aqui não deve travar a conexão.
-  const userRes = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=username', {
+  // de stats, então uma falha aqui não deve travar a conexão. "username"
+  // (o @) exige o scope user.info.profile, que precisa de aprovação
+  // separada da TikTok e não temos — display_name vem no user.info.basic
+  // que já temos, então usamos ele pra identificar a conta.
+  const userRes = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=display_name,avatar_url', {
     headers: { authorization: `Bearer ${token.access_token}` },
   })
-  const userData = userRes.ok ? ((await userRes.json()) as { data?: { user?: { username?: string } } }) : null
-  const username = userData?.data?.user?.username
+  const userData = userRes.ok
+    ? ((await userRes.json()) as { data?: { user?: { display_name?: string; avatar_url?: string } } })
+    : null
+  const username = userData?.data?.user?.display_name
+  const avatarUrl = userData?.data?.user?.avatar_url
 
-  await upsertTiktokToken(context.env.DB, { accessToken: token.access_token, refreshToken: token.refresh_token, username })
+  await upsertTiktokToken(context.env.DB, {
+    accessToken: token.access_token,
+    refreshToken: token.refresh_token,
+    username,
+    avatarUrl,
+  })
 
   return new Response(null, {
     status: 302,

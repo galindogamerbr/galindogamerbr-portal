@@ -1,6 +1,7 @@
 export type InstagramStatus = {
   connected: boolean
   username: string | null
+  avatarUrl: string | null
   updatedAt: string | null
   expiresAt: string | null
 }
