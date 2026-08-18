@@ -6,6 +6,14 @@ Tudo aqui é **keyless**: scraping de páginas públicas ou endpoints não-auten
 
 ## Rodar localmente
 
+Esse worker tem seu próprio D1 local (`workers/social-stats-cron/.wrangler/state`), separado do `.wrangler/state` da raiz do projeto — mesmo `database_id`, mas é outro arquivo sqlite. Antes do primeiro teste local, aplica a migration nele também (só uma vez):
+
+```
+wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0008_community_stats.sql
+```
+
+Depois:
+
 ```
 wrangler dev --config wrangler.toml --test-scheduled
 # depois, num terminal separado:

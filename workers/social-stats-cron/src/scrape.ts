@@ -46,6 +46,8 @@ export async function fetchKickFollowers(username: string): Promise<number | nul
   })
   if (!res.ok) return null
 
-  const data = (await res.json()) as { followersCount?: number }
-  return data.followersCount ?? null
+  const data = (await res.json()) as { followers_count?: string | number }
+  if (data.followers_count === undefined) return null
+  const count = Number(data.followers_count)
+  return Number.isNaN(count) ? null : count
 }
