@@ -117,7 +117,7 @@ function ComeceAquiTeaser() {
                 </p>
               </div>
             </div>
-            <NavButton to="/comece-aqui" variant="gold" className="shrink-0 text-base">
+            <NavButton to="/boas-vindas" variant="gold" className="shrink-0 text-base">
               Ver guia de boas-vindas →
             </NavButton>
           </div>
