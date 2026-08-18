@@ -11,6 +11,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   return json({
     connected: token !== null,
     username: token?.username ?? null,
+    avatarUrl: token?.avatar_url ?? null,
     updatedAt: token?.updated_at ?? null,
     expiresAt: token?.expires_at ?? null,
   })
