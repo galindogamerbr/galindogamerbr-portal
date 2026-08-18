@@ -1,24 +1,30 @@
-import { SOCIALS } from '../../data/socials'
+import { SOCIALS, type SocialPlatform } from '../../data/socials'
 import { useCommunityStats } from '../../hooks/useCommunityStats'
 import { formatCompactNumber } from '../../lib/formatNumber'
+import type { LiveStatus } from '../../lib/api/communityStats'
 
 // Grid de cards de seguidores por rede — os números vêm do cache em D1,
 // populado de hora em hora pelo worker workers/social-stats-cron (scraping
 // keyless, sem API key). Enquanto o cache ainda não tem uma rede (worker
 // não rodou ainda, ou aquela rede falhou), o card mostra só o ícone/link,
-// sem número — nunca mostra "0" como se fosse um dado real. A Twitch é a
-// exceção: quando ao vivo, mostra também espectadores agora (cache curto e
-// próprio, não vem do worker — ver functions/api/community-stats.ts).
+// sem número — nunca mostra "0" como se fosse um dado real. Twitch e Kick
+// são exceção: quando ao vivo, mostram também espectadores agora (cada uma
+// com seu próprio fetch ao vivo, cache só como fallback — ver
+// functions/api/community-stats.ts).
 export function CommunityStatsGrid() {
   const stats = useCommunityStats()
   const byPlatform = new Map(stats?.social.map((s) => [s.platform, s.count]))
-  const twitchLive = stats?.twitchLive
+  const liveByPlatform: Partial<Record<SocialPlatform, LiveStatus>> = {
+    twitch: stats?.twitchLive,
+    kick: stats?.kickLive,
+  }
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
       {SOCIALS.map((social) => {
         const count = byPlatform.get(social.platform)
-        const showLive = social.platform === 'twitch' && twitchLive?.isLive
+        const live = liveByPlatform[social.platform]
+        const showLive = live?.isLive
 
         return (
           <a
@@ -32,9 +38,9 @@ export function CommunityStatsGrid() {
             <span className="text-lg font-semibold">{count !== undefined ? formatCompactNumber(count) : '—'}</span>
             <span className="text-xs uppercase tracking-widest text-muted">{social.name}</span>
             {showLive && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red" />
-                {twitchLive.viewerCount !== null ? `${formatCompactNumber(twitchLive.viewerCount)} assistindo` : 'ao vivo'}
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold" style={{ color: social.color }}>
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ backgroundColor: social.color }} />
+                {live.viewerCount !== null ? `${formatCompactNumber(live.viewerCount)} assistindo` : 'ao vivo'}
               </span>
             )}
           </a>
