@@ -76,11 +76,22 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     )
   }
 
+  // Passo 4: busca o @ da conta comercial do Instagram — só pra exibir no
+  // painel qual conta está conectada, uma falha aqui não deve travar a
+  // conexão.
+  const igUserId = page.instagram_business_account.id
+  const usernameUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/${igUserId}`)
+  usernameUrl.searchParams.set('fields', 'username')
+  usernameUrl.searchParams.set('access_token', page.access_token)
+  const usernameRes = await fetch(usernameUrl.toString())
+  const usernameData = usernameRes.ok ? ((await usernameRes.json()) as { username?: string }) : null
+
   const expiresAt = new Date(Date.now() + longLived.expires_in * 1000).toISOString()
   await upsertInstagramToken(context.env.DB, {
     accessToken: page.access_token,
-    igUserId: page.instagram_business_account.id,
+    igUserId,
     expiresAt,
+    username: usernameData?.username,
   })
 
   return new Response(null, {

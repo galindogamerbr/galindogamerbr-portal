@@ -39,7 +39,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return new Response('Resposta sem access_token/refresh_token.', { status: 502 })
   }
 
-  await upsertTiktokToken(context.env.DB, { accessToken: token.access_token, refreshToken: token.refresh_token })
+  // Só pra exibir no painel qual conta está conectada — não afeta o fluxo
+  // de stats, então uma falha aqui não deve travar a conexão.
+  const userRes = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=username', {
+    headers: { authorization: `Bearer ${token.access_token}` },
+  })
+  const userData = userRes.ok ? ((await userRes.json()) as { data?: { user?: { username?: string } } }) : null
+  const username = userData?.data?.user?.username
+
+  await upsertTiktokToken(context.env.DB, { accessToken: token.access_token, refreshToken: token.refresh_token, username })
 
   return new Response(null, {
     status: 302,

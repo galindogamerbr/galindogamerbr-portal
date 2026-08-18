@@ -10,6 +10,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const token = await getInstagramToken(context.env.DB)
   return json({
     connected: token !== null,
+    username: token?.username ?? null,
     updatedAt: token?.updated_at ?? null,
     expiresAt: token?.expires_at ?? null,
   })
