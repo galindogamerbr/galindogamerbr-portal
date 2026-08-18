@@ -1,6 +1,6 @@
 import type { Env } from '../lib/env'
 import { json } from '../lib/http'
-import { fetchLast24hVisits } from '../lib/cfAnalytics'
+import { fetchTodayVisits } from '../lib/cfAnalytics'
 import { getSiteVisitsCache, getSocialStatsCache, upsertSiteVisitsCache } from '../lib/d1-community'
 
 // Quanto tempo o cache de visitas do site vale antes de bater de novo na
@@ -15,7 +15,7 @@ async function resolveSiteVisits(env: Env): Promise<number | null> {
     if (ageMinutes < SITE_VISITS_CACHE_MINUTES) return cached.visits_today
   }
 
-  const fresh = await fetchLast24hVisits(env)
+  const fresh = await fetchTodayVisits(env)
   if (fresh !== null) {
     await upsertSiteVisitsCache(env.DB, fresh)
     return fresh

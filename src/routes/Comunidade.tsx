@@ -36,17 +36,12 @@ const HUB_LINKS = [
 export function Comunidade() {
   return (
     <>
-      <section className="py-16 sm:py-24">
+      <section className="pb-16 pt-16 sm:pb-24 sm:pt-24">
         <Reveal>
           <Container>
             <Eyebrow>Central da comunidade</Eyebrow>
             <h1 className="text-4xl sm:text-5xl">TODOS OS CAMINHOS</h1>
             <p className="mt-3 max-w-xl text-muted">Entre, participe e faça parte do universo GalindoGamerBR.</p>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
-              {HUB_LINKS.map((link) => (
-                <HubLink key={link.title} {...link} />
-              ))}
-            </div>
           </Container>
         </Reveal>
       </section>
@@ -65,6 +60,18 @@ export function Comunidade() {
             </div>
             <div className="mt-4 max-w-xs">
               <SiteVisitsCard />
+            </div>
+          </Container>
+        </Reveal>
+      </section>
+
+      <section className="pb-16 sm:pb-24">
+        <Reveal>
+          <Container>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {HUB_LINKS.map((link) => (
+                <HubLink key={link.title} {...link} />
+              ))}
             </div>
           </Container>
         </Reveal>
