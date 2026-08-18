@@ -39,6 +39,11 @@ INSTAGRAM_APP_SECRET=
 # provisionado em cima do Facebook Login for Business, que exige config_id
 # no dialog de autorização em vez de scope.
 INSTAGRAM_LOGIN_CONFIG_ID=
+# String arbitrária escolhida por você (não vem da Meta) — coloca o mesmo
+# valor no campo "Verificar token" ao configurar o produto Webhooks no
+# painel do app. Usado só pelo handshake de verificação em
+# functions/api/webhooks/instagram.ts; não processamos eventos de verdade.
+INSTAGRAM_WEBHOOK_VERIFY_TOKEN=
 
 # Espectadores ao vivo da Twitch (functions/lib/twitch.ts) — Client ID/
 # Secret do app criado em dev.twitch.tv/console/apps. Só credencial de

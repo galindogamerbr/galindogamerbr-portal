@@ -34,6 +34,12 @@ export type Env = {
   // provisionado em cima desse produto, que usa config_id em vez de scope
   // no dialog de autorização.
   INSTAGRAM_LOGIN_CONFIG_ID: string
+  // Verify token do produto Webhooks (ver functions/api/webhooks/instagram.ts)
+  // — string arbitrária definida por nós, que a Meta ecoa de volta no
+  // handshake de verificação. Não usamos webhooks de verdade ainda (não
+  // processamos nenhum evento), só implementa o handshake pra passar na
+  // validação do painel da Meta.
+  INSTAGRAM_WEBHOOK_VERIFY_TOKEN: string
   // Espectadores ao vivo da Twitch (ver functions/lib/twitch.ts) — só
   // credencial de app (client_credentials), dado público, sem OAuth de
   // usuário/moderador (isso só seria necessário pra follower count, que
