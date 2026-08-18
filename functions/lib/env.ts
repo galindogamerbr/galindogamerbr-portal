@@ -13,11 +13,12 @@ export type Env = {
   // por rede vêm de scraping/endpoints públicos, coletados por um worker
   // separado (workers/social-stats-cron) — nenhum API key/OAuth aqui.
   DISCORD_INVITE_CODE: string
-  // Visitas do site: GraphQL Analytics API da Cloudflare, dataset
-  // httpRequestsAdaptiveGroups da zona (ver functions/lib/cfAnalytics.ts).
-  // Nome distinto de CLOUDFLARE_API_TOKEN (usado no deploy) de propósito —
-  // são tokens diferentes, com escopos diferentes (esse é só leitura de
-  // Zone Analytics; o de deploy tem permissão de editar Pages/D1/Workers).
+  // Visitas do site: Cloudflare Web Analytics (RUM) via GraphQL Analytics
+  // API, dataset rumPageloadEventsAdaptiveGroups — é account-scoped, não
+  // zone-scoped (ver functions/lib/cfAnalytics.ts). Nome distinto de
+  // CLOUDFLARE_API_TOKEN (usado no deploy) de propósito — são tokens
+  // diferentes, com escopos diferentes (esse é só leitura de Account
+  // Analytics; o de deploy tem permissão de editar Pages/D1/Workers).
   CLOUDFLARE_ANALYTICS_API_TOKEN: string
-  CLOUDFLARE_ZONE_TAG: string
+  CLOUDFLARE_ACCOUNT_ID: string
 }

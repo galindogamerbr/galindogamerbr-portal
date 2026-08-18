@@ -16,9 +16,10 @@ YOUTUBE_CHANNEL_ID=UCZGlbfvpoitCSFTsWVWVAow
 # sem API key. Só as visitas do site (Cloudflare Web Analytics) usam credenciais.
 # Não é secreto — código de convite público do servidor Discord.
 DISCORD_INVITE_CODE=JggtZ7qGY3
-# API Token da Cloudflare com escopo Zone.Analytics:Read (dash.cloudflare.com/profile/api-tokens).
+# API Token da Cloudflare com escopo "Account Analytics" → Read (dash.cloudflare.com/profile/api-tokens).
 # Nome diferente de CLOUDFLARE_API_TOKEN (usado no deploy) de propósito —
-# são tokens diferentes, esse só precisa de leitura de Zone Analytics.
+# são tokens diferentes, esse só precisa de leitura de Account Analytics.
 CLOUDFLARE_ANALYTICS_API_TOKEN=
-# Zone Tag do domínio (Cloudflare dashboard > domínio > Overview, lado direito).
-CLOUDFLARE_ZONE_TAG=
+# Account ID da Cloudflare (dashboard > qualquer domínio > Overview, lado
+# direito — é o mesmo pra todos os domínios da conta).
+CLOUDFLARE_ACCOUNT_ID=
