@@ -16,8 +16,8 @@ YOUTUBE_CHANNEL_ID=UCZGlbfvpoitCSFTsWVWVAow
 YOUTUBE_API_KEY=
 
 # Métricas de comunidade (functions/api/community-stats.ts). Seguidores por
-# rede são coletados por scraping/endpoints públicos (workers/social-stats-cron),
-# sem API key. Só as visitas do site (Cloudflare Web Analytics) usam credenciais.
+# rede são coletados por workers/social-stats-cron (API oficial pra
+# YouTube/Instagram/TikTok, scraping/endpoints públicos pra Discord/Kick).
 # Não é secreto — código de convite público do servidor Discord.
 DISCORD_INVITE_CODE=JggtZ7qGY3
 # API Token da Cloudflare com escopo "Account Analytics" → Read (dash.cloudflare.com/profile/api-tokens).
@@ -40,3 +40,10 @@ INSTAGRAM_APP_SECRET=
 # aplicativo (client_credentials), dado público, sem login de ninguém.
 TWITCH_CLIENT_ID=
 TWITCH_CLIENT_SECRET=
+
+# OAuth do TikTok (functions/api/admin/tiktok/*.ts) — Client Key e Client
+# Secret do app criado em developers.tiktok.com (produto "Login Kit").
+# Conectar uma vez em /admin/tiktok; o worker (workers/social-stats-cron)
+# renova o token sozinho depois.
+TIKTOK_CLIENT_KEY=
+TIKTOK_CLIENT_SECRET=

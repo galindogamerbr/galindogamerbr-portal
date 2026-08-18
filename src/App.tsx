@@ -13,6 +13,7 @@ import { NotFound } from './routes/NotFound'
 import { Login } from './routes/admin/Login'
 import { Schedule } from './routes/admin/Schedule'
 import { Instagram } from './routes/admin/Instagram'
+import { TikTok } from './routes/admin/TikTok'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
       { path: '/admin/login', element: <Login /> },
       { path: '/admin/programacao', element: <Schedule /> },
       { path: '/admin/instagram', element: <Instagram /> },
+      { path: '/admin/tiktok', element: <TikTok /> },
       { path: '*', element: <NotFound /> },
     ],
   },

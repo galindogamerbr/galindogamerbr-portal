@@ -3,9 +3,10 @@ import { upsertSocialStat, type SocialPlatform } from './d1'
 import { fetchYoutubeSubscribers } from './youtube'
 import { fetchDiscordMembers } from './discord'
 import { fetchTwitchFollowers } from './twitch'
-import { fetchKickFollowers, fetchTiktokFollowers } from './scrape'
+import { fetchKickFollowers } from './scrape'
 import { getInstagramFollowers } from './instagram'
-import { DISCORD_INVITE_CODE, KICK_USERNAME, TIKTOK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
+import { getTiktokFollowers } from './tiktok'
+import { DISCORD_INVITE_CODE, KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<number | null> }
 
@@ -14,7 +15,7 @@ const FETCHERS: Fetcher[] = [
   { platform: 'discord', run: () => fetchDiscordMembers(DISCORD_INVITE_CODE) },
   { platform: 'twitch', run: () => fetchTwitchFollowers(TWITCH_LOGIN) },
   { platform: 'instagram', run: (env) => getInstagramFollowers(env) },
-  { platform: 'tiktok', run: () => fetchTiktokFollowers(TIKTOK_USERNAME) },
+  { platform: 'tiktok', run: (env) => getTiktokFollowers(env) },
   { platform: 'kick', run: () => fetchKickFollowers(KICK_USERNAME) },
 ]
 
