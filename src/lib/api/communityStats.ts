@@ -9,6 +9,7 @@ export type CommunityStats = {
   siteVisits: { visitsToday: number | null }
   twitchLive: LiveStatus
   kickLive: LiveStatus
+  discordOnline: number | null
 }
 
 export async function getCommunityStats(): Promise<CommunityStats> {

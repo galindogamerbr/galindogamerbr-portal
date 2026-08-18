@@ -3,11 +3,14 @@ import { json } from '../lib/http'
 import { fetchTodayVisits } from '../lib/cfAnalytics'
 import { fetchTwitchLiveStatus } from '../lib/twitch'
 import { fetchKickLiveStatus } from '../lib/kick'
+import { fetchDiscordOnlineCount } from '../lib/discord'
 import {
+  getDiscordPresenceCache,
   getKickLiveCache,
   getSiteVisitsCache,
   getSocialStatsCache,
   getTwitchLiveCache,
+  upsertDiscordPresenceCache,
   upsertKickLiveCache,
   upsertSiteVisitsCache,
   upsertTwitchLiveCache,
@@ -15,8 +18,9 @@ import {
 
 // Cache de visitas do site: não é limite de cota, é só pra não repetir o
 // request pra cada visitante fazendo polling ao mesmo tempo (10min de
-// validade). Twitch/Kick são diferentes: sem risco de cota, então sempre
-// busca fresco — o cache aí é só um fallback pra quando a chamada falhar.
+// validade). Twitch/Kick/Discord são diferentes: sem risco de cota, então
+// sempre busca fresco — o cache aí é só um fallback pra quando a chamada
+// falhar.
 const SITE_VISITS_CACHE_MINUTES = 10
 
 type LiveStatus = { isLive: boolean; viewerCount: number | null }
@@ -56,16 +60,28 @@ async function resolveKickLive(env: Env): Promise<LiveStatus> {
   return cached ? { isLive: cached.is_live === 1, viewerCount: cached.viewer_count } : { isLive: false, viewerCount: null }
 }
 
+async function resolveDiscordOnline(env: Env): Promise<number | null> {
+  const fresh = await fetchDiscordOnlineCount()
+  if (fresh !== null) {
+    await upsertDiscordPresenceCache(env.DB, fresh)
+    return fresh
+  }
+  const cached = await getDiscordPresenceCache(env.DB)
+  return cached?.online_count ?? null
+}
+
 // Seguidores por rede são só leitura de D1 — quem os popula é o worker
 // separado workers/social-stats-cron (roda de hora em hora, ver README lá).
-// Aqui nunca falamos com YouTube/Discord/etc diretamente, exceto Twitch/Kick
-// live (mais voláteis, cada um com seu próprio cache curto) e visitas do site.
+// Aqui nunca falamos com YouTube/etc diretamente, exceto Twitch/Kick live e
+// Discord online (mais voláteis, cada um com seu próprio cache curto/
+// fallback) e visitas do site.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const [social, visitsToday, twitchLive, kickLive] = await Promise.all([
+  const [social, visitsToday, twitchLive, kickLive, discordOnline] = await Promise.all([
     getSocialStatsCache(context.env.DB),
     resolveSiteVisits(context.env),
     resolveTwitchLive(context.env),
     resolveKickLive(context.env),
+    resolveDiscordOnline(context.env),
   ])
 
   return json({
@@ -73,5 +89,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     siteVisits: { visitsToday },
     twitchLive,
     kickLive,
+    discordOnline,
   })
 }

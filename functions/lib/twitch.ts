@@ -1,6 +1,5 @@
 import type { Env } from './env'
-
-const TWITCH_LOGIN = 'galindogamerbr'
+import { TWITCH_LOGIN } from './socialConstants'
 
 // App Access Token (client_credentials) — sem OAuth de usuário, sem
 // moderador, sem broadcaster autorizando nada. helix/streams é dado

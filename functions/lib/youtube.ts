@@ -1,5 +1,6 @@
 import type { Env } from './env'
 import { extractVideoIds } from './atom'
+import { BROWSER_USER_AGENT } from './socialConstants'
 
 export type VideoState = {
   videoId: string
@@ -23,10 +24,7 @@ type OEmbedResponse = { title: string }
 async function getLiveVideoId(channelId: string): Promise<string | null> {
   const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
     redirect: 'follow',
-    headers: {
-      'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    },
+    headers: { 'user-agent': BROWSER_USER_AGENT },
     cf: { cacheTtl: 0, cacheEverything: false },
   })
   const body = await res.text()
