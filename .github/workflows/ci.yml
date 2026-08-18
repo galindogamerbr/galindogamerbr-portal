@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      # tsc -b só cobre o frontend (tsconfig.app.json/node.json) — o
+      # tsconfig raiz não referencia functions/, então erros de import ali
+      # (ex: profundidade errada de "../") só apareciam no deploy real. Esse
+      # comando compila as Pages Functions localmente, sem precisar de auth
+      # nem deploy de verdade, e pega esse tipo de erro antes do merge.
+      - name: Build Pages Functions (valida imports em functions/)
+        run: npx wrangler pages functions build --outdir=/tmp/functions-build-check
