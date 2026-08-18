@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  # Permite forçar um redeploy sem mudar código — útil pra pegar env vars
+  # novas configuradas no dashboard da Cloudflare (nem sempre aplicam sem
+  # um novo deploy).
+  workflow_dispatch:
 
 jobs:
   deploy:

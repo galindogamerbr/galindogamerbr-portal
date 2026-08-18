@@ -11,4 +11,7 @@ export const FOOTER_ITEMS = [
   ...NAV_ITEMS,
   { label: 'Contato', to: '/contato' },
   { label: 'Privacidade', to: '/privacidade' },
+  { label: 'Termos', to: '/termos' },
+  { label: 'Créditos', to: '/creditos' },
+  { label: 'Admin', to: '/admin' },
 ] as const

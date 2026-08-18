@@ -10,8 +10,10 @@ import { Sobre } from './routes/Sobre'
 import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
 import { Termos } from './routes/Termos'
+import { Creditos } from './routes/Creditos'
 import { NotFound } from './routes/NotFound'
 import { Login } from './routes/admin/Login'
+import { AdminIndex } from './routes/admin/Index'
 import { Schedule } from './routes/admin/Schedule'
 import { Instagram } from './routes/admin/Instagram'
 import { TikTok } from './routes/admin/TikTok'
@@ -32,7 +34,8 @@ const router = createBrowserRouter([
       { path: '/contato', element: <Contato /> },
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/termos', element: <Termos /> },
-      { path: '/admin', element: <Navigate to="/admin/login" replace /> },
+      { path: '/creditos', element: <Creditos /> },
+      { path: '/admin', element: <AdminIndex /> },
       { path: '/admin/login', element: <Login /> },
       { path: '/admin/programacao', element: <Schedule /> },
       { path: '/admin/instagram', element: <Instagram /> },
