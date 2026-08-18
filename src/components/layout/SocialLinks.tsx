@@ -12,7 +12,7 @@ export function SocialLinks({ className = '' }: { className?: string }) {
           aria-label={social.name}
           className="opacity-80 transition hover:opacity-100"
         >
-          <img src={`/assets/logos/${social.logo}`} alt={social.name} className="h-5 w-5 rounded object-contain" />
+          <img src={`/assets/icons/${social.icon}.svg`} alt={social.name} className="h-5 w-5" />
         </a>
       ))}
     </div>
