@@ -14,4 +14,4 @@ curl "http://localhost:8787/__scheduled?cron=0+*+*+*+*"
 
 ## Deploy
 
-Feito pelo job `deploy-cron-worker` do workflow principal (`.github/workflows/deploy.yml`), em paralelo ao deploy do site — não precisa rodar `wrangler deploy` manualmente.
+Workflow próprio: `.github/workflows/deploy-cron-worker.yml`. Só roda automaticamente quando algo muda dentro de `workers/social-stats-cron/` num push na `main` (via filtro `paths`) — não redeploya à toa a cada mudança no resto do site. Também pode ser disparado manualmente (`workflow_dispatch`, inclusive a partir de outra branch) — não precisa rodar `wrangler deploy` na mão.
