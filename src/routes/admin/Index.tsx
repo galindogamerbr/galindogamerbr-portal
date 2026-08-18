@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
 import { Eyebrow } from '../../components/ui/Eyebrow'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
-import { getFlag, setFlag } from '../../lib/api/flags'
 
-const INSTAGRAM_FLAG = 'admin-instagram-visible'
-
-const ALL_SECTIONS = [
+// Instagram escondido do painel por enquanto — a rota /admin/instagram
+// continua funcionando, só não aparece linkada aqui.
+const SECTIONS = [
   {
     label: 'Programação',
     description: 'Editor da grade de horários da semana.',
@@ -21,42 +19,18 @@ const ALL_SECTIONS = [
     to: '/admin/tiktok',
     icon: '/assets/icons/tiktok.svg',
   },
-  {
-    label: 'Instagram',
-    description: 'Conectar a conta pra sincronizar seguidores.',
-    to: '/admin/instagram',
-    icon: '/assets/icons/instagram.svg',
-    flag: INSTAGRAM_FLAG,
-  },
 ]
 
 export function AdminIndex() {
   const { email, loading, refresh } = useSession()
-  const [instagramVisible, setInstagramVisible] = useState(false)
-  const [togglingInstagram, setTogglingInstagram] = useState(false)
-
-  useEffect(() => {
-    if (!email) return
-    getFlag(INSTAGRAM_FLAG).then(setInstagramVisible)
-  }, [email])
 
   async function handleLogout() {
     await logout()
     refresh()
   }
 
-  async function handleToggleInstagram() {
-    const next = !instagramVisible
-    setTogglingInstagram(true)
-    await setFlag(INSTAGRAM_FLAG, next)
-    setInstagramVisible(next)
-    setTogglingInstagram(false)
-  }
-
   if (loading) return null
   if (!email) return <Navigate to="/admin/login" replace />
-
-  const sections = ALL_SECTIONS.filter((section) => !section.flag || instagramVisible)
 
   return (
     <section className="py-16 sm:py-24">
@@ -70,8 +44,8 @@ export function AdminIndex() {
           </button>
         </div>
 
-        <div className={`mt-8 grid grid-cols-1 gap-4 sm:${sections.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-          {sections.map((section) => (
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {SECTIONS.map((section) => (
             <Link
               key={section.to}
               to={section.to}
@@ -85,15 +59,6 @@ export function AdminIndex() {
             </Link>
           ))}
         </div>
-
-        <button
-          type="button"
-          onClick={handleToggleInstagram}
-          disabled={togglingInstagram}
-          className="mt-6 text-xs font-semibold uppercase tracking-wide text-white/40 hover:text-white/70"
-        >
-          {instagramVisible ? 'Ocultar' : 'Mostrar'} card do Instagram
-        </button>
       </Container>
     </section>
   )
