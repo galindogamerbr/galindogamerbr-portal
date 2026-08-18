@@ -4,6 +4,10 @@ import { Eyebrow } from '../components/ui/Eyebrow'
 const ICON_CREDITS = [
   { label: 'Sun icons created by Magnific - Flaticon', href: 'https://www.flaticon.com/free-icons/sun' },
   { label: 'Sunset icons created by Magnific - Flaticon', href: 'https://www.flaticon.com/free-icons/sunset' },
+  { label: 'Instagram icons created by Magnific - Flaticon', href: 'https://www.flaticon.com/br/icones-gratis/instagram' },
+  { label: 'Youtube icons created by Magnific - Flaticon', href: 'https://www.flaticon.com/br/icones-gratis/youtube' },
+  { label: 'Tik tok icons created by Magnific - Flaticon', href: 'https://www.flaticon.com/br/icones-gratis/tik-tok' },
+  { label: 'Twitch icons created by Laisa Islam Ani - Flaticon', href: 'https://www.flaticon.com/free-icons/twitch' },
 ]
 
 // Lista de créditos de ícones/assets de terceiros usados no site — página
