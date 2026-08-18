@@ -7,8 +7,18 @@ import { logout } from '../../lib/api/auth'
 // Instagram escondido do painel por enquanto — a rota /admin/instagram
 // continua funcionando, só não aparece linkada aqui.
 const SECTIONS = [
-  { label: 'Programação', description: 'Editor da grade de horários da semana.', to: '/admin/programacao' },
-  { label: 'TikTok', description: 'Conectar a conta pra sincronizar seguidores.', to: '/admin/tiktok' },
+  {
+    label: 'Programação',
+    description: 'Editor da grade de horários da semana.',
+    to: '/admin/programacao',
+    icon: '/assets/icons/schedule-icon-calendar.png',
+  },
+  {
+    label: 'TikTok',
+    description: 'Conectar a conta pra sincronizar seguidores.',
+    to: '/admin/tiktok',
+    icon: '/assets/icons/tiktok.svg',
+  },
 ]
 
 export function AdminIndex() {
@@ -41,8 +51,11 @@ export function AdminIndex() {
               to={section.to}
               className="rounded-lg border border-line bg-panel p-6 transition-colors hover:border-gold/60"
             >
-              <span className="block text-base font-bold uppercase tracking-wide">{section.label}</span>
-              <span className="mt-1 block text-xs text-muted">{section.description}</span>
+              <div className="flex items-center gap-3">
+                <img src={section.icon} alt="" className="h-8 w-8 shrink-0 object-contain" />
+                <span className="block text-base font-bold uppercase tracking-wide">{section.label}</span>
+              </div>
+              <span className="mt-2 block text-xs text-muted">{section.description}</span>
             </Link>
           ))}
         </div>
