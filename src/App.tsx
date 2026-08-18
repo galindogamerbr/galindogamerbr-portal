@@ -9,6 +9,7 @@ import { Sobre } from './routes/Sobre'
 // import { Parceiros } from './routes/Parceiros'
 import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
+import { Termos } from './routes/Termos'
 import { NotFound } from './routes/NotFound'
 import { Login } from './routes/admin/Login'
 import { Schedule } from './routes/admin/Schedule'
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       // { path: '/parceiros', element: <Parceiros /> },
       { path: '/contato', element: <Contato /> },
       { path: '/privacidade', element: <Privacidade /> },
+      { path: '/termos', element: <Termos /> },
       { path: '/admin', element: <Navigate to="/admin/login" replace /> },
       { path: '/admin/login', element: <Login /> },
       { path: '/admin/programacao', element: <Schedule /> },
