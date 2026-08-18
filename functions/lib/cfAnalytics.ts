@@ -8,15 +8,15 @@ import type { Env } from './env'
 // Analytics da Cloudflare para a mesma janela de tempo. Requer só a
 // permissão "Account Analytics" → Read no token (CLOUDFLARE_ANALYTICS_API_TOKEN/
 // CLOUDFLARE_ACCOUNT_ID, ver functions/lib/env.ts) — não precisa de siteTag
-// nem de escopo de zona. A resposta ainda tem alguns minutos de atraso e
-// não é "visitantes agora" em tempo real estrito, então tratamos como
-// "visitas de hoje" (desde meia-noite UTC).
-export async function fetchTodayVisits(env: Env): Promise<number | null> {
+// nem de escopo de zona. Janela de "últimas 24h" (rolling), não "hoje desde
+// meia-noite" — de propósito, pra bater com o número que o dashboard da
+// Cloudflare mostra (facilita conferir/comparar). A resposta ainda tem
+// alguns minutos de atraso, não é "visitantes agora" em tempo real estrito.
+export async function fetchLast24hVisits(env: Env): Promise<number | null> {
   if (!env.CLOUDFLARE_ANALYTICS_API_TOKEN || !env.CLOUDFLARE_ACCOUNT_ID) return null
 
-  const since = new Date()
-  since.setUTCHours(0, 0, 0, 0)
   const until = new Date()
+  const since = new Date(until.getTime() - 24 * 60 * 60 * 1000)
 
   const query = `
     query {
