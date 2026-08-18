@@ -12,6 +12,11 @@ body,
 
 body {
   @apply bg-bg text-white font-body antialiased;
+  background-image: url('/assets/body-bg.webp');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 h1,
