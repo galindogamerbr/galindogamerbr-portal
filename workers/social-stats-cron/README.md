@@ -2,7 +2,13 @@
 
 Worker separado (não Pages Functions — Cloudflare Pages não suporta cron) que roda de hora em hora e popula `social_stats_cache` no D1 (`galindogamerbr_hub`, mesmo banco do site) com o número de seguidores/inscritos/membros de cada rede.
 
-Tudo aqui é **keyless**: scraping de páginas públicas ou endpoints não-autenticados que os próprios frontends das redes usam. Nenhuma credencial, nenhuma cota formal — mas também nenhuma garantia de estabilidade: qualquer rede pode mudar o formato da página/endpoint a qualquer momento. Uma falha numa rede não derruba as outras (`Promise.allSettled` em `src/index.ts`) nem apaga o último valor conhecido em cache.
+Discord e Kick são **keyless**: scraping de páginas públicas ou endpoints não-autenticados que os próprios frontends das redes usam. Nenhuma credencial, nenhuma cota formal — mas também nenhuma garantia de estabilidade: qualquer rede pode mudar o formato da página/endpoint a qualquer momento. YouTube, Instagram e TikTok usam API oficial (menos frágil, mas precisam de credencial — ver abaixo). Uma falha numa rede não derruba as outras (`Promise.allSettled` em `src/index.ts`) nem apaga o último valor conhecido em cache.
+
+## Credenciais necessárias
+
+- **`YOUTUBE_API_KEY`** (secret do Worker, `wrangler secret put YOUTUBE_API_KEY` rodando dentro desta pasta) — API key do YouTube Data API v3 (Google Cloud Console → habilitar "YouTube Data API v3" → Credentials → Create API key).
+- **`INSTAGRAM_APP_ID`** e **`INSTAGRAM_APP_SECRET`** (secrets do Worker, mesmos valores do app "Instagram API with Facebook Login" em developers.facebook.com/apps) — usados só pra renovar o token (`fb_exchange_token`), nunca pra login. O login inicial é feito uma vez pelo admin em `/admin/instagram` no site (fluxo OAuth em `functions/api/admin/instagram/*.ts`), que grava o token no D1 (`instagram_token`); este worker só lê e renova (`src/instagram.ts`). Se ninguém conectou ainda, o Instagram simplesmente fica de fora da coleta (sem erro).
+- **`TIKTOK_CLIENT_KEY`** e **`TIKTOK_CLIENT_SECRET`** (secrets do Worker, mesmos valores do app "Login Kit" em developers.tiktok.com) — mesmo espírito do Instagram: login inicial uma vez em `/admin/tiktok` (`functions/api/admin/tiktok/*.ts`), token salvo no D1 (`tiktok_token`), este worker só lê e renova (`src/tiktok.ts`) a cada rodada (access token do TikTok dura só 24h).
 
 ## Rodar localmente
 
@@ -10,6 +16,8 @@ Esse worker tem seu próprio D1 local (`workers/social-stats-cron/.wrangler/stat
 
 ```
 wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0008_community_stats.sql
+wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0009_instagram_oauth.sql
+wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0013_tiktok_oauth.sql
 ```
 
 Depois:

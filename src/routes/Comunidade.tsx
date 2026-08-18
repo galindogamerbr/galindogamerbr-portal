@@ -5,7 +5,6 @@ import { HubLink } from '../components/shared/HubLink'
 import { VipSteps } from '../components/shared/VipSteps'
 import { CommunityStatsGrid } from '../components/shared/CommunityStatsGrid'
 import { SiteVisitsCard } from '../components/shared/SiteVisitsCard'
-import { LiveNowBadge } from '../components/shared/LiveNowBadge'
 
 const HUB_LINKS = [
   {
@@ -44,7 +43,6 @@ export function Comunidade() {
             <p className="mt-3 max-w-xl text-muted">
               Seguidores em cada rede, atualizados a cada hora, e as visitas do site — tudo num só lugar.
             </p>
-            <LiveNowBadge />
             <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_14rem]">
               <CommunityStatsGrid />
               <SiteVisitsCard />

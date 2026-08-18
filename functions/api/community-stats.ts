@@ -1,12 +1,29 @@
 import type { Env } from '../lib/env'
 import { json } from '../lib/http'
 import { fetchTodayVisits } from '../lib/cfAnalytics'
-import { getSiteVisitsCache, getSocialStatsCache, upsertSiteVisitsCache } from '../lib/d1-community'
+import { fetchTwitchLiveStatus } from '../lib/twitch'
+import { fetchKickLiveStatus } from '../lib/kick'
+import { fetchDiscordOnlineCount } from '../lib/discord'
+import {
+  getDiscordPresenceCache,
+  getKickLiveCache,
+  getSiteVisitsCache,
+  getSocialStatsCache,
+  getTwitchLiveCache,
+  upsertDiscordPresenceCache,
+  upsertKickLiveCache,
+  upsertSiteVisitsCache,
+  upsertTwitchLiveCache,
+} from '../lib/d1-community'
 
-// Quanto tempo o cache de visitas do site vale antes de bater de novo na
-// GraphQL Analytics API da Cloudflare — não é limite de cota, é só pra não
-// repetir o request pra cada visitante fazendo polling ao mesmo tempo.
+// Cache de visitas do site: não é limite de cota, é só pra não repetir o
+// request pra cada visitante fazendo polling ao mesmo tempo (10min de
+// validade). Twitch/Kick/Discord são diferentes: sem risco de cota, então
+// sempre busca fresco — o cache aí é só um fallback pra quando a chamada
+// falhar.
 const SITE_VISITS_CACHE_MINUTES = 10
+
+type LiveStatus = { isLive: boolean; viewerCount: number | null }
 
 async function resolveSiteVisits(env: Env): Promise<number | null> {
   const cached = await getSiteVisitsCache(env.DB)
@@ -23,14 +40,55 @@ async function resolveSiteVisits(env: Env): Promise<number | null> {
   return cached?.visits_today ?? null
 }
 
+async function resolveTwitchLive(env: Env): Promise<LiveStatus> {
+  const fresh = await fetchTwitchLiveStatus(env)
+  if (fresh) {
+    await upsertTwitchLiveCache(env.DB, fresh)
+    return fresh
+  }
+  const cached = await getTwitchLiveCache(env.DB)
+  return cached ? { isLive: cached.is_live === 1, viewerCount: cached.viewer_count } : { isLive: false, viewerCount: null }
+}
+
+async function resolveKickLive(env: Env): Promise<LiveStatus> {
+  const fresh = await fetchKickLiveStatus()
+  if (fresh) {
+    await upsertKickLiveCache(env.DB, fresh)
+    return fresh
+  }
+  const cached = await getKickLiveCache(env.DB)
+  return cached ? { isLive: cached.is_live === 1, viewerCount: cached.viewer_count } : { isLive: false, viewerCount: null }
+}
+
+async function resolveDiscordOnline(env: Env): Promise<number | null> {
+  const fresh = await fetchDiscordOnlineCount()
+  if (fresh !== null) {
+    await upsertDiscordPresenceCache(env.DB, fresh)
+    return fresh
+  }
+  const cached = await getDiscordPresenceCache(env.DB)
+  return cached?.online_count ?? null
+}
+
 // Seguidores por rede são só leitura de D1 — quem os popula é o worker
 // separado workers/social-stats-cron (roda de hora em hora, ver README lá).
-// Aqui nunca falamos com YouTube/Twitch/Discord/etc diretamente.
+// Aqui nunca falamos com YouTube/etc diretamente, exceto Twitch/Kick live e
+// Discord online (mais voláteis, cada um com seu próprio cache curto/
+// fallback) e visitas do site.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const [social, visitsToday] = await Promise.all([getSocialStatsCache(context.env.DB), resolveSiteVisits(context.env)])
+  const [social, visitsToday, twitchLive, kickLive, discordOnline] = await Promise.all([
+    getSocialStatsCache(context.env.DB),
+    resolveSiteVisits(context.env),
+    resolveTwitchLive(context.env),
+    resolveKickLive(context.env),
+    resolveDiscordOnline(context.env),
+  ])
 
   return json({
     social: social.map((row) => ({ platform: row.platform, count: row.count, fetchedAt: row.fetched_at })),
     siteVisits: { visitsToday },
+    twitchLive,
+    kickLive,
+    discordOnline,
   })
 }
