@@ -1,6 +1,6 @@
 import type { Env } from '../lib/env'
 import { json } from '../lib/http'
-import { fetchTodayVisits } from '../lib/cfAnalytics'
+import { debugIntrospectRum, fetchTodayVisits } from '../lib/cfAnalytics'
 import { getSiteVisitsCache, getSocialStatsCache, upsertSiteVisitsCache } from '../lib/d1-community'
 
 // Quanto tempo o cache de visitas do site vale antes de bater de novo na
@@ -27,6 +27,7 @@ async function resolveSiteVisits(env: Env): Promise<number | null> {
 // separado workers/social-stats-cron (roda de hora em hora, ver README lá).
 // Aqui nunca falamos com YouTube/Twitch/Discord/etc diretamente.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
+  await debugIntrospectRum(context.env) // TEMP
   const [social, visitsToday] = await Promise.all([getSocialStatsCache(context.env.DB), resolveSiteVisits(context.env)])
 
   return json({

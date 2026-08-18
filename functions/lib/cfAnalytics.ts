@@ -12,6 +12,36 @@ import type { Env } from './env'
 // (rumPageloadEventsAdaptiveGroups); como não há como testar contra uma conta
 // real sem o token do Pedro, vale conferir a resposta real na primeira vez
 // que rodar e ajustar o campo (`sum.visits` vs `count`) se necessário.
+// TEMP — introspecção pra descobrir o nome/caminho certo do dataset de RUM
+// nessa conta (rumPageloadEventsAdaptiveGroups deu "unknown field" embaixo
+// de zones). Remover depois de descobrir o campo certo.
+export async function debugIntrospectRum(env: Env): Promise<void> {
+  const query = `
+    query {
+      zonesType: __type(name: "zones") { fields { name } }
+      accountsType: __type(name: "accounts") { fields { name } }
+      queryType: __type(name: "Query") { fields { name } }
+    }
+  `
+  const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${env.CLOUDFLARE_ANALYTICS_API_TOKEN}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ query }),
+  })
+  const data = (await res.json()) as {
+    data?: { zonesType?: { fields: { name: string }[] }; accountsType?: { fields: { name: string }[] }; queryType?: { fields: { name: string }[] } }
+    errors?: unknown
+  }
+  if (data.errors) {
+    console.error('[cfAnalytics][debug] introspecção falhou:', JSON.stringify(data.errors))
+    return
+  }
+  const rumIn = (fields?: { name: string }[]) => (fields ?? []).map((f) => f.name).filter((n) => n.toLowerCase().includes('rum'))
+  console.error('[cfAnalytics][debug] Query fields:', JSON.stringify((data.data?.queryType?.fields ?? []).map((f) => f.name)))
+  console.error('[cfAnalytics][debug] zones RUM fields:', JSON.stringify(rumIn(data.data?.zonesType?.fields)))
+  console.error('[cfAnalytics][debug] accounts RUM fields:', JSON.stringify(rumIn(data.data?.accountsType?.fields)))
+}
+
 export async function fetchTodayVisits(env: Env): Promise<number | null> {
   if (!env.CLOUDFLARE_ANALYTICS_API_TOKEN || !env.CLOUDFLARE_ZONE_TAG) return null
 
