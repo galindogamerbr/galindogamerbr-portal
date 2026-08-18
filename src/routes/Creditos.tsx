@@ -37,7 +37,17 @@ export function Creditos() {
                 </a>
                 .
               </p>
-              <p className="mt-1 text-sm text-white/50">Discord: ph_brz</p>
+              <p className="mt-1 text-sm text-white/50">
+                Discord:{' '}
+                <a
+                  href="https://discord.com/users/276859538349752321"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold hover:underline"
+                >
+                  ph_brz
+                </a>
+              </p>
             </div>
           </div>
 
