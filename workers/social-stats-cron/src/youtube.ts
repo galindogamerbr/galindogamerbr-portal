@@ -1,24 +1,15 @@
-import { BROWSER_USER_AGENT } from './constants'
-import { parseAbbreviatedCount } from './parseCount'
+import type { Env } from './env'
 
-// Sem API key: a página /about do canal embute "subscriberCountText" no
-// JSON interno (ytInitialData), já abreviado ("1,2 mi de inscritos"). Mesmo
-// princípio de getLiveVideoId em functions/lib/youtube.ts (UA de navegador,
-// cache desligado) — se o YouTube mudar o formato desse campo, essa regex
-// para de casar e a função só devolve null (o worker mantém o valor
-// anterior em cache, ver src/index.ts).
-export async function fetchYoutubeSubscribers(channelId: string): Promise<number | null> {
-  const res = await fetch(`https://www.youtube.com/channel/${channelId}/about`, {
-    headers: { 'user-agent': BROWSER_USER_AGENT },
-    cf: { cacheTtl: 0, cacheEverything: false },
-  })
+// YouTube Data API v3 — número exato de inscritos, sem precisar parsear
+// texto abreviado ("1,2 mi de inscritos") como o scraping fazia antes.
+// Precisa de YOUTUBE_API_KEY (cota gratuita generosa: 10.000 unidades/dia,
+// essa chamada custa 1 unidade por rodada).
+export async function fetchYoutubeSubscribers(env: Env, channelId: string): Promise<number | null> {
+  const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${channelId}&key=${env.YOUTUBE_API_KEY}`
+  const res = await fetch(url)
   if (!res.ok) return null
 
-  const body = await res.text()
-  const match =
-    body.match(/"subscriberCountText":\{"simpleText":"([^"]+)"\}/) ??
-    body.match(/"subscriberCountText":\{"accessibility":\{"accessibilityData":\{"label":"([^"]+)"/)
-  if (!match) return null
-
-  return parseAbbreviatedCount(match[1])
+  const data = (await res.json()) as { items?: [{ statistics?: { subscriberCount?: string } }] }
+  const raw = data.items?.[0]?.statistics?.subscriberCount
+  return raw ? Number(raw) : null
 }

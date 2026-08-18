@@ -21,4 +21,8 @@ export type Env = {
   // Analytics; o de deploy tem permissão de editar Pages/D1/Workers).
   CLOUDFLARE_ANALYTICS_API_TOKEN: string
   CLOUDFLARE_ACCOUNT_ID: string
+  // OAuth do Instagram (ver functions/api/admin/instagram/*.ts) — conectado
+  // uma vez pelo admin, o worker renova o token sozinho depois.
+  INSTAGRAM_APP_ID: string
+  INSTAGRAM_APP_SECRET: string
 }

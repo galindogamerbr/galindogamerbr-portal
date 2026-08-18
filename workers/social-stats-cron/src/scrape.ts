@@ -1,27 +1,10 @@
 import { BROWSER_USER_AGENT } from './constants'
-import { parseAbbreviatedCount } from './parseCount'
 
-// As três redes mais frágeis do lote — layout pode mudar, bloqueio
-// anti-scraping pode aparecer a qualquer momento. Tratadas como melhor
-// esforço: falha aqui nunca derruba as outras redes (ver Promise.allSettled
-// em src/index.ts) nem apaga o último valor conhecido em D1.
-
-// Instagram: og:description da página pública de perfil ainda costuma trazer
-// "1,2 mi Seguidores, 200 Seguindo, 50 Publicações - ..." mesmo deslogado.
-export async function fetchInstagramFollowers(username: string): Promise<number | null> {
-  const res = await fetch(`https://www.instagram.com/${username}/`, {
-    headers: { 'user-agent': BROWSER_USER_AGENT },
-    cf: { cacheTtl: 0, cacheEverything: false },
-  })
-  if (!res.ok) return null
-
-  const body = await res.text()
-  const match = body.match(/<meta property="og:description" content="([\d.,]+\s*\w*)\s+[Ff]ollowers/) ??
-    body.match(/<meta property="og:description" content="([\d.,]+\s*\w*)\s+[Ss]eguidores/)
-  if (!match) return null
-
-  return parseAbbreviatedCount(match[1])
-}
+// TikTok e Kick — scraping, layout pode mudar, bloqueio anti-scraping pode
+// aparecer a qualquer momento. Tratados como melhor esforço: falha aqui
+// nunca derruba as outras redes (ver Promise.allSettled em src/index.ts)
+// nem apaga o último valor conhecido em D1. Instagram e YouTube saíram
+// daqui — usam API oficial agora (ver instagram.ts e youtube.ts).
 
 // TikTok: a página de perfil embute o estado inicial da UI (SIGI_STATE) com
 // o número exato de seguidores em "followerCount".

@@ -5,7 +5,6 @@
 export const YOUTUBE_CHANNEL_ID = 'UCZGlbfvpoitCSFTsWVWVAow'
 export const DISCORD_INVITE_CODE = 'JggtZ7qGY3'
 export const TWITCH_LOGIN = 'galindogamerbr'
-export const INSTAGRAM_USERNAME = 'galindogamerbr'
 export const TIKTOK_USERNAME = 'galindogamerbr'
 export const KICK_USERNAME = 'galindogamerbr'
 

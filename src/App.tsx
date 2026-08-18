@@ -12,6 +12,7 @@ import { Privacidade } from './routes/Privacidade'
 import { NotFound } from './routes/NotFound'
 import { Login } from './routes/admin/Login'
 import { Schedule } from './routes/admin/Schedule'
+import { Instagram } from './routes/admin/Instagram'
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: '/admin', element: <Navigate to="/admin/login" replace /> },
       { path: '/admin/login', element: <Login /> },
       { path: '/admin/programacao', element: <Schedule /> },
+      { path: '/admin/instagram', element: <Instagram /> },
       { path: '*', element: <NotFound /> },
     ],
   },

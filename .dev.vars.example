@@ -23,3 +23,10 @@ CLOUDFLARE_ANALYTICS_API_TOKEN=
 # Account ID da Cloudflare (dashboard > qualquer domínio > Overview, lado
 # direito — é o mesmo pra todos os domínios da conta).
 CLOUDFLARE_ACCOUNT_ID=
+
+# OAuth do Instagram (functions/api/admin/instagram/*.ts) — App ID e App
+# Secret do app criado em developers.facebook.com/apps (produto "Instagram
+# API with Facebook Login"). Conectar uma vez em /admin/instagram; o
+# worker (workers/social-stats-cron) renova o token sozinho depois.
+INSTAGRAM_APP_ID=
+INSTAGRAM_APP_SECRET=

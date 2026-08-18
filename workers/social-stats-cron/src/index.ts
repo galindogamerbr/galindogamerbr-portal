@@ -3,23 +3,17 @@ import { upsertSocialStat, type SocialPlatform } from './d1'
 import { fetchYoutubeSubscribers } from './youtube'
 import { fetchDiscordMembers } from './discord'
 import { fetchTwitchFollowers } from './twitch'
-import { fetchInstagramFollowers, fetchKickFollowers, fetchTiktokFollowers } from './scrape'
-import {
-  DISCORD_INVITE_CODE,
-  INSTAGRAM_USERNAME,
-  KICK_USERNAME,
-  TIKTOK_USERNAME,
-  TWITCH_LOGIN,
-  YOUTUBE_CHANNEL_ID,
-} from './constants'
+import { fetchKickFollowers, fetchTiktokFollowers } from './scrape'
+import { getInstagramFollowers } from './instagram'
+import { DISCORD_INVITE_CODE, KICK_USERNAME, TIKTOK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 
-type Fetcher = { platform: SocialPlatform; run: () => Promise<number | null> }
+type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<number | null> }
 
 const FETCHERS: Fetcher[] = [
-  { platform: 'youtube', run: () => fetchYoutubeSubscribers(YOUTUBE_CHANNEL_ID) },
+  { platform: 'youtube', run: (env) => fetchYoutubeSubscribers(env, YOUTUBE_CHANNEL_ID) },
   { platform: 'discord', run: () => fetchDiscordMembers(DISCORD_INVITE_CODE) },
   { platform: 'twitch', run: () => fetchTwitchFollowers(TWITCH_LOGIN) },
-  { platform: 'instagram', run: () => fetchInstagramFollowers(INSTAGRAM_USERNAME) },
+  { platform: 'instagram', run: (env) => getInstagramFollowers(env) },
   { platform: 'tiktok', run: () => fetchTiktokFollowers(TIKTOK_USERNAME) },
   { platform: 'kick', run: () => fetchKickFollowers(KICK_USERNAME) },
 ]
@@ -30,7 +24,7 @@ const FETCHERS: Fetcher[] = [
 async function collectAll(env: Env): Promise<void> {
   const results = await Promise.allSettled(
     FETCHERS.map(async ({ platform, run }) => {
-      const count = await run()
+      const count = await run(env)
       if (count === null) {
         console.warn(`[social-stats-cron] ${platform}: sem dado nesta rodada`)
         return
