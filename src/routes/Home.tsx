@@ -85,16 +85,16 @@ function Hero() {
         </p>
         <div className="mt-2 flex max-w-[460px] flex-wrap gap-2">
           <LinkButton variant="purple" size="sm" href="https://www.twitch.tv/galindogamerbr" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/icons/twitch.svg" alt="" className="h-4 w-4" /> Twitch
+            <img src="/assets/logos/twitch.png" alt="" className="h-4 w-4 rounded-sm object-contain" /> Twitch
           </LinkButton>
           <LinkButton variant="green" size="sm" href="https://kick.com/galindogamerbr" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/icons/kick.svg" alt="" className="h-4 w-4" /> Kick
+            <img src="/assets/logos/kick.svg" alt="" className="h-4 w-4 rounded-sm object-contain" /> Kick
           </LinkButton>
           <LinkButton variant="red" size="sm" href="https://www.youtube.com/@galindogamerbr" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/icons/youtube.svg" alt="" className="h-4 w-4" /> YouTube
+            <img src="/assets/logos/youtube.png" alt="" className="h-4 w-4 rounded-sm object-contain" /> YouTube
           </LinkButton>
           <LinkButton variant="default" size="sm" href="https://www.tiktok.com/@galindogamerbr" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/icons/tiktok.svg" alt="" className="h-4 w-4" /> TikTok
+            <img src="/assets/logos/tiktok.png" alt="" className="h-4 w-4 rounded-sm object-contain" /> TikTok
           </LinkButton>
         </div>
       </Container>
