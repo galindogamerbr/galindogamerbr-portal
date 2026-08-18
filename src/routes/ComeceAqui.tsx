@@ -17,23 +17,24 @@ const TOPICS = [
   },
 ]
 
-// Onboarding de novo membro — vídeo introdutório do Galindo e regras da
-// fazenda entram aqui assim que o conteúdo for gravado (Fase 4).
 export function ComeceAqui() {
   return (
     <section className="py-16 sm:py-24">
       <Container className="max-w-3xl">
         <Eyebrow>Novo por aqui?</Eyebrow>
-        <h1 className="text-4xl sm:text-5xl">COMECE AQUI</h1>
+        <h1 className="text-4xl sm:text-5xl">BOAS-VINDAS</h1>
         <p className="mt-3 text-muted">
           Antes de entrar de cabeça na comunidade, um resumo rápido de como tudo funciona por aqui.
         </p>
 
-        <div className="mt-8 flex aspect-video items-center justify-center rounded-lg border border-dashed border-line bg-panel text-center">
-          <div className="px-6">
-            <p className="text-sm font-semibold uppercase tracking-wide text-gold">Vídeo de boas-vindas</p>
-            <p className="mt-2 text-sm text-muted">Em breve: vídeo do Galindo apresentando a comunidade.</p>
-          </div>
+        <div className="mt-8 overflow-hidden rounded-lg border border-line bg-panel">
+          <iframe
+            src="https://www.youtube.com/embed/TcBrAo_A1Lc"
+            title="Vídeo de boas-vindas — GalindoGamerBR"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="aspect-video w-full border-0"
+          />
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">

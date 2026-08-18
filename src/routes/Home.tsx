@@ -110,14 +110,14 @@ function ComeceAquiTeaser() {
               <span className="text-4xl">👋</span>
               <div>
                 <Eyebrow>Novo por aqui?</Eyebrow>
-                <h2 className="text-3xl sm:text-4xl">COMECE AQUI</h2>
+                <h2 className="text-3xl sm:text-4xl">BOAS-VINDAS</h2>
                 <p className="mt-2 max-w-xl text-muted">
                   Antes de entrar de cabeça: vídeo de boas-vindas, regras da fazenda e boas práticas da comunidade,
                   tudo em um só lugar.
                 </p>
               </div>
             </div>
-            <NavButton to="/comece-aqui" variant="gold" className="shrink-0 text-base">
+            <NavButton to="/boas-vindas" variant="gold" className="shrink-0 text-base">
               Ver guia de boas-vindas →
             </NavButton>
           </div>

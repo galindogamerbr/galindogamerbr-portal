@@ -18,7 +18,8 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/comece-aqui', element: <ComeceAqui /> },
+      { path: '/boas-vindas', element: <ComeceAqui /> },
+      { path: '/comece-aqui', element: <Navigate to="/boas-vindas" replace /> },
       { path: '/conteudos', element: <Conteudos /> },
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
       { path: '/comunidade', element: <Comunidade /> },

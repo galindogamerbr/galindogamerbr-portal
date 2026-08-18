@@ -29,7 +29,7 @@ const HUB_LINKS = [
 ]
 
 // Hub de links para quem já é engajado — o onboarding de quem está
-// chegando agora vive em /comece-aqui (ver plano, revisão de UX).
+// chegando agora vive em /boas-vindas (ver plano, revisão de UX).
 export function Comunidade() {
   return (
     <>
