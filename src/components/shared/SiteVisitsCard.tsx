@@ -9,7 +9,7 @@ export function SiteVisitsCard() {
   const visits = stats?.siteVisits.visitsToday
 
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg border border-line bg-panel p-6 text-center">
+    <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg border border-line bg-panel p-6 text-center">
       <span className="text-3xl font-semibold text-gold">{visits != null ? formatCompactNumber(visits) : '—'}</span>
       <span className="text-xs uppercase tracking-widest text-muted">Visitas ao site hoje</span>
     </div>

@@ -47,7 +47,7 @@ export function Sobre() {
       <section
         className="pb-16 sm:pb-24"
         style={{
-          backgroundImage: 'url(/assets/about-bg.webp)',
+          backgroundImage: 'linear-gradient(90deg, #03070be0 0%, #03070ba0 45%, #03070b60 100%), url(/assets/about-bg.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'right center',
           backgroundRepeat: 'no-repeat',

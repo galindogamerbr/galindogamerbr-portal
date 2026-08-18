@@ -55,10 +55,8 @@ export function Comunidade() {
               Seguidores em cada rede, atualizados a cada hora, e as visitas do site — tudo num só lugar.
             </p>
             <LiveNowBadge />
-            <div className="mt-8">
+            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_14rem]">
               <CommunityStatsGrid />
-            </div>
-            <div className="mt-4 max-w-xs">
               <SiteVisitsCard />
             </div>
           </Container>
