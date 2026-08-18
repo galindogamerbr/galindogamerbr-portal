@@ -39,7 +39,4 @@ export type Env = {
   // conectado uma vez pelo admin, o worker renova o token sozinho depois.
   TIKTOK_CLIENT_KEY: string
   TIKTOK_CLIENT_SECRET: string
-  // Feature flags (Cloudflare Flagship, ver functions/api/flags/[key].ts) —
-  // liga/desliga features pelo dashboard sem precisar de deploy.
-  FLAGS: Flagship
 }

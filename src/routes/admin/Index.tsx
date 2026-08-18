@@ -4,7 +4,9 @@ import { Container } from '../../components/ui/Container'
 import { Eyebrow } from '../../components/ui/Eyebrow'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
-import { getFlag } from '../../lib/api/flags'
+import { getFlag, setFlag } from '../../lib/api/flags'
+
+const INSTAGRAM_FLAG = 'admin-instagram-visible'
 
 const ALL_SECTIONS = [
   {
@@ -24,24 +26,31 @@ const ALL_SECTIONS = [
     description: 'Conectar a conta pra sincronizar seguidores.',
     to: '/admin/instagram',
     icon: '/assets/icons/instagram.svg',
-    // Controlado por feature flag (Cloudflare Flagship, app
-    // "Instagram-Admin") — liga/desliga pelo dashboard sem deploy.
-    flag: 'admin-instagram-visible',
+    flag: INSTAGRAM_FLAG,
   },
 ]
 
 export function AdminIndex() {
   const { email, loading, refresh } = useSession()
   const [instagramVisible, setInstagramVisible] = useState(false)
+  const [togglingInstagram, setTogglingInstagram] = useState(false)
 
   useEffect(() => {
     if (!email) return
-    getFlag('admin-instagram-visible').then(setInstagramVisible)
+    getFlag(INSTAGRAM_FLAG).then(setInstagramVisible)
   }, [email])
 
   async function handleLogout() {
     await logout()
     refresh()
+  }
+
+  async function handleToggleInstagram() {
+    const next = !instagramVisible
+    setTogglingInstagram(true)
+    await setFlag(INSTAGRAM_FLAG, next)
+    setInstagramVisible(next)
+    setTogglingInstagram(false)
   }
 
   if (loading) return null
@@ -76,6 +85,15 @@ export function AdminIndex() {
             </Link>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={handleToggleInstagram}
+          disabled={togglingInstagram}
+          className="mt-6 text-xs font-semibold uppercase tracking-wide text-white/40 hover:text-white/70"
+        >
+          {instagramVisible ? 'Ocultar' : 'Mostrar'} card do Instagram
+        </button>
       </Container>
     </section>
   )

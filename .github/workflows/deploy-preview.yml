@@ -31,7 +31,6 @@ jobs:
         run: |
           sed -i "s/00000000-0000-0000-0000-000000000000/${{ secrets.CLOUDFLARE_D1_PREVIEW_DATABASE_ID }}/" wrangler.toml
           sed -i 's/ENVIRONMENT = "production"/ENVIRONMENT = "preview"/' wrangler.toml
-          sed -i "s/FLAGSHIP_APP_ID_PLACEHOLDER/${{ secrets.FLAGSHIP_APP_ID }}/" wrangler.toml
 
       - name: Apply D1 migrations (preview)
         uses: cloudflare/wrangler-action@v3
