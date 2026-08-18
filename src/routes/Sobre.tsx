@@ -2,6 +2,12 @@ import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { NavButton } from '../components/ui/Button'
+import { PageBackground } from '../components/layout/PageBackground'
+
+// Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
+// Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
+// escurecido junto do resto do fundo.
+const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
@@ -31,6 +37,7 @@ const STORY = [
 export function Sobre() {
   return (
     <>
+      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
       <section className="py-16 sm:py-24">
         <Reveal>
           <Container className="max-w-3xl">
@@ -47,49 +54,41 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
-              <img
-                src="/assets/about-galindo.webp"
-                alt="GalindoGamerBR em sua estação de jogos"
-                className="w-full rounded-lg border border-line object-cover"
-              />
-              <div>
-                <Eyebrow>Quem é o Galindo?</Eyebrow>
-                <h2 className="text-2xl sm:text-3xl">
-                  EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
-                </h2>
-                <div className="mt-4 space-y-4 text-muted">
-                  <p>
-                    <strong className="text-white">
-                      Tenho 41 anos, sou casado, trabalho na cidade e tenho uma vida como qualquer pessoa que corre
-                      atrás dos seus objetivos.
-                    </strong>{' '}
-                    Mas existe uma parte que nunca ficou para trás: aquele garoto que descobriu, nos videogames e na
-                    época do Windows 95, que uma tela podia abrir portas para mundos inteiros.
-                  </p>
-                  <p>
-                    Os anos passaram. Vieram responsabilidades, trabalho, família e uma vida cada vez mais corrida.
-                    Só que a paixão pelos jogos continuou ali. E foi justamente dessa paixão que nasceu o
-                    GalindoGamerBR.
-                  </p>
-                  <p>
-                    As lives são a maneira de colocar essa paixão para fora e mostrar um pedaço da vida para o mundo.
-                    Não é apenas ligar o jogo e transmitir: é entrar em contato com pessoas, conhecer histórias, rir,
-                    trocar ideia e construir lembranças que não existiriam jogando sozinho.
-                  </p>
-                  <p>
-                    <strong className="text-white">Uma boa live precisa fazer alguém querer voltar.</strong> Pode ser
-                    pela resenha, pelo gameplay, pela história de uma fazenda, por um momento inesperado no roleplay
-                    ou simplesmente porque existe alguém do outro lado disposto a conversar.
-                  </p>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {CHIPS.map((chip) => (
-                    <span key={chip} className="rounded-full border border-line bg-panel2 px-3 py-1 text-xs text-white/80">
-                      {chip}
-                    </span>
-                  ))}
-                </div>
+            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
+              <Eyebrow>Quem é o Galindo?</Eyebrow>
+              <h2 className="text-2xl sm:text-3xl">
+                EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
+              </h2>
+              <div className="mt-4 space-y-4 text-justify text-muted">
+                <p>
+                  <strong className="text-white">
+                    Tenho 41 anos, sou casado, trabalho na cidade e tenho uma vida como qualquer pessoa que corre
+                    atrás dos seus objetivos.
+                  </strong>{' '}
+                  Mas existe uma parte que nunca ficou para trás: aquele garoto que descobriu, nos videogames e na
+                  época do Windows 95, que uma tela podia abrir portas para mundos inteiros.
+                </p>
+                <p>
+                  Os anos passaram. Vieram responsabilidades, trabalho, família e uma vida cada vez mais corrida. Só
+                  que a paixão pelos jogos continuou ali. E foi justamente dessa paixão que nasceu o GalindoGamerBR.
+                </p>
+                <p>
+                  As lives são a maneira de colocar essa paixão para fora e mostrar um pedaço da vida para o mundo.
+                  Não é apenas ligar o jogo e transmitir: é entrar em contato com pessoas, conhecer histórias, rir,
+                  trocar ideia e construir lembranças que não existiriam jogando sozinho.
+                </p>
+                <p>
+                  <strong className="text-white">Uma boa live precisa fazer alguém querer voltar.</strong> Pode ser
+                  pela resenha, pelo gameplay, pela história de uma fazenda, por um momento inesperado no roleplay ou
+                  simplesmente porque existe alguém do outro lado disposto a conversar.
+                </p>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {CHIPS.map((chip) => (
+                  <span key={chip} className="rounded-full border border-gold bg-panel2 px-3 py-1 text-xs text-gold">
+                    {chip}
+                  </span>
+                ))}
               </div>
             </div>
           </Container>

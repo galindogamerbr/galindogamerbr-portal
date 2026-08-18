@@ -1,0 +1,41 @@
+name: Deploy Cron Worker
+
+# Worker separado (Pages Functions não suporta cron) que coleta seguidores
+# por rede de hora em hora — ver workers/social-stats-cron/README.md. Só
+# redeploya quando o conteúdo do worker muda (o `paths` abaixo evita rodar
+# em todo push na main); workflow_dispatch permite publicar manualmente
+# (ex.: primeira publicação, ou pra rodar a partir de uma branch).
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - workers/social-stats-cron/**
+      - .github/workflows/deploy-cron-worker.yml
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy cron worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: workers/social-stats-cron
+          command: deploy

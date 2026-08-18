@@ -1,30 +1,12 @@
-import { useEffect, useState } from 'react'
-import { getLiveStatus, type LiveStatus } from '../../lib/api/live'
+import { useLiveStatus } from '../../hooks/useLiveStatus'
 import { LinkButton } from '../ui/Button'
 import { Eyebrow } from '../ui/Eyebrow'
-
-const POLL_INTERVAL_MS = 60_000
 
 // Estado da live domina a home quando ao vivo (Fase 2) — offline, só avisa
 // que não tá ao vivo agora (o carro-chefe já tem seção própria na home,
 // não repete thumbnail/título aqui).
 export function LiveBanner() {
-  const [status, setStatus] = useState<LiveStatus | null>(null)
-
-  useEffect(() => {
-    let active = true
-    function load() {
-      getLiveStatus().then((s) => {
-        if (active) setStatus(s)
-      })
-    }
-    load()
-    const interval = setInterval(load, POLL_INTERVAL_MS)
-    return () => {
-      active = false
-      clearInterval(interval)
-    }
-  }, [])
+  const status = useLiveStatus()
 
   if (status?.isLive && status.videoId) {
     return (
@@ -40,6 +22,11 @@ export function LiveBanner() {
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
               <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
+              {status.viewerCount !== null && (
+                <span className="font-normal normal-case tracking-normal opacity-90">
+                  · {status.viewerCount.toLocaleString('pt-BR')} assistindo
+                </span>
+              )}
             </span>
             <h3 className="mt-2 text-xl">{status.title}</h3>
           </div>

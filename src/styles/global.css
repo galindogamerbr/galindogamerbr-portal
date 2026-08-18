@@ -12,6 +12,11 @@ body,
 
 body {
   @apply bg-bg text-white font-body antialiased;
+  /* Cor sólida só como fallback — a imagem de fundo em si é responsabilidade
+     de cada página via <PageBackground>, ver src/components/layout/PageBackground.tsx
+     (background-attachment:fixed direto no body tem suporte inconsistente
+     entre navegadores e, junto de conteúdo bem mais alto que largo, causa
+     um zoom gigante tentando cobrir a altura inteira da página). */
 }
 
 h1,
@@ -32,6 +37,7 @@ a {
     linear-gradient(90deg, #03070be8 0%, #03070bb0 28%, #03070b40 52%, transparent 72%),
     linear-gradient(0deg, #03070bf0 0%, #03070b55 22%, transparent 46%);
 }
+
 @media (max-width: 900px) {
   .hero-fade {
     background: linear-gradient(0deg, #03070bf5 10%, #03070b8a 55%, #03070b40 100%);
@@ -39,6 +45,7 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

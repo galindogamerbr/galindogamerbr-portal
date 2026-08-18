@@ -1,0 +1,11 @@
+name = "galindogamerbr-social-stats-cron"
+main = "src/index.ts"
+compatibility_date = "2026-05-01"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "galindogamerbr_hub"
+database_id = "40731032-1600-4512-ab7d-3465d93a3436"
