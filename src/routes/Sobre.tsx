@@ -44,15 +44,7 @@ export function Sobre() {
         </Reveal>
       </section>
 
-      <section
-        className="pb-16 sm:pb-24"
-        style={{
-          backgroundImage: 'linear-gradient(90deg, #03070be0 0%, #03070ba0 45%, #03070b60 100%), url(/assets/about-bg.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'right center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
+      <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
             <div className="max-w-xl">

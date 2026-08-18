@@ -12,7 +12,10 @@ body,
 
 body {
   @apply bg-bg text-white font-body antialiased;
-  background-image: linear-gradient(#03070bc0, #03070bc0), url('/assets/body-bg.webp');
+  /* Degradê só até 80% da largura — o Galindo fica no lado direito da
+     imagem e não pode ficar escurecido junto do resto (ver about-bg.webp). */
+  background-image:
+    linear-gradient(90deg, #03070bd9 0%, #03070ba0 40%, #03070b40 65%, transparent 80%), url('/assets/about-bg.webp');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
