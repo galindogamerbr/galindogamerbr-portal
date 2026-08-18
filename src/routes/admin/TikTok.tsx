@@ -58,7 +58,7 @@ export function TikTok() {
                   <img src={status.avatarUrl} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
                 )}
                 <p className="text-sm text-white">
-                  ✅ Conectado{status.username ? <> como <span className="font-semibold">@{status.username}</span></> : null}.
+                  ✅ Conectado{status.username ? <> como <span className="font-semibold">{status.username}</span></> : null}.
                 </p>
               </div>
               <p className="mt-2 text-xs text-muted">Última renovação: {status.updatedAt}</p>
