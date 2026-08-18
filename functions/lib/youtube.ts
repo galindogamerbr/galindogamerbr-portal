@@ -86,24 +86,17 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   }
 }
 
-// Sem API key: a página /watch de um vídeo ao vivo embute um JSON interno
-// (ytInitialData) com "originalViewCount":"1234" — o número cru de
-// espectadores simultâneos, sem formatação (ao contrário do "viewCount"
-// exibido, que já vem como texto tipo "1,2 mil assistindo agora"). Só
-// existe enquanto o vídeo está ao vivo; se o campo sumir (layout mudou,
-// vídeo não é live), devolve null em vez de quebrar quem chama.
-export async function fetchViewerCount(videoId: string): Promise<number | null> {
-  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-    headers: {
-      'user-agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    },
-    cf: { cacheTtl: 0, cacheEverything: false },
-  })
+// YouTube Data API v3 — número oficial de espectadores simultâneos
+// (liveStreamingDetails.concurrentViewers), só existe enquanto o vídeo
+// está ao vivo. Antes era via scraping da página /watch (frágil, dependia
+// de um campo interno do YouTube que podia sumir a qualquer momento).
+export async function fetchViewerCount(env: Env, videoId: string): Promise<number | null> {
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
+  const res = await fetch(url)
   if (!res.ok) return null
-  const body = await res.text()
-  const match = body.match(/"originalViewCount":"(\d+)"/)
-  return match ? Number(match[1]) : null
+  const data = (await res.json()) as { items?: [{ liveStreamingDetails?: { concurrentViewers?: string } }] }
+  const raw = data.items?.[0]?.liveStreamingDetails?.concurrentViewers
+  return raw ? Number(raw) : null
 }
 
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }

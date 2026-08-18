@@ -10,6 +10,10 @@ ENVIRONMENT=development
 # Não é secreto (id público do canal), mas fica fora do wrangler.toml pra
 # não commitar config de ambiente junto do código — mesmo valor em produção.
 YOUTUBE_CHANNEL_ID=UCZGlbfvpoitCSFTsWVWVAow
+# API key da YouTube Data API v3 (Google Cloud Console → habilitar
+# "YouTube Data API v3" → Credentials → Create API key). Usada só pro
+# número de espectadores ao vivo (functions/lib/youtube.ts).
+YOUTUBE_API_KEY=
 
 # Métricas de comunidade (functions/api/community-stats.ts). Seguidores por
 # rede são coletados por scraping/endpoints públicos (workers/social-stats-cron),
@@ -30,3 +34,9 @@ CLOUDFLARE_ACCOUNT_ID=
 # worker (workers/social-stats-cron) renova o token sozinho depois.
 INSTAGRAM_APP_ID=
 INSTAGRAM_APP_SECRET=
+
+# Espectadores ao vivo da Twitch (functions/lib/twitch.ts) — Client ID/
+# Secret do app criado em dev.twitch.tv/console/apps. Só credencial de
+# aplicativo (client_credentials), dado público, sem login de ninguém.
+TWITCH_CLIENT_ID=
+TWITCH_CLIENT_SECRET=

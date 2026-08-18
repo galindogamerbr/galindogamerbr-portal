@@ -45,6 +45,29 @@ export async function upsertLiveViewerCache(db: D1Database, params: { videoId: s
     .run()
 }
 
+export type TwitchLiveCacheRow = {
+  is_live: number
+  viewer_count: number | null
+  fetched_at: string
+}
+
+export async function getTwitchLiveCache(db: D1Database): Promise<TwitchLiveCacheRow | null> {
+  const row = await db.prepare('SELECT is_live, viewer_count, fetched_at FROM twitch_live_cache WHERE id = 1').first<TwitchLiveCacheRow>()
+  return row ?? null
+}
+
+export async function upsertTwitchLiveCache(db: D1Database, params: { isLive: boolean; viewerCount: number | null }): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO twitch_live_cache (id, is_live, viewer_count, fetched_at)
+       VALUES (1, ?, ?, datetime('now'))
+       ON CONFLICT (id) DO UPDATE SET is_live = excluded.is_live, viewer_count = excluded.viewer_count,
+         fetched_at = excluded.fetched_at`,
+    )
+    .bind(params.isLive ? 1 : 0, params.viewerCount)
+    .run()
+}
+
 export type SiteVisitsCacheRow = {
   visits_today: number
   fetched_at: string

@@ -16,7 +16,7 @@ async function resolveViewerCount(env: Env, videoId: string): Promise<number | n
     if (ageMinutes < VIEWER_COUNT_CACHE_MINUTES) return cached.viewer_count
   }
 
-  const fresh = await fetchViewerCount(videoId)
+  const fresh = await fetchViewerCount(env, videoId)
   if (fresh !== null) {
     await upsertLiveViewerCache(env.DB, { videoId, viewerCount: fresh })
     return fresh

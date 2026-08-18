@@ -5,6 +5,7 @@ export type SocialStat = { platform: SocialPlatform; count: number; fetchedAt: s
 export type CommunityStats = {
   social: SocialStat[]
   siteVisits: { visitsToday: number | null }
+  twitchLive: { isLive: boolean; viewerCount: number | null }
 }
 
 export async function getCommunityStats(): Promise<CommunityStats> {
