@@ -8,5 +8,5 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!email) return json({ error: 'unauthorized' }, { status: 401 })
 
   const token = await getTiktokToken(context.env.DB)
-  return json({ connected: token !== null, updatedAt: token?.updated_at ?? null })
+  return json({ connected: token !== null, username: token?.username ?? null, updatedAt: token?.updated_at ?? null })
 }

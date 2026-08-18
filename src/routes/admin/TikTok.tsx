@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
 import { Eyebrow } from '../../components/ui/Eyebrow'
-import { LinkButton } from '../../components/ui/Button'
+import { Button, LinkButton } from '../../components/ui/Button'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
-import { getTiktokStatus, type TiktokStatus } from '../../lib/api/tiktok'
+import { disconnectTiktok, getTiktokStatus, type TiktokStatus } from '../../lib/api/tiktok'
 
 // Conectar uma vez aqui autoriza o worker (workers/social-stats-cron) a
 // buscar o número de seguidores via TikTok Login Kit (user.info.stats) —
@@ -13,6 +13,7 @@ import { getTiktokStatus, type TiktokStatus } from '../../lib/api/tiktok'
 export function TikTok() {
   const { email, loading: sessionLoading, refresh } = useSession()
   const [status, setStatus] = useState<TiktokStatus | null>(null)
+  const [disconnecting, setDisconnecting] = useState(false)
 
   useEffect(() => {
     if (!email) return
@@ -22,6 +23,14 @@ export function TikTok() {
   async function handleLogout() {
     await logout()
     refresh()
+  }
+
+  async function handleDisconnect() {
+    if (!window.confirm('Desvincular a conta do TikTok? A sincronização de seguidores para de funcionar até reconectar.')) return
+    setDisconnecting(true)
+    await disconnectTiktok()
+    setStatus(await getTiktokStatus())
+    setDisconnecting(false)
   }
 
   if (sessionLoading) return null
@@ -44,11 +53,18 @@ export function TikTok() {
             <p className="text-sm text-muted">Carregando…</p>
           ) : status.connected ? (
             <>
-              <p className="text-sm text-white">✅ Conectado.</p>
+              <p className="text-sm text-white">
+                ✅ Conectado{status.username ? <> como <span className="font-semibold">@{status.username}</span></> : null}.
+              </p>
               <p className="mt-1 text-xs text-muted">Última renovação: {status.updatedAt}</p>
-              <LinkButton variant="gold" size="sm" className="mt-4" href="/api/admin/tiktok/authorize">
-                Reconectar
-              </LinkButton>
+              <div className="mt-4 flex gap-3">
+                <LinkButton variant="gold" size="sm" href="/api/admin/tiktok/authorize">
+                  Reconectar
+                </LinkButton>
+                <Button variant="red" size="sm" onClick={handleDisconnect} disabled={disconnecting}>
+                  {disconnecting ? 'Desvinculando…' : 'Desvincular'}
+                </Button>
+              </div>
             </>
           ) : (
             <>
