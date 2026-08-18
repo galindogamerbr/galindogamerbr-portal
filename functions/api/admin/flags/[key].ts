@@ -1,7 +1,7 @@
-import type { Env } from '../../../../lib/env'
-import { requireSession } from '../../../../lib/requireSession'
-import { json } from '../../../../lib/http'
-import { getFlag, setFlag } from '../../../../lib/d1-flags'
+import type { Env } from '../../../lib/env'
+import { requireSession } from '../../../lib/requireSession'
+import { json } from '../../../lib/http'
+import { getFlag, setFlag } from '../../../lib/d1-flags'
 
 // Allowlist proposital — evita ligar/desligar qualquer chave arbitrária via
 // URL, só as que o front realmente usa.
