@@ -4,9 +4,10 @@ import { Eyebrow } from '../../components/ui/Eyebrow'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
 
+// Instagram escondido do painel por enquanto — a rota /admin/instagram
+// continua funcionando, só não aparece linkada aqui.
 const SECTIONS = [
   { label: 'Programação', description: 'Editor da grade de horários da semana.', to: '/admin/programacao' },
-  { label: 'Instagram', description: 'Conectar a conta pra sincronizar seguidores.', to: '/admin/instagram' },
   { label: 'TikTok', description: 'Conectar a conta pra sincronizar seguidores.', to: '/admin/tiktok' },
 ]
 
@@ -33,7 +34,7 @@ export function AdminIndex() {
           </button>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {SECTIONS.map((section) => (
             <Link
               key={section.to}
