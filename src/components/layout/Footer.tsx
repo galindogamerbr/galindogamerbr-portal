@@ -20,21 +20,7 @@ export function Footer() {
           ))}
         </nav>
       </Container>
-      <p className="mt-6 text-center text-xs text-muted">
-        © 2026 GalindoGamerBR — Todos os direitos reservados.{' '}
-        <Link to="/admin/programacao" className="text-white/20 hover:text-white/50">
-          admin
-        </Link>
-      </p>
-      <p className="mt-2 text-center text-[11px] text-white/30">
-        <a href="https://www.flaticon.com/free-icons/sun" title="sun icons" target="_blank" rel="noopener noreferrer" className="hover:text-white/60">
-          Sun icons created by Magnific - Flaticon
-        </a>{' '}
-        ·{' '}
-        <a href="https://www.flaticon.com/free-icons/sunset" title="sunset icons" target="_blank" rel="noopener noreferrer" className="hover:text-white/60">
-          Sunset icons created by Magnific - Flaticon
-        </a>
-      </p>
+      <p className="mt-6 text-center text-xs text-muted">© 2026 GalindoGamerBR — Todos os direitos reservados.</p>
     </footer>
   )
 }
