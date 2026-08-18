@@ -6,9 +6,13 @@ import { buildSetCookie } from '../../../lib/session'
 // é proteção CSRF padrão de fluxo OAuth.
 const STATE_COOKIE_NAME = 'ig_oauth_state'
 
-// "Instagram API with Facebook Login" — login passa pelo Facebook mesmo
-// (produto oficial da Meta, diferente do "Instagram API with Instagram
-// Login"), exige a Página do Facebook vinculada à conta do Instagram.
+// "Instagram API with Facebook Login" — hoje a Meta provisiona esse caso de
+// uso em cima do produto "Login do Facebook para Empresas" (Facebook Login
+// for Business), não o "Facebook Login" clássico. Esse produto troca o
+// parâmetro `scope` por `config_id`, referenciando uma "Configuração de
+// Login" criada em Login do Facebook para Empresas → Configurações (que já
+// embute as permissões, tipo de token, etc). O redirect_uri continua vindo
+// da lista clássica "Valid OAuth Redirect URIs".
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const email = await requireSession(context.request, context.env)
   if (!email) return new Response('Unauthorized', { status: 401 })
@@ -18,9 +22,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const authorizeUrl = new URL('https://www.facebook.com/v22.0/dialog/oauth')
   authorizeUrl.searchParams.set('client_id', context.env.INSTAGRAM_APP_ID)
+  authorizeUrl.searchParams.set('config_id', context.env.INSTAGRAM_LOGIN_CONFIG_ID)
   authorizeUrl.searchParams.set('redirect_uri', redirectUri)
   authorizeUrl.searchParams.set('response_type', 'code')
-  authorizeUrl.searchParams.set('scope', 'instagram_basic,pages_show_list,pages_read_engagement')
   authorizeUrl.searchParams.set('state', state)
 
   return new Response(null, {
