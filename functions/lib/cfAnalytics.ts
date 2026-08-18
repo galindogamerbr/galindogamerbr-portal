@@ -41,11 +41,24 @@ export async function fetchTodayVisits(env: Env): Promise<number | null> {
       variables: { zoneTag: env.CLOUDFLARE_ZONE_TAG, since: since.toISOString(), until: new Date().toISOString() },
     }),
   })
-  if (!res.ok) return null
 
   const data = (await res.json()) as {
     data?: { viewer?: { zones?: [{ rumPageloadEventsAdaptiveGroups?: [{ sum?: { visits?: number } }] }] } }
+    errors?: unknown
   }
+
+  // Loga o corpo bruto sempre que não vier um número — a GraphQL Analytics
+  // API devolve 200 mesmo quando a query tem erro (fica em `errors`), então
+  // `res.ok` sozinho não denuncia problema de token/zona/campo errado.
+  if (!res.ok || data.errors) {
+    console.error('[cfAnalytics] resposta inesperada da GraphQL Analytics API:', res.status, JSON.stringify(data))
+    return null
+  }
+
   const visits = data.data?.viewer?.zones?.[0]?.rumPageloadEventsAdaptiveGroups?.[0]?.sum?.visits
-  return typeof visits === 'number' ? visits : null
+  if (typeof visits !== 'number') {
+    console.error('[cfAnalytics] campo sum.visits não encontrado na resposta:', JSON.stringify(data))
+    return null
+  }
+  return visits
 }
