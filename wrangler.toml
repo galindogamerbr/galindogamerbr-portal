@@ -12,3 +12,13 @@ migrations_dir = "migrations"
 SESSION_COOKIE_NAME = "ggb_session"
 OTP_EXPIRY_MINUTES = "10"
 ENVIRONMENT = "production"
+
+# Feature flags (Compute > Flagship no dashboard da Cloudflare) — liga/
+# desliga features sem precisar de deploy. App "Instagram-Admin". app_id
+# não é secreto, mas fica fora do repo por consistência com o padrão do
+# database_id acima — injetado pelo workflow de deploy a partir do secret
+# FLAGSHIP_APP_ID do GitHub. Preview e dev local sempre caem no fallback
+# da flag (binding só resolve de verdade em produção).
+[[flagship]]
+binding = "FLAGS"
+app_id = "FLAGSHIP_APP_ID_PLACEHOLDER"

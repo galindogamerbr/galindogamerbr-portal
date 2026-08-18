@@ -1,12 +1,12 @@
+import { useEffect, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
 import { Eyebrow } from '../../components/ui/Eyebrow'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
+import { getFlag } from '../../lib/api/flags'
 
-// Instagram escondido do painel por enquanto — a rota /admin/instagram
-// continua funcionando, só não aparece linkada aqui.
-const SECTIONS = [
+const ALL_SECTIONS = [
   {
     label: 'Programação',
     description: 'Editor da grade de horários da semana.',
@@ -19,10 +19,25 @@ const SECTIONS = [
     to: '/admin/tiktok',
     icon: '/assets/icons/tiktok.svg',
   },
+  {
+    label: 'Instagram',
+    description: 'Conectar a conta pra sincronizar seguidores.',
+    to: '/admin/instagram',
+    icon: '/assets/icons/instagram.svg',
+    // Controlado por feature flag (Cloudflare Flagship, app
+    // "Instagram-Admin") — liga/desliga pelo dashboard sem deploy.
+    flag: 'admin-instagram-visible',
+  },
 ]
 
 export function AdminIndex() {
   const { email, loading, refresh } = useSession()
+  const [instagramVisible, setInstagramVisible] = useState(false)
+
+  useEffect(() => {
+    if (!email) return
+    getFlag('admin-instagram-visible').then(setInstagramVisible)
+  }, [email])
 
   async function handleLogout() {
     await logout()
@@ -31,6 +46,8 @@ export function AdminIndex() {
 
   if (loading) return null
   if (!email) return <Navigate to="/admin/login" replace />
+
+  const sections = ALL_SECTIONS.filter((section) => !section.flag || instagramVisible)
 
   return (
     <section className="py-16 sm:py-24">
@@ -44,8 +61,8 @@ export function AdminIndex() {
           </button>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {SECTIONS.map((section) => (
+        <div className={`mt-8 grid grid-cols-1 gap-4 sm:${sections.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+          {sections.map((section) => (
             <Link
               key={section.to}
               to={section.to}
