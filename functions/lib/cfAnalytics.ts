@@ -15,31 +15,63 @@ import type { Env } from './env'
 // TEMP — introspecção pra descobrir o nome/caminho certo do dataset de RUM
 // nessa conta (rumPageloadEventsAdaptiveGroups deu "unknown field" embaixo
 // de zones). Remover depois de descobrir o campo certo.
-export async function debugIntrospectRum(env: Env): Promise<void> {
-  const query = `
-    query {
-      zonesType: __type(name: "zones") { fields { name } }
-      accountsType: __type(name: "accounts") { fields { name } }
-      queryType: __type(name: "Query") { fields { name } }
-    }
-  `
+type NamedType = { name: string | null; ofType: NamedType | null } | null
+
+function unwrapTypeName(t: NamedType): string | null {
+  let cur = t
+  for (let i = 0; i < 5 && cur; i++) {
+    if (cur.name) return cur.name
+    cur = cur.ofType
+  }
+  return null
+}
+
+async function introspect(env: Env, query: string): Promise<any> {
   const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
     method: 'POST',
     headers: { authorization: `Bearer ${env.CLOUDFLARE_ANALYTICS_API_TOKEN}`, 'content-type': 'application/json' },
     body: JSON.stringify({ query }),
   })
-  const data = (await res.json()) as {
-    data?: { zonesType?: { fields: { name: string }[] }; accountsType?: { fields: { name: string }[] }; queryType?: { fields: { name: string }[] } }
-    errors?: unknown
-  }
-  if (data.errors) {
-    console.error('[cfAnalytics][debug] introspecção falhou:', JSON.stringify(data.errors))
+  return res.json()
+}
+
+export async function debugIntrospectRum(env: Env): Promise<void> {
+  // Passo 1: descobre o tipo real de Viewer.zones e Viewer.accounts (o nome
+  // do tipo não é necessariamente "zones"/"accounts" — pode vir embrulhado
+  // em NON_NULL/LIST).
+  const step1 = await introspect(
+    env,
+    `query {
+      __type(name: "Viewer") {
+        fields { name type { name kind ofType { name kind ofType { name kind ofType { name kind } } } } }
+      }
+    }`,
+  )
+  if (step1.errors) {
+    console.error('[cfAnalytics][debug] step1 falhou:', JSON.stringify(step1.errors))
     return
   }
-  const rumIn = (fields?: { name: string }[]) => (fields ?? []).map((f) => f.name).filter((n) => n.toLowerCase().includes('rum'))
-  console.error('[cfAnalytics][debug] Query fields:', JSON.stringify((data.data?.queryType?.fields ?? []).map((f) => f.name)))
-  console.error('[cfAnalytics][debug] zones RUM fields:', JSON.stringify(rumIn(data.data?.zonesType?.fields)))
-  console.error('[cfAnalytics][debug] accounts RUM fields:', JSON.stringify(rumIn(data.data?.accountsType?.fields)))
+  const viewerFields = (step1.data?.__type?.fields ?? []) as { name: string; type: NamedType }[]
+  console.error('[cfAnalytics][debug] Viewer fields:', JSON.stringify(viewerFields.map((f) => f.name)))
+
+  const zonesField = viewerFields.find((f) => f.name === 'zones')
+  const accountsField = viewerFields.find((f) => f.name === 'accounts')
+  const zonesTypeName = zonesField ? unwrapTypeName(zonesField.type) : null
+  const accountsTypeName = accountsField ? unwrapTypeName(accountsField.type) : null
+  console.error('[cfAnalytics][debug] zonesTypeName:', zonesTypeName, 'accountsTypeName:', accountsTypeName)
+
+  // Passo 2: lista os campos desses tipos reais, filtrando por "rum".
+  const typeNames = [zonesTypeName, accountsTypeName].filter((n): n is string => !!n)
+  for (const typeName of typeNames) {
+    const step2 = await introspect(env, `query { __type(name: "${typeName}") { fields { name } } }`)
+    if (step2.errors) {
+      console.error(`[cfAnalytics][debug] step2 (${typeName}) falhou:`, JSON.stringify(step2.errors))
+      continue
+    }
+    const fields = (step2.data?.__type?.fields ?? []) as { name: string }[]
+    const rumFields = fields.map((f) => f.name).filter((n) => n.toLowerCase().includes('rum'))
+    console.error(`[cfAnalytics][debug] ${typeName} total fields:`, fields.length, 'rum fields:', JSON.stringify(rumFields))
+  }
 }
 
 export async function fetchTodayVisits(env: Env): Promise<number | null> {
