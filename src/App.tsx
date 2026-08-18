@@ -5,7 +5,8 @@ import { ComeceAqui } from './routes/ComeceAqui'
 import { Conteudos } from './routes/Conteudos'
 import { Comunidade } from './routes/Comunidade'
 import { Sobre } from './routes/Sobre'
-import { Parceiros } from './routes/Parceiros'
+// TODO: reativar rota /parceiros (import + registro abaixo) quando a página/fluxo de parceiros estiver pronto
+// import { Parceiros } from './routes/Parceiros'
 import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
 import { NotFound } from './routes/NotFound'
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
       { path: '/comunidade', element: <Comunidade /> },
       { path: '/sobre', element: <Sobre /> },
-      { path: '/parceiros', element: <Parceiros /> },
+      // { path: '/parceiros', element: <Parceiros /> },
       { path: '/contato', element: <Contato /> },
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/admin', element: <Navigate to="/admin/login" replace /> },

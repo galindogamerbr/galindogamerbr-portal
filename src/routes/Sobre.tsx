@@ -114,6 +114,8 @@ export function Sobre() {
         </Reveal>
       </section>
 
+      {/* TODO: reativar seção de parceiros quando a página/fluxo estiver pronto (ver App.tsx) */}
+      {/*
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
@@ -133,6 +135,7 @@ export function Sobre() {
           </Container>
         </Reveal>
       </section>
+      */}
 
       <section className="pb-16 sm:pb-24 text-center">
         <Reveal>
