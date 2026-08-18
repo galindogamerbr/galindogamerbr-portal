@@ -7,10 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="GalindoGamerBR — simuladores, games, roleplay, lives e uma comunidade construída com paixão." />
     <title>GalindoGamerBR — Simuladores • Games • Comunidade</title>
-    <!-- Cloudflare Web Analytics — token vem de VITE_CF_BEACON_TOKEN em build
-         time (ver .github/workflows/deploy.yml). Sem o token, o script só
-         fica inerte (não reporta nada), então é seguro deixar em branco em dev. -->
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "%VITE_CF_BEACON_TOKEN%"}'></script>
+    <!-- Sem beacon manual do Cloudflare Web Analytics de propósito: o domínio
+         já é uma zona proxied na Cloudflare, então a coleta é automática por
+         zona — só precisamos ler os dados depois (ver functions/lib/cfAnalytics.ts). -->
   </head>
   <body>
     <div id="root"></div>

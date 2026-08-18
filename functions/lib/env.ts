@@ -14,6 +14,9 @@ export type Env = {
   // separado (workers/social-stats-cron) — nenhum API key/OAuth aqui.
   DISCORD_INVITE_CODE: string
   // Visitas do site: Cloudflare Web Analytics via GraphQL Analytics API.
-  CF_API_TOKEN: string
-  CF_ZONE_TAG: string
+  // Nome distinto de CLOUDFLARE_API_TOKEN (usado no deploy) de propósito —
+  // são tokens diferentes, com escopos diferentes (esse é só leitura de
+  // Zone Analytics; o de deploy tem permissão de editar Pages/D1/Workers).
+  CLOUDFLARE_ANALYTICS_API_TOKEN: string
+  CLOUDFLARE_ZONE_TAG: string
 }
