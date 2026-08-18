@@ -34,6 +34,11 @@ CLOUDFLARE_ACCOUNT_ID=
 # worker (workers/social-stats-cron) renova o token sozinho depois.
 INSTAGRAM_APP_ID=
 INSTAGRAM_APP_SECRET=
+# Id da "Configuração de Login" em Login do Facebook para Empresas →
+# Configurações (não é o App ID nem o App Secret) — esse caso de uso hoje é
+# provisionado em cima do Facebook Login for Business, que exige config_id
+# no dialog de autorização em vez de scope.
+INSTAGRAM_LOGIN_CONFIG_ID=
 
 # Espectadores ao vivo da Twitch (functions/lib/twitch.ts) — Client ID/
 # Secret do app criado em dev.twitch.tv/console/apps. Só credencial de
