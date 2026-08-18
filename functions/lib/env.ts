@@ -9,4 +9,11 @@ export type Env = {
   // Automação de live (ver functions/lib/youtube.ts) — checagem direta e
   // keyless a cada request, sem API key, sem D1, sem cron externo.
   YOUTUBE_CHANNEL_ID: string
+  // Métricas de comunidade (ver functions/api/community-stats.ts). Seguidores
+  // por rede vêm de scraping/endpoints públicos, coletados por um worker
+  // separado (workers/social-stats-cron) — nenhum API key/OAuth aqui.
+  DISCORD_INVITE_CODE: string
+  // Visitas do site: Cloudflare Web Analytics via GraphQL Analytics API.
+  CF_API_TOKEN: string
+  CF_ZONE_TAG: string
 }

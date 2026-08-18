@@ -86,6 +86,26 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   }
 }
 
+// Sem API key: a página /watch de um vídeo ao vivo embute um JSON interno
+// (ytInitialData) com "originalViewCount":"1234" — o número cru de
+// espectadores simultâneos, sem formatação (ao contrário do "viewCount"
+// exibido, que já vem como texto tipo "1,2 mil assistindo agora"). Só
+// existe enquanto o vídeo está ao vivo; se o campo sumir (layout mudou,
+// vídeo não é live), devolve null em vez de quebrar quem chama.
+export async function fetchViewerCount(videoId: string): Promise<number | null> {
+  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+    headers: {
+      'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+    },
+    cf: { cacheTtl: 0, cacheEverything: false },
+  })
+  if (!res.ok) return null
+  const body = await res.text()
+  const match = body.match(/"originalViewCount":"(\d+)"/)
+  return match ? Number(match[1]) : null
+}
+
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }
 
 // Sem API key: feed Atom público da playlist, do mais novo pro mais antigo —

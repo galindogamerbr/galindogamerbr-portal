@@ -3,6 +3,9 @@ import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { HubLink } from '../components/shared/HubLink'
 import { VipSteps } from '../components/shared/VipSteps'
+import { CommunityStatsGrid } from '../components/shared/CommunityStatsGrid'
+import { SiteVisitsCard } from '../components/shared/SiteVisitsCard'
+import { LiveNowBadge } from '../components/shared/LiveNowBadge'
 
 const HUB_LINKS = [
   {
@@ -43,6 +46,25 @@ export function Comunidade() {
               {HUB_LINKS.map((link) => (
                 <HubLink key={link.title} {...link} />
               ))}
+            </div>
+          </Container>
+        </Reveal>
+      </section>
+
+      <section id="numeros" className="pb-16 sm:pb-24">
+        <Reveal>
+          <Container>
+            <Eyebrow>Comunidade em números</Eyebrow>
+            <h2 className="text-3xl sm:text-4xl">A GALERA CRESCENDO</h2>
+            <p className="mt-3 max-w-xl text-muted">
+              Seguidores em cada rede, atualizados a cada hora, e as visitas do site — tudo num só lugar.
+            </p>
+            <LiveNowBadge />
+            <div className="mt-8">
+              <CommunityStatsGrid />
+            </div>
+            <div className="mt-4 max-w-xs">
+              <SiteVisitsCard />
             </div>
           </Container>
         </Reveal>
