@@ -4,7 +4,7 @@ export const NAV_ITEMS = [
   { label: 'Conteúdos', to: '/conteudos' },
   { label: 'Comunidade', to: '/comunidade' },
   { label: 'Sobre', to: '/sobre' },
-  { label: 'Parceiros', to: '/parceiros' },
+  // TODO: reativar link de Parceiros quando a página/fluxo estiver pronto (ver App.tsx)
 ] as const
 
 export const FOOTER_ITEMS = [

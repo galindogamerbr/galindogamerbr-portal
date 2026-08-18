@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+// TODO: reativar `useState`/`FormEvent` (usados só pela Newsletter comentada abaixo) quando a seção voltar
 import { Link } from 'react-router-dom'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
@@ -39,8 +39,10 @@ export function Home() {
       <JogosBannerCta />
       <ComunidadeTeaser />
       <SobreTeaser />
-      <ParceirosTeaser />
-      <Newsletter />
+      {/* TODO: reativar quando a página/fluxo de parceiros estiver pronta — ver ParceirosTeaser() comentada abaixo */}
+      {/* <ParceirosTeaser /> */}
+      {/* TODO: reativar quando o cadastro de e-mail tiver backend de verdade — ver Newsletter() comentada abaixo */}
+      {/* <Newsletter /> */}
     </>
   )
 }
@@ -240,6 +242,8 @@ function SobreTeaser() {
   )
 }
 
+// TODO: reativar a seção de parceiros quando a página/fluxo de parceiros estiver pronta.
+/*
 function ParceirosTeaser() {
   return (
     <section className="pb-16 sm:pb-24">
@@ -261,7 +265,12 @@ function ParceirosTeaser() {
     </section>
   )
 }
+*/
 
+// TODO: reativar a seção de newsletter (cadastro por e-mail) quando houver
+// backend de verdade conectado. Precisa também descomentar o import de
+// `useState`/`FormEvent` no topo do arquivo e a chamada <Newsletter /> em Home().
+/*
 function Newsletter() {
   const [status, setStatus] = useState<'idle' | 'soon'>('idle')
 
@@ -307,3 +316,5 @@ function Newsletter() {
     </section>
   )
 }
+*/
+// está no histórico do git (ver commit antes desta remoção).
