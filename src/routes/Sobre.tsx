@@ -2,6 +2,12 @@ import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { NavButton } from '../components/ui/Button'
+import { PageBackground } from '../components/layout/PageBackground'
+
+// Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
+// Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
+// escurecido junto do resto do fundo.
+const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
@@ -31,6 +37,7 @@ const STORY = [
 export function Sobre() {
   return (
     <>
+      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
       <section className="py-16 sm:py-24">
         <Reveal>
           <Container className="max-w-3xl">
@@ -47,12 +54,12 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="max-w-xl">
+            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
               <Eyebrow>Quem é o Galindo?</Eyebrow>
               <h2 className="text-2xl sm:text-3xl">
                 EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
               </h2>
-              <div className="mt-4 space-y-4 text-muted">
+              <div className="mt-4 space-y-4 text-justify text-muted">
                 <p>
                   <strong className="text-white">
                     Tenho 41 anos, sou casado, trabalho na cidade e tenho uma vida como qualquer pessoa que corre
@@ -78,7 +85,7 @@ export function Sobre() {
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {CHIPS.map((chip) => (
-                  <span key={chip} className="rounded-full border border-line bg-panel2 px-3 py-1 text-xs text-white/80">
+                  <span key={chip} className="rounded-full border border-gold bg-panel2 px-3 py-1 text-xs text-gold">
                     {chip}
                   </span>
                 ))}

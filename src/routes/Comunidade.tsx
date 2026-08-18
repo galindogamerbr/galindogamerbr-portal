@@ -36,17 +36,7 @@ const HUB_LINKS = [
 export function Comunidade() {
   return (
     <>
-      <section className="pb-16 pt-16 sm:pb-24 sm:pt-24">
-        <Reveal>
-          <Container>
-            <Eyebrow>Central da comunidade</Eyebrow>
-            <h1 className="text-4xl sm:text-5xl">TODOS OS CAMINHOS</h1>
-            <p className="mt-3 max-w-xl text-muted">Entre, participe e faça parte do universo GalindoGamerBR.</p>
-          </Container>
-        </Reveal>
-      </section>
-
-      <section id="numeros" className="pb-16 sm:pb-24">
+      <section id="numeros" className="pb-16 pt-16 sm:pb-24 sm:pt-24">
         <Reveal>
           <Container>
             <Eyebrow>Comunidade em números</Eyebrow>
@@ -59,6 +49,16 @@ export function Comunidade() {
               <CommunityStatsGrid />
               <SiteVisitsCard />
             </div>
+          </Container>
+        </Reveal>
+      </section>
+
+      <section className="pb-8 sm:pb-12">
+        <Reveal>
+          <Container>
+            <Eyebrow>Central da comunidade</Eyebrow>
+            <h1 className="text-4xl sm:text-5xl">TODOS OS CAMINHOS</h1>
+            <p className="mt-3 max-w-xl text-muted">Entre, participe e faça parte do universo GalindoGamerBR.</p>
           </Container>
         </Reveal>
       </section>
