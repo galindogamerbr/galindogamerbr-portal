@@ -3,9 +3,9 @@ import { getLiveStatus, type LiveStatus } from '../lib/api/live'
 
 const POLL_INTERVAL_MS = 60_000
 
-// Polling compartilhado do status de live — usado por LiveBanner,
-// LiveNowBadge e a seção de métricas da Comunidade, pra não disparar 3
-// pollings independentes do mesmo /api/live.
+// Polling compartilhado do status de live — usado por LiveBanner e a seção
+// de métricas da Comunidade, pra não disparar 2 pollings independentes do
+// mesmo /api/live.
 export function useLiveStatus(): LiveStatus | null {
   const [status, setStatus] = useState<LiveStatus | null>(null)
 
