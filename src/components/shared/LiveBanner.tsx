@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { preload } from 'react-dom'
 import { useLiveStatus } from '../../hooks/useLiveStatus'
 import { LinkButton } from '../ui/Button'
 import { Eyebrow } from '../ui/Eyebrow'
@@ -21,7 +22,26 @@ export function LiveBanner() {
   const status = useLiveStatus()
   const [thumbLoaded, setThumbLoaded] = useState(false)
   const [thumbFailed, setThumbFailed] = useState(false)
-  const [playing, setPlaying] = useState(false)
+  const [isInlinePlayerActive, setIsInlinePlayerActive] = useState(false)
+  const displayedVideoIdRef = useRef<string | null>(null)
+
+  // useLiveStatus faz polling a cada 60s — a maioria das vezes devolve o
+  // mesmo videoId de antes, e nesse caso não deve acontecer nada (a
+  // thumbnail já carregada continua na tela, sem re-render de "carregando").
+  // Só quando o videoId muda de verdade (novo upload virou "último vídeo",
+  // ou o canal ficou ao vivo agora) é que reseta o estado de loading pra
+  // mostrar o spinner até a nova imagem carregar — e dispara o preload dela
+  // assim que o videoId chega, antes mesmo de decidir trocar a UI, pra
+  // minimizar esse tempo de spinner.
+  useEffect(() => {
+    if (!status?.videoId) return
+    preload(thumbnailUrl(status.videoId, 'maxresdefault'), { as: 'image' })
+
+    if (status.videoId === displayedVideoIdRef.current) return
+    displayedVideoIdRef.current = status.videoId
+    setThumbLoaded(false)
+    setThumbFailed(false)
+  }, [status?.videoId])
 
   if (status?.isLive && status.videoId) {
     return (
@@ -82,7 +102,7 @@ export function LiveBanner() {
   // "Ver no YouTube" abre em outra aba.
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-panel">
-      {playing && status?.videoId ? (
+      {isInlinePlayerActive && status?.videoId ? (
         <iframe
           src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1`}
           title={status.title ?? 'GalindoGamerBR'}
@@ -93,7 +113,7 @@ export function LiveBanner() {
       ) : (
         <button
           type="button"
-          onClick={() => status?.videoId && setPlaying(true)}
+          onClick={() => status?.videoId && setIsInlinePlayerActive(true)}
           disabled={!status?.videoId}
           className="group block w-full"
         >
@@ -108,6 +128,9 @@ export function LiveBanner() {
                 <img
                   src={thumbnailUrl(status.videoId, thumbFailed ? 'hqdefault' : 'maxresdefault')}
                   alt=""
+                  width={1280}
+                  height={720}
+                  fetchPriority="high"
                   onLoad={() => setThumbLoaded(true)}
                   onError={() => {
                     if (!thumbFailed) setThumbFailed(true)
@@ -116,9 +139,12 @@ export function LiveBanner() {
                   className={`h-full w-full object-cover transition-opacity duration-300 group-hover:scale-105 ${thumbLoaded ? 'opacity-100' : 'opacity-0'}`}
                 />
                 {thumbLoaded && (
+                  // Formato do botão de play original do YouTube: retângulo
+                  // arredondado (não círculo) em vermelho sólido da marca,
+                  // não a cor "red" do nosso tema.
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red/90 shadow-lg transition group-hover:scale-110">
-                      <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white">
+                    <div className="flex h-14 w-20 items-center justify-center rounded-2xl bg-[#FF0000] shadow-lg transition group-hover:scale-110">
+                      <svg viewBox="0 0 24 24" className="ml-1 h-8 w-8 fill-white">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
@@ -131,11 +157,18 @@ export function LiveBanner() {
       )}
       <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0">
-          <Eyebrow>{status ? 'Último vídeo' : 'Onde acompanhar'}</Eyebrow>
           {status ? (
-            <h3 className="mt-2 text-xl">{status.title}</h3>
+            <>
+              <Eyebrow>Último vídeo</Eyebrow>
+              <h3 className="mt-2 text-xl">{status.title}</h3>
+            </>
           ) : (
-            <div className="mt-3 h-5 w-2/3 animate-pulse rounded bg-panel2" />
+            // Ainda carregando — "Onde acompanhar" não faz sentido aqui, só
+            // faz sentido no fallback de falha total (ver bloco acima).
+            <>
+              <div className="h-3 w-24 animate-pulse rounded bg-panel2" />
+              <div className="mt-3 h-5 w-2/3 animate-pulse rounded bg-panel2" />
+            </>
           )}
         </div>
         {status && (

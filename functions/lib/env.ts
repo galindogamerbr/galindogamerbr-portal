@@ -1,5 +1,9 @@
 export type Env = {
   DB: D1Database
+  // Cache de leitura pública compartilhado entre todos os visitantes (live
+  // status, viewer count, stats de redes sociais, programação publicada) —
+  // D1 continua sendo a fonte de verdade; isso é só a camada quente.
+  PUBLIC_CACHE: KVNamespace
   RESEND_API_KEY: string
   SESSION_SECRET: string
   OTP_PEPPER: string

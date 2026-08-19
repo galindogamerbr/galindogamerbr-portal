@@ -1,22 +1,39 @@
 name: Deploy
 
+# Antes disparava em paralelo com o CI (mesmo evento push:main), sem
+# depender do resultado — lint/typecheck/audit/sequência de migrations do
+# ci.yml não eram gate real do deploy. Agora só dispara quando o CI
+# terminar com sucesso em main (o filtro no job abaixo garante isso; o
+# workflow_run em si já dispara pra qualquer conclusão/branch do CI).
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
   # Permite forçar um redeploy sem mudar código — útil pra pegar env vars
   # novas configuradas no dashboard da Cloudflare (nem sempre aplicam sem
-  # um novo deploy).
+  # um novo deploy). Sem workflow_run associado, builda direto (ver step
+  # condicional abaixo).
   workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main')
     permissions:
       contents: read
+      actions: read
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -27,13 +44,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Typecheck/lint/build/etc já rodam no ci.yml pro mesmo push — não
-      # repete aqui, só builda de fato pra deployar.
+      # Reusa o dist/ já buildado no ci.yml pro mesmo push — evita buildar
+      # duas vezes. Só existe quando disparado via workflow_run.
+      - name: Baixar build do CI
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Redeploy manual (workflow_dispatch) não tem um run do CI associado
+      # pra baixar artefato — builda aqui mesmo.
       - name: Build
+        if: github.event_name == 'workflow_dispatch'
         run: npm run build
 
-      - name: Injetar D1 database_id
-        run: sed -i "s/00000000-0000-0000-0000-000000000000/${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}/" wrangler.toml
+      - name: Injetar D1 database_id e KV namespace id
+        run: |
+          sed -i "s/00000000-0000-0000-0000-000000000000/${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}/" wrangler.toml
+          sed -i "s/PENDING_KV_NAMESPACE_ID/${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}/" wrangler.toml
 
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v4
@@ -48,3 +79,10 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name=galindogamerbr-portal --branch=main
+
+      # Roda uma coleta de social stats agora em vez de esperar até 20min
+      # pela próxima rodada agendada do worker (ver
+      # workers/social-stats-cron) — não derruba o job se falhar.
+      - name: Disparar coleta de social stats agora
+        run: |
+          curl -s -X POST -H "x-trigger-secret: ${{ secrets.CRON_TRIGGER_SECRET }}" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/ || true

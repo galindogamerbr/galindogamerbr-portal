@@ -8,6 +8,11 @@ database_name = "galindogamerbr_hub"
 database_id = "00000000-0000-0000-0000-000000000000" # placeholder — id real só no working tree local, nunca commitado (skip-worktree ativo)
 migrations_dir = "migrations"
 
+[[kv_namespaces]]
+binding = "PUBLIC_CACHE"
+id = "PENDING_KV_NAMESPACE_ID" # placeholder — id real injetado no deploy via secret CLOUDFLARE_KV_NAMESPACE_ID (ver deploy.yml)
+preview_id = "f5c7ed1056a243bc9df10f0661762f91"
+
 [vars]
 SESSION_COOKIE_NAME = "ggb_session"
 OTP_EXPIRY_MINUTES = "10"

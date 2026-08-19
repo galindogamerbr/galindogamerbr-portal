@@ -1,3 +1,4 @@
+import { lazy, Suspense, type ReactElement } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Home } from './routes/Home'
@@ -11,11 +12,30 @@ import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
 import { Termos } from './routes/Termos'
 import { Creditos } from './routes/Creditos'
+import { MapaDoSite } from './routes/MapaDoSite'
 import { NotFound } from './routes/NotFound'
-import { Login } from './routes/admin/Login'
-import { AdminIndex } from './routes/admin/Index'
-import { Schedule } from './routes/admin/Schedule'
-import { TikTok } from './routes/admin/TikTok'
+
+// Rotas /admin/*: ninguém que não seja o próprio admin visita — importar
+// estático colocava Login/editor de programação/TikTok no bundle de
+// qualquer visitante da Home. Um único Suspense pro grupo inteiro (a
+// navegação entre elas já é rara o suficiente pra não precisar de
+// granularidade por rota).
+const Login = lazy(() => import('./routes/admin/Login').then((m) => ({ default: m.Login })))
+const AdminIndex = lazy(() => import('./routes/admin/Index').then((m) => ({ default: m.AdminIndex })))
+const Schedule = lazy(() => import('./routes/admin/Schedule').then((m) => ({ default: m.Schedule })))
+const TikTok = lazy(() => import('./routes/admin/TikTok').then((m) => ({ default: m.TikTok })))
+
+function AdminRouteFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
+    </div>
+  )
+}
+
+function withAdminSuspense(element: ReactElement): ReactElement {
+  return <Suspense fallback={<AdminRouteFallback />}>{element}</Suspense>
+}
 
 const router = createBrowserRouter([
   {
@@ -34,10 +54,11 @@ const router = createBrowserRouter([
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/termos', element: <Termos /> },
       { path: '/creditos', element: <Creditos /> },
-      { path: '/admin', element: <AdminIndex /> },
-      { path: '/admin/login', element: <Login /> },
-      { path: '/admin/programacao', element: <Schedule /> },
-      { path: '/admin/tiktok', element: <TikTok /> },
+      { path: '/mapa-do-site', element: <MapaDoSite /> },
+      { path: '/admin', element: withAdminSuspense(<AdminIndex />) },
+      { path: '/admin/login', element: withAdminSuspense(<Login />) },
+      { path: '/admin/programacao', element: withAdminSuspense(<Schedule />) },
+      { path: '/admin/tiktok', element: withAdminSuspense(<TikTok />) },
       { path: '*', element: <NotFound /> },
     ],
   },

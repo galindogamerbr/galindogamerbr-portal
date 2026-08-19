@@ -26,7 +26,7 @@ export const GAMES: Game[] = [
     tag: 'Roleplay',
     icon: '/assets/logos/furia_reborn_rp.webp',
     description: 'Roleplay imersivo, histórias e experiências na comunidade.',
-    image: '/assets/banners/furia_rp.webp',
+    image: '/assets/banners/furia-reborn.webp',
     href: 'https://www.youtube.com/playlist?list=PLJtoEQhBWmWI',
   },
   {
@@ -35,7 +35,7 @@ export const GAMES: Game[] = [
     tag: 'Simulação',
     icon: '/assets/logos/caminhao.webp',
     description: 'Expedições, lama, carga pesada e desafios extremos.',
-    image: '/assets/banners/snowrunner.webp',
+    image: '/assets/banners/snowrunner-banner.webp',
     href: 'https://www.youtube.com/playlist?list=PLDv3gOgRACDY',
   },
   {
@@ -44,7 +44,7 @@ export const GAMES: Game[] = [
     tag: 'Estradas',
     icon: '/assets/logos/cavalo.webp',
     description: 'Viagens, caminhões e muita estrada.',
-    image: '/assets/banners/ets2.webp',
+    image: '/assets/banners/ets2-banner.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUkbejSJ6f1D0eob6leKJAur',
   },
   {
@@ -53,7 +53,7 @@ export const GAMES: Game[] = [
     tag: 'Tutoriais',
     icon: null,
     description: 'Tutoriais, truques, configurações e dicas que fazem a diferença.',
-    image: '/assets/banners/dicas.webp',
+    image: '/assets/banners/dicas-banner.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUmOBGsW2WBorqwszTEJihie',
   },
 ]

@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react'
 import { getFlagshipVideos, type FlagshipVideo } from '../lib/api/flagship'
 import { getLiveStatus } from '../lib/api/live'
+import { useLocalStorageCachedVideos } from './useLocalStorageCachedVideos'
 
 const CACHE_KEY = 'ggb:flagship-videos'
-
-function readCache(): FlagshipVideo[] {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY)
-    return raw ? (JSON.parse(raw) as FlagshipVideo[]) : []
-  } catch {
-    return []
-  }
-}
 
 // Se o canal estiver ao vivo agora, a live vira o primeiro item (destaque)
 // mesmo que a ordem da playlist não coloque ela em primeiro — cria uma
@@ -28,32 +19,16 @@ function withLiveFeatured(videos: FlagshipVideo[], live: Awaited<ReturnType<type
   return [liveVideo, ...rest]
 }
 
+async function fetchFlagshipVideosWithLive(): Promise<FlagshipVideo[]> {
+  const [videos, live] = await Promise.all([getFlagshipVideos(), getLiveStatus()])
+  return withLiveFeatured(videos, live)
+}
+
 // Episódios mais recentes da playlist do carro-chefe (Fazenda Nova Aliança),
 // do mais novo pro mais antigo — busca uma vez ao montar. Parte do estado
 // inicial do último resultado salvo em localStorage, pra evitar o flash de
 // loading em visitas repetidas; só troca quando o fetch traz algo novo.
 // Se estiver ao vivo, a live vira o primeiro item (ver withLiveFeatured).
 export function useFlagshipVideos(): FlagshipVideo[] {
-  const [videos, setVideos] = useState<FlagshipVideo[]>(() => readCache())
-
-  useEffect(() => {
-    let active = true
-
-    Promise.all([getFlagshipVideos(), getLiveStatus()]).then(([v, live]) => {
-      if (!active || v.length === 0) return
-      const ordered = withLiveFeatured(v, live)
-      setVideos(ordered)
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify(ordered))
-      } catch {
-        // localStorage indisponível (modo privado, storage cheio etc.) — só não persiste
-      }
-    })
-
-    return () => {
-      active = false
-    }
-  }, [])
-
-  return videos
+  return useLocalStorageCachedVideos(CACHE_KEY, fetchFlagshipVideosWithLive)
 }

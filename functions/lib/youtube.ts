@@ -64,10 +64,21 @@ async function fetchTitle(videoId: string): Promise<string | null> {
   return data.title
 }
 
+const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
+// 60 é o mínimo que o Workers KV aceita pra expirationTtl (PUT falha com
+// 400 abaixo disso) — não dá pra ir mais curto que isso.
+const LIVE_STATE_CACHE_TTL_SECONDS = 60
+
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
-// publicado se não houver live) — chamado direto a cada request de
-// /api/live, sempre fresco. Não depende de YOUTUBE_API_KEY nem de D1.
+// publicado se não houver live) — cache-first no KV (PUBLIC_CACHE), TTL
+// curto: cada miss custa até 3 fetches sequenciais pro YouTube (scrape +
+// feed Atom + shorts-check + oEmbed), então vale a pena servir do cache
+// pra qualquer visitante que caia dentro da janela do TTL. Não depende de
+// YOUTUBE_API_KEY nem de D1.
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
+  const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
+  if (cached) return cached
+
   const liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
   const videoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
   if (!videoId) return null
@@ -75,13 +86,15 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   const title = await fetchTitle(videoId)
   if (!title) return null
 
-  return {
+  const state: VideoState = {
     videoId,
     title,
     thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
     isLive: liveVideoId !== null,
     startedAt: null,
   }
+  await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
+  return state
 }
 
 // YouTube Data API v3 — número oficial de espectadores simultâneos
@@ -95,27 +108,6 @@ export async function fetchViewerCount(env: Env, videoId: string): Promise<numbe
   const data = (await res.json()) as { items?: [{ liveStreamingDetails?: { concurrentViewers?: string } }] }
   const raw = data.items?.[0]?.liveStreamingDetails?.concurrentViewers
   return raw ? Number(raw) : null
-}
-
-export type ChannelStats = { count: number | null; postCount: number | null }
-
-// YouTube Data API v3 — inscritos e quantidade de vídeos numa chamada só.
-// Chamado direto de functions/api/community-stats.ts (busca sempre fresco,
-// cache em D1 só como fallback) — mesma chamada que o worker
-// workers/social-stats-cron faz de hora em hora, sem custo extra de cota
-// nem risco de renovação de token (essa API só precisa da API key, sem
-// token de usuário pra rotacionar).
-export async function fetchYoutubeStats(env: Env): Promise<ChannelStats> {
-  const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${env.YOUTUBE_CHANNEL_ID}&key=${env.YOUTUBE_API_KEY}`
-  const res = await fetch(url)
-  if (!res.ok) return { count: null, postCount: null }
-
-  const data = (await res.json()) as { items?: [{ statistics?: { subscriberCount?: string; videoCount?: string } }] }
-  const stats = data.items?.[0]?.statistics
-  return {
-    count: stats?.subscriberCount ? Number(stats.subscriberCount) : null,
-    postCount: stats?.videoCount ? Number(stats.videoCount) : null,
-  }
 }
 
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }

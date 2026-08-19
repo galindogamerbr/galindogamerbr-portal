@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -34,6 +36,16 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # deploy.yml (workflow_run, só dispara depois desse CI passar em main)
+      # reusa esse artefato em vez de buildar de novo.
+      - name: Upload do dist/ pro deploy.yml reusar
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
 
       # tsc -b só cobre o frontend (tsconfig.app.json/node.json) — o
       # tsconfig raiz não referencia functions/, então erros de import ali

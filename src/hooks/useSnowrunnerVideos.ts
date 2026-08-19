@@ -1,20 +1,8 @@
-import { useEffect, useState } from 'react'
 import { getSnowrunnerVideos, type SnowrunnerVideo } from '../lib/api/snowrunner'
+import { useLocalStorageCachedVideos } from './useLocalStorageCachedVideos'
 
 // Os 2 vídeos mais recentes da playlist do SnowRunner, do mais novo pro
-// mais antigo — busca uma vez ao montar. [] enquanto carrega/se falhar.
+// mais antigo. Ver useLocalStorageCachedVideos pro comportamento de cache.
 export function useSnowrunnerVideos(): SnowrunnerVideo[] {
-  const [videos, setVideos] = useState<SnowrunnerVideo[]>([])
-
-  useEffect(() => {
-    let active = true
-    getSnowrunnerVideos().then((v) => {
-      if (active) setVideos(v)
-    })
-    return () => {
-      active = false
-    }
-  }, [])
-
-  return videos
+  return useLocalStorageCachedVideos('ggb:snowrunner-videos', getSnowrunnerVideos)
 }

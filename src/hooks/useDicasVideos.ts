@@ -1,20 +1,8 @@
-import { useEffect, useState } from 'react'
 import { getDicasVideos, type DicasVideo } from '../lib/api/dicas'
+import { useLocalStorageCachedVideos } from './useLocalStorageCachedVideos'
 
 // Os 2 vídeos mais recentes da playlist do Dicas do Galindo, do mais novo
-// pro mais antigo — busca uma vez ao montar. [] enquanto carrega/se falhar.
+// pro mais antigo. Ver useLocalStorageCachedVideos pro comportamento de cache.
 export function useDicasVideos(): DicasVideo[] {
-  const [videos, setVideos] = useState<DicasVideo[]>([])
-
-  useEffect(() => {
-    let active = true
-    getDicasVideos().then((v) => {
-      if (active) setVideos(v)
-    })
-    return () => {
-      active = false
-    }
-  }, [])
-
-  return videos
+  return useLocalStorageCachedVideos('ggb:dicas-videos', getDicasVideos)
 }

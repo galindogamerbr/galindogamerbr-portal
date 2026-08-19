@@ -1,24 +1,18 @@
 import type { Env } from '../lib/env'
-import { getPublishedVersion, getBlocks } from '../lib/d1-schedule'
+import { buildPublishedScheduleJson, getPublishedVersion, PUBLISHED_SCHEDULE_CACHE_KEY, type PublishedSchedule } from '../lib/d1-schedule'
 import { json } from '../lib/http'
 
 // Público — consumido pela página /programacao e pelo teaser da Home.
+// Lê direto do KV (escrito no publish, ver publishVersion em
+// lib/d1-schedule.ts) — só cai pro D1 se a chave ainda não existir (deploy
+// novo, antes de qualquer publish ter acontecido depois dele).
 export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const cached = await context.env.PUBLIC_CACHE.get<PublishedSchedule>(PUBLISHED_SCHEDULE_CACHE_KEY, 'json')
+  if (cached) return json(cached, { publicCacheSeconds: 30 })
+
   const version = await getPublishedVersion(context.env.DB)
-  if (!version) return json({ label: null, cycleLength: 0, weeks: [] })
+  if (!version) return json({ label: null, cycleLength: 0, weeks: [] }, { publicCacheSeconds: 30 })
 
-  const blocks = await getBlocks(context.env.DB, version.id)
-  const weeks = Array.from({ length: version.cycle_length }, (_, cycleIndex) => ({
-    cycleIndex,
-    blocks: blocks
-      .filter((block) => block.cycle_index === cycleIndex)
-      .map((block) => ({
-        dayOfWeek: block.day_of_week,
-        startTime: block.start_time,
-        endTime: block.end_time,
-        note: block.note,
-      })),
-  }))
-
-  return json({ label: version.label, cycleLength: version.cycle_length, weeks })
+  const publishedJson = await buildPublishedScheduleJson(context.env.DB, version.id)
+  return json(publishedJson, { publicCacheSeconds: 30 })
 }
