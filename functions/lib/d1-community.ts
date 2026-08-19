@@ -33,6 +33,17 @@ export async function getPostCountsCache(db: D1Database): Promise<PostCountRow[]
   return results
 }
 
+export async function upsertPostCount(db: D1Database, platform: SocialPlatform, count: number): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO post_counts_cache (platform, count, fetched_at)
+       VALUES (?, ?, datetime('now'))
+       ON CONFLICT (platform) DO UPDATE SET count = excluded.count, fetched_at = excluded.fetched_at`,
+    )
+    .bind(platform, count)
+    .run()
+}
+
 export type LiveViewerCacheRow = {
   video_id: string
   viewer_count: number

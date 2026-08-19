@@ -1,6 +1,6 @@
 import type { SocialPlatform } from '../../data/socials'
 
-export type SocialStat = { platform: SocialPlatform; count: number; fetchedAt: string }
+export type SocialStat = { platform: SocialPlatform; count: number; fetchedAt: string | null }
 
 export type LiveStatus = { isLive: boolean; viewerCount: number | null }
 
