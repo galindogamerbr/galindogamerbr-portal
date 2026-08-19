@@ -28,12 +28,23 @@ export function Header() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `text-sm font-semibold uppercase tracking-wide transition hover:text-gold ${
+                `group relative py-1 text-sm font-semibold uppercase tracking-wide transition hover:text-gold ${
                   isActive ? 'text-gold' : 'text-white/80'
                 }`
               }
             >
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {item.label}
+                  {/* Barrinha embaixo do item — cheia na página ativa, cresce a
+                      partir do centro no hover das outras. */}
+                  <span
+                    className={`absolute inset-x-0 -bottom-1 h-0.5 origin-center scale-x-0 rounded-full bg-gold transition-transform duration-300 group-hover:scale-x-100 ${
+                      isActive ? 'scale-x-100' : ''
+                    }`}
+                  />
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
