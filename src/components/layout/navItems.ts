@@ -4,7 +4,7 @@ export const NAV_ITEMS = [
   { label: 'Conteúdos', to: '/conteudos' },
   { label: 'Comunidade', to: '/comunidade' },
   { label: 'Sobre', to: '/sobre' },
-  // TODO: reativar link de Parceiros quando a página/fluxo estiver pronto (ver App.tsx)
+  { label: 'Parceiros', to: '/parceiros' },
 ] as const
 
 // Só o que não está na navbar (NAV_ITEMS) — repetir os mesmos links nos
