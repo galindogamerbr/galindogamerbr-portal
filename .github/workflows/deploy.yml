@@ -27,9 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
-
+      # Typecheck/lint/build/etc já rodam no ci.yml pro mesmo push — não
+      # repete aqui, só builda de fato pra deployar.
       - name: Build
         run: npm run build
 
