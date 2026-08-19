@@ -13,6 +13,16 @@ binding = "DB"
 database_name = "galindogamerbr_hub"
 database_id = "00000000-0000-0000-0000-000000000000" # placeholder — id real só no working tree local, nunca commitado (skip-worktree ativo, ver deploy-cron-worker.yml)
 
+# D1 separado do preview (mesmo banco que deploy-preview.yml usa) — o cron
+# roda só uma vez (não tem "preview" de Worker), então escreve nos dois D1
+# pra não deixar o preview com stats/post-counts vazios/desatualizados no
+# fallback (o caminho quente é o KV acima, compartilhado; isso é só pro
+# fallback bater também).
+[[d1_databases]]
+binding = "PREVIEW_DB"
+database_name = "galindogamerbr_hub_preview"
+database_id = "PENDING_D1_PREVIEW_DATABASE_ID" # placeholder — id real injetado no deploy via secret CLOUDFLARE_D1_PREVIEW_DATABASE_ID (ver deploy-cron-worker.yml)
+
 [[kv_namespaces]]
 binding = "PUBLIC_CACHE"
 id = "PENDING_KV_NAMESPACE_ID" # placeholder — id real injetado no deploy via secret CLOUDFLARE_KV_NAMESPACE_ID (ver deploy-cron-worker.yml)
