@@ -1,47 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import { preload } from 'react-dom'
 import { useLiveStatus } from '../../hooks/useLiveStatus'
 import { LinkButton } from '../ui/Button'
 import { Eyebrow } from '../ui/Eyebrow'
-
-function thumbnailUrl(videoId: string, quality: 'maxresdefault' | 'hqdefault'): string {
-  return `https://i.ytimg.com/vi/${videoId}/${quality}.jpg`
-}
 
 // Estado da live domina a home quando ao vivo (Fase 2) — offline (ou ainda
 // carregando), mostra o último vídeo enviado (a mesma API já devolve
 // videoId/title/thumbnailUrl mesmo com isLive: false, ver
 // functions/api/live.ts) na mesma casca de card o tempo todo, com um
-// skeleton no lugar da thumbnail/título até chegar dado de verdade — evita
+// skeleton no lugar do player/título até chegar dado de verdade — evita
 // o layout pular de um card pequeno de "Carregando…" pro card grande do
-// vídeo assim que os dados chegam. maxresdefault.jpg nem sempre existe
-// (vídeos mais antigos/baixa resolução não têm essa thumb gerada) — sem
-// fallback, a imagem falhava silenciosamente e ficava invisível pra
-// sempre; troca pra hqdefault.jpg (essa sempre existe) no onError.
+// vídeo assim que os dados chegam.
 export function LiveBanner() {
   const status = useLiveStatus()
-  const [thumbLoaded, setThumbLoaded] = useState(false)
-  const [thumbFailed, setThumbFailed] = useState(false)
-  const [isInlinePlayerActive, setIsInlinePlayerActive] = useState(false)
-  const displayedVideoIdRef = useRef<string | null>(null)
-
-  // useLiveStatus faz polling a cada 60s — a maioria das vezes devolve o
-  // mesmo videoId de antes, e nesse caso não deve acontecer nada (a
-  // thumbnail já carregada continua na tela, sem re-render de "carregando").
-  // Só quando o videoId muda de verdade (novo upload virou "último vídeo",
-  // ou o canal ficou ao vivo agora) é que reseta o estado de loading pra
-  // mostrar o spinner até a nova imagem carregar — e dispara o preload dela
-  // assim que o videoId chega, antes mesmo de decidir trocar a UI, pra
-  // minimizar esse tempo de spinner.
-  useEffect(() => {
-    if (!status?.videoId) return
-    preload(thumbnailUrl(status.videoId, 'maxresdefault'), { as: 'image' })
-
-    if (status.videoId === displayedVideoIdRef.current) return
-    displayedVideoIdRef.current = status.videoId
-    setThumbLoaded(false)
-    setThumbFailed(false)
-  }, [status?.videoId])
 
   if (status?.isLive && status.videoId) {
     return (
@@ -96,64 +65,24 @@ export function LiveBanner() {
   }
 
   // Carregando (status === null) ou offline com último vídeo (status.videoId)
-  // — mesma casca de card nos dois casos, só o conteúdo troca de skeleton
-  // pro dado real conforme chega. Clicar na thumbnail toca o vídeo embutido
-  // ali mesmo (troca pro iframe) em vez de navegar pro YouTube — só o botão
-  // "Ver no YouTube" abre em outra aba.
+  // — mesma casca de card nos dois casos. Embuti o player do YouTube direto
+  // (sem autoplay) em vez de uma thumbnail com botão de play desenhado à
+  // mão: o próprio YouTube já mostra a thumbnail + botão de play nativo
+  // antes do clique, então não tem por que replicar isso.
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-panel">
-      {isInlinePlayerActive && status?.videoId ? (
+      {status?.videoId ? (
         <iframe
-          src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1`}
+          src={`https://www.youtube.com/embed/${status.videoId}`}
           title={status.title ?? 'GalindoGamerBR'}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           className="aspect-video w-full border-0"
         />
       ) : (
-        <button
-          type="button"
-          onClick={() => status?.videoId && setIsInlinePlayerActive(true)}
-          disabled={!status?.videoId}
-          className="group block w-full"
-        >
-          <div className="relative aspect-video w-full overflow-hidden bg-panel2">
-            {!thumbLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
-              </div>
-            )}
-            {status?.videoId && (
-              <>
-                <img
-                  src={thumbnailUrl(status.videoId, thumbFailed ? 'hqdefault' : 'maxresdefault')}
-                  alt=""
-                  width={1280}
-                  height={720}
-                  fetchPriority="high"
-                  onLoad={() => setThumbLoaded(true)}
-                  onError={() => {
-                    if (!thumbFailed) setThumbFailed(true)
-                    else setThumbLoaded(true)
-                  }}
-                  className={`h-full w-full object-cover transition-opacity duration-300 group-hover:scale-105 ${thumbLoaded ? 'opacity-100' : 'opacity-0'}`}
-                />
-                {thumbLoaded && (
-                  // Formato do botão de play original do YouTube: retângulo
-                  // arredondado (não círculo) em vermelho sólido da marca,
-                  // não a cor "red" do nosso tema.
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-20 items-center justify-center rounded-2xl bg-[#FF0000] shadow-lg transition group-hover:scale-110">
-                      <svg viewBox="0 0 24 24" className="ml-1 h-8 w-8 fill-white">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </button>
+        <div className="flex aspect-video w-full items-center justify-center bg-panel2">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
+        </div>
       )}
       <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0">
