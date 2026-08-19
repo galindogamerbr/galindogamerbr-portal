@@ -1,7 +1,6 @@
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
-import { LinkButton } from '../components/ui/Button'
-// TODO: reimportar `NavButton` junto com a seção de parceiros comentada abaixo, quando reativada
+import { LinkButton, NavButton } from '../components/ui/Button'
 import { SocialLinks } from '../components/layout/SocialLinks'
 
 export function Contato() {
@@ -43,8 +42,6 @@ export function Contato() {
         </Container>
       </section>
 
-      {/* TODO: reativar seção de parceiros quando a página/fluxo estiver pronto (ver App.tsx) */}
-      {/*
       <section className="pb-16 sm:pb-24">
         <Container>
           <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -62,7 +59,6 @@ export function Contato() {
           </div>
         </Container>
       </section>
-      */}
     </>
   )
 }

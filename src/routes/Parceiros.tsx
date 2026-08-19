@@ -1,27 +1,36 @@
+import { useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
-import { NavButton } from '../components/ui/Button'
+import { Button } from '../components/ui/Button'
+import { PartnershipModal } from '../components/shared/PartnershipModal'
 
 export function Parceiros() {
-  return (
-    <section className="py-16 sm:py-24">
-      <Container className="max-w-2xl">
-        <Eyebrow>Parceiros</Eyebrow>
-        <h1 className="text-4xl sm:text-5xl">PARCEIROS</h1>
-        <p className="mt-3 text-muted">
-          Espaço reservado para marcas e projetos que acreditam no trabalho do GalindoGamerBR.
-        </p>
+  const [modalOpen, setModalOpen] = useState(false)
 
-        <div className="mt-8 rounded-lg border border-line bg-panel p-6 sm:p-8">
-          <h2 className="text-2xl">SUA MARCA AQUI</h2>
-          <p className="mt-2 text-muted">
-            Interessado em parceria, divulgação ou projeto conjunto? Entre em contato para conversarmos.
+  return (
+    <>
+      <section className="py-16 sm:py-24">
+        <Container className="max-w-2xl">
+          <Eyebrow>Parceiros</Eyebrow>
+          <h1 className="text-4xl sm:text-5xl">SUA MARCA NA RESENHA</h1>
+          <p className="mt-3 text-muted">
+            Marcas e projetos que fazem sentido pra comunidade do canal — não é sobre colocar uma logo, é sobre
+            presença de verdade: conteúdo, live, comunidade e uma audiência que confia no que o Galindo mostra.
           </p>
-          <NavButton variant="gold" className="mt-6" to="/contato">
-            Falar sobre parceria
-          </NavButton>
-        </div>
-      </Container>
-    </section>
+
+          <div className="mt-8 rounded-lg border border-gold/40 bg-panel p-6 sm:p-8">
+            <h2 className="text-2xl">VAMOS CONVERSAR SOBRE PARCERIA?</h2>
+            <p className="mt-2 text-muted">
+              Conta pra gente sobre a marca, o projeto ou a ideia — respondemos direto no seu e-mail.
+            </p>
+            <Button variant="gold" className="mt-6" onClick={() => setModalOpen(true)}>
+              Quero ser parceiro
+            </Button>
+          </div>
+        </Container>
+      </section>
+
+      <PartnershipModal open={modalOpen} onClose={() => setModalOpen(false)} />
+    </>
   )
 }
