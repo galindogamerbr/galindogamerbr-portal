@@ -1,5 +1,8 @@
 export type Env = {
   DB: D1Database
+  // Mesmo namespace KV que as Pages Functions usam (ver functions/lib/env.ts)
+  // — esse worker escreve, o site público só lê (functions/api/community-stats.ts).
+  PUBLIC_CACHE: KVNamespace
   // YouTube Data API v3 — troca a checagem de inscritos por scraping (que
   // dependia de parsear número abreviado) por um valor exato e oficial.
   YOUTUBE_API_KEY: string

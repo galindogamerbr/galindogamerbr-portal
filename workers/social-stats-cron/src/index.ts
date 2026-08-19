@@ -1,11 +1,17 @@
 import type { Env } from './env'
 import { upsertSocialStat, upsertPostCount, type SocialPlatform, type Stats } from './d1'
+import { cacheSocialStats } from './cache'
 import { fetchYoutubeStats } from './youtube'
 import { fetchTwitchFollowers } from './twitch'
 import { fetchKickFollowers } from './scrape'
 import { getInstagramStats } from './instagram'
 import { getTiktokStats } from './tiktok'
 import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
+
+// Únicas plataformas que o endpoint público lê do KV (ver
+// functions/api/community-stats.ts) — twitch/kick continuam só em D1 (lidos
+// direto, sem passar pelo caminho que o item 2 mudou).
+const CACHED_IN_KV_PLATFORMS: SocialPlatform[] = ['youtube', 'tiktok', 'instagram']
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<Stats> }
 
@@ -27,11 +33,13 @@ const FETCHERS: Fetcher[] = [
 async function collectAll(env: Env): Promise<void> {
   const results = await Promise.allSettled(
     FETCHERS.map(async ({ platform, run }) => {
-      const { count, postCount } = await run(env)
+      const stats = await run(env)
+      const { count, postCount } = stats
       if (count === null) {
         console.warn(`[social-stats-cron] ${platform}: sem dado nesta rodada`)
       } else {
         await upsertSocialStat(env.DB, platform, count)
+        if (CACHED_IN_KV_PLATFORMS.includes(platform)) await cacheSocialStats(env, platform, stats)
       }
       if (postCount !== undefined && postCount !== null) {
         await upsertPostCount(env.DB, platform, postCount)

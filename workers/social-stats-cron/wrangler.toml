@@ -3,9 +3,16 @@ main = "src/index.ts"
 compatibility_date = "2026-05-01"
 
 [triggers]
-crons = ["0 * * * *"]
+# Métricas de API oficial (YouTube/TikTok/Instagram), sem risco de cota
+# relevante nesse volume — reduzido de hora em hora pra manter o cache do
+# KV (PUBLIC_CACHE, TTL 25min em cache.ts) sempre morno.
+crons = ["*/20 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
 database_name = "galindogamerbr_hub"
-database_id = "40731032-1600-4512-ab7d-3465d93a3436"
+database_id = "00000000-0000-0000-0000-000000000000" # placeholder — id real só no working tree local, nunca commitado (skip-worktree ativo, ver deploy-cron-worker.yml)
+
+[[kv_namespaces]]
+binding = "PUBLIC_CACHE"
+id = "PENDING_KV_NAMESPACE_ID" # placeholder — id real injetado no deploy via secret CLOUDFLARE_KV_NAMESPACE_ID (ver deploy-cron-worker.yml)
