@@ -73,12 +73,30 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: d1 migrations apply galindogamerbr_hub --remote
 
+      # Mensagem lida do git (não de ${{ }} direto no command abaixo) e
+      # passada via env — evita interpolar texto de commit (fora do nosso
+      # controle) direto num comando de shell.
+      - name: Resolve mensagem do commit
+        id: commit
+        run: |
+          {
+            echo "message<<COMMIT_MSG_EOF"
+            git log -1 --format=%s "${{ github.event.workflow_run.head_sha || github.sha }}"
+            echo "COMMIT_MSG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # wrangler-action não expõe --commit-hash/--commit-message, então esse
+      # step chama o wrangler direto — sem isso, o deploy aparecia sem
+      # nenhuma mensagem/commit associado no dashboard da Cloudflare.
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=galindogamerbr-portal --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          COMMIT_MESSAGE: ${{ steps.commit.outputs.message }}
+          COMMIT_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          npx wrangler pages deploy dist --project-name=galindogamerbr-portal --branch=main \
+            --commit-hash="$COMMIT_SHA" --commit-message="$COMMIT_MESSAGE"
 
       # Roda uma coleta de social stats agora em vez de esperar até 20min
       # pela próxima rodada agendada do worker (ver
