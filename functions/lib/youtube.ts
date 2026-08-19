@@ -8,6 +8,7 @@ export type VideoState = {
   thumbnailUrl: string
   isLive: boolean
   startedAt: string | null
+  viewerCount: number | null
 }
 
 type OEmbedResponse = { title: string }
@@ -15,12 +16,14 @@ type OEmbedResponse = { title: string }
 // Sem API key: busca a página /channel/{id}/live e olha o HTML — o YouTube
 // não faz mais redirect HTTP de verdade pra essa URL (é servida como SPA).
 // O <link rel="canonical"> da página aponta pro vídeo ao vivo quando o
-// canal está transmitindo, e pro próprio canal (sem "v=") quando não está
-// — mais confiável que o marcador "isLiveNow" embutido no JSON, que na
-// prática se mostrou inconsistente (testado ao vivo, várias respostas).
-// User-Agent de navegador de verdade + cache desligado: sem isso o YouTube
-// pode servir algo diferente do que um navegador vê, e o Cloudflare pode
-// cachear a resposta (ficando presa no estado de antes da live).
+// canal está transmitindo, e pro próprio canal (sem "v=") quando não está.
+// Só usado como palpite de QUAL vídeo checar (ver resolveChannelLiveState)
+// — quem decide se está ao vivo de verdade é a Data API
+// (fetchLiveStreamingDetails), porque o fetch daqui pro YouTube, rodando
+// dentro do Workers, às vezes recebe um HTML diferente do que um navegador
+// comum vê (IP de datacenter provavelmente tratado diferente por algum
+// bot-detection do lado do YouTube) e erra o isLiveNow/canonical mesmo com
+// a live rolando de verdade.
 async function getLiveVideoId(channelId: string): Promise<string | null> {
   const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
     redirect: 'follow',
@@ -69,45 +72,57 @@ const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
 // 400 abaixo disso) — não dá pra ir mais curto que isso.
 const LIVE_STATE_CACHE_TTL_SECONDS = 60
 
+type LiveStreamingState = { isLive: boolean; viewerCount: number | null }
+
+// YouTube Data API v3 — liveStreamingDetails só aparece (e actualStartTime
+// só vem preenchido sem actualEndTime) enquanto o vídeo está ao vivo de
+// verdade. É quem decide isLive de fato: getLiveVideoId (scrape do HTML de
+// /channel/{id}/live) só serve pra sugerir qual vídeo checar, porque o
+// fetch pra lá, rodando dentro do Workers, às vezes recebe um HTML
+// diferente do que um navegador comum vê (provável bot-detection por IP de
+// datacenter) e erra o isLiveNow/canonical mesmo com a live rolando —
+// a Data API não tem esse problema.
+async function fetchLiveStreamingDetails(env: Env, videoId: string): Promise<LiveStreamingState> {
+  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
+  const res = await fetch(url)
+  if (!res.ok) return { isLive: false, viewerCount: null }
+
+  const data = (await res.json()) as {
+    items?: [{ liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string; concurrentViewers?: string } }]
+  }
+  const details = data.items?.[0]?.liveStreamingDetails
+  if (!details?.actualStartTime || details.actualEndTime) return { isLive: false, viewerCount: null }
+
+  return { isLive: true, viewerCount: details.concurrentViewers ? Number(details.concurrentViewers) : null }
+}
+
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
 // publicado se não houver live) — cache-first no KV (PUBLIC_CACHE), TTL
-// curto: cada miss custa até 3 fetches sequenciais pro YouTube (scrape +
-// feed Atom + shorts-check + oEmbed), então vale a pena servir do cache
-// pra qualquer visitante que caia dentro da janela do TTL. Não depende de
-// YOUTUBE_API_KEY nem de D1.
+// curto: cada miss custa até 4 fetches sequenciais pro YouTube (scrape +
+// feed Atom + shorts-check + oEmbed + Data API), então vale a pena servir
+// do cache pra qualquer visitante que caia dentro da janela do TTL.
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
   if (cached) return cached
 
-  const liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
-  const videoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
-  if (!videoId) return null
+  const candidateVideoId = (await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)) ?? (await getLatestUploadedVideoId(env))
+  if (!candidateVideoId) return null
 
-  const title = await fetchTitle(videoId)
+  const title = await fetchTitle(candidateVideoId)
   if (!title) return null
 
+  const { isLive, viewerCount } = await fetchLiveStreamingDetails(env, candidateVideoId)
+
   const state: VideoState = {
-    videoId,
+    videoId: candidateVideoId,
     title,
-    thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
-    isLive: liveVideoId !== null,
+    thumbnailUrl: `https://i.ytimg.com/vi/${candidateVideoId}/maxresdefault.jpg`,
+    isLive,
     startedAt: null,
+    viewerCount,
   }
   await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
   return state
-}
-
-// YouTube Data API v3 — número oficial de espectadores simultâneos
-// (liveStreamingDetails.concurrentViewers), só existe enquanto o vídeo
-// está ao vivo. Antes era via scraping da página /watch (frágil, dependia
-// de um campo interno do YouTube que podia sumir a qualquer momento).
-export async function fetchViewerCount(env: Env, videoId: string): Promise<number | null> {
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
-  const res = await fetch(url)
-  if (!res.ok) return null
-  const data = (await res.json()) as { items?: [{ liveStreamingDetails?: { concurrentViewers?: string } }] }
-  const raw = data.items?.[0]?.liveStreamingDetails?.concurrentViewers
-  return raw ? Number(raw) : null
 }
 
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }
