@@ -28,17 +28,12 @@ CLOUDFLARE_ANALYTICS_API_TOKEN=
 # direito — é o mesmo pra todos os domínios da conta).
 CLOUDFLARE_ACCOUNT_ID=
 
-# OAuth do Instagram (functions/api/admin/instagram/*.ts) — App ID e App
-# Secret do app criado em developers.facebook.com/apps (produto "Instagram
-# API with Facebook Login"). Conectar uma vez em /admin/instagram; o
-# worker (workers/social-stats-cron) renova o token sozinho depois.
-INSTAGRAM_APP_ID=
-INSTAGRAM_APP_SECRET=
-# Id da "Configuração de Login" em Login do Facebook para Empresas →
-# Configurações (não é o App ID nem o App Secret) — esse caso de uso hoje é
-# provisionado em cima do Facebook Login for Business, que exige config_id
-# no dialog de autorização em vez de scope.
-INSTAGRAM_LOGIN_CONFIG_ID=
+# Instagram (functions/api/admin/instagram/connect.ts) — sem fluxo OAuth
+# próprio. Gere um token de acesso do Instagram no App Dashboard da Meta
+# (Casos de uso → Gerenciar mensagens e conteúdo no Instagram → "Gerar
+# tokens de acesso" → conta → "Gerar token") e cole em /admin/instagram
+# junto com o ID da conta. O worker (workers/social-stats-cron) renova o
+# token sozinho depois via ig_refresh_token.
 # String arbitrária escolhida por você (não vem da Meta) — coloca o mesmo
 # valor no campo "Verificar token" ao configurar o produto Webhooks no
 # painel do app. Usado só pelo handshake de verificação em

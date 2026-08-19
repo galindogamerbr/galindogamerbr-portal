@@ -25,15 +25,6 @@ export type Env = {
   // Analytics; o de deploy tem permissão de editar Pages/D1/Workers).
   CLOUDFLARE_ANALYTICS_API_TOKEN: string
   CLOUDFLARE_ACCOUNT_ID: string
-  // OAuth do Instagram (ver functions/api/admin/instagram/*.ts) — conectado
-  // uma vez pelo admin, o worker renova o token sozinho depois.
-  INSTAGRAM_APP_ID: string
-  INSTAGRAM_APP_SECRET: string
-  // Id da "Configuração de Login" criada em Login do Facebook para Empresas
-  // → Configurações no app da Meta — o caso de uso "Instagram API" hoje é
-  // provisionado em cima desse produto, que usa config_id em vez de scope
-  // no dialog de autorização.
-  INSTAGRAM_LOGIN_CONFIG_ID: string
   // Verify token do produto Webhooks (ver functions/api/webhooks/instagram.ts)
   // — string arbitrária definida por nós, que a Meta ecoa de volta no
   // handshake de verificação. Não usamos webhooks de verdade ainda (não

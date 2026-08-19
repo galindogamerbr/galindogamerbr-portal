@@ -14,3 +14,14 @@ export async function getInstagramStatus(): Promise<InstagramStatus> {
 export async function disconnectInstagram(): Promise<void> {
   await fetch('/api/admin/instagram/disconnect', { method: 'POST' })
 }
+
+export async function connectInstagram(accessToken: string, igUserId: string): Promise<{ ok: boolean; error?: string }> {
+  const res = await fetch('/api/admin/instagram/connect', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ accessToken, igUserId }),
+  })
+  if (res.ok) return { ok: true }
+  const data = (await res.json().catch(() => null)) as { error?: string } | null
+  return { ok: false, error: data?.error ?? 'unknown_error' }
+}

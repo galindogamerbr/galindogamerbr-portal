@@ -7,7 +7,7 @@ Discord e Kick são **keyless**: scraping de páginas públicas ou endpoints nã
 ## Credenciais necessárias
 
 - **`YOUTUBE_API_KEY`** (secret do Worker, `wrangler secret put YOUTUBE_API_KEY` rodando dentro desta pasta) — API key do YouTube Data API v3 (Google Cloud Console → habilitar "YouTube Data API v3" → Credentials → Create API key).
-- **`INSTAGRAM_APP_ID`** e **`INSTAGRAM_APP_SECRET`** (secrets do Worker, mesmos valores do app "Instagram API with Facebook Login" em developers.facebook.com/apps) — usados só pra renovar o token (`fb_exchange_token`), nunca pra login. O login inicial é feito uma vez pelo admin em `/admin/instagram` no site (fluxo OAuth em `functions/api/admin/instagram/*.ts`), que grava o token no D1 (`instagram_token`); este worker só lê e renova (`src/instagram.ts`). Se ninguém conectou ainda, o Instagram simplesmente fica de fora da coleta (sem erro).
+- **Instagram**: sem secrets aqui — o token de acesso do Instagram é gerado manualmente pelo admin no App Dashboard da Meta e colado uma vez em `/admin/instagram` no site (`functions/api/admin/instagram/connect.ts`), que grava no D1 (`instagram_token`); este worker só lê e renova sozinho via `ig_refresh_token` (`src/instagram.ts`, sem precisar de App ID/Secret). Se ninguém conectou ainda, o Instagram simplesmente fica de fora da coleta (sem erro).
 - **`TIKTOK_CLIENT_KEY`** e **`TIKTOK_CLIENT_SECRET`** (secrets do Worker, mesmos valores do app "Login Kit" em developers.tiktok.com) — mesmo espírito do Instagram: login inicial uma vez em `/admin/tiktok` (`functions/api/admin/tiktok/*.ts`), token salvo no D1 (`tiktok_token`), este worker só lê e renova (`src/tiktok.ts`) a cada rodada (access token do TikTok dura só 24h).
 
 ## Rodar localmente
