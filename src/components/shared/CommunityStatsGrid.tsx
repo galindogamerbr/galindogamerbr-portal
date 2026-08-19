@@ -42,7 +42,7 @@ export function CommunityStatsGrid() {
         const live = liveByPlatform[social.platform]
         const showLive = live?.isLive
         const discordOnline = social.platform === 'discord' ? (stats?.discordOnline ?? null) : null
-        const postCount = stats?.postCounts[social.platform]
+        const postCount = stats?.postCounts?.[social.platform]
         const postLabel = POST_LABEL[social.platform]
 
         return (
