@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { SectionHead } from '../components/ui/SectionHead'
 import { Eyebrow } from '../components/ui/Eyebrow'
@@ -13,39 +12,24 @@ import { useFuriaVideos } from '../hooks/useFuriaVideos'
 import { useDicasVideos } from '../hooks/useDicasVideos'
 import { useEts2Videos } from '../hooks/useEts2Videos'
 import { useSnowrunnerVideos } from '../hooks/useSnowrunnerVideos'
-import { getLiveStatus, type LiveStatus } from '../lib/api/live'
+import { useLiveStatus } from '../hooks/useLiveStatus'
 
 const OTHER_GAMES = GAMES.filter(
   (game) =>
     !game.flagship && game.slug !== 'furia-reborn-rp' && game.slug !== 'dicas' && game.slug !== 'ets2' && game.slug !== 'snowrunner',
 )
 
-const LIVE_POLL_INTERVAL_MS = 60_000
-
 export function Conteudos() {
   const tiltRef = useTilt<HTMLDivElement>()
   const [flagship, ...recent] = useFlagshipVideos()
-  const [live, setLive] = useState<LiveStatus | null>(null)
+  // Mesmo polling de /api/live que o LiveBanner usa — evita um segundo
+  // poller independente rodando em paralelo nesta rota.
+  const live = useLiveStatus()
   const flagshipHref = flagship?.videoId ? `https://www.youtube.com/watch?v=${flagship.videoId}` : FAZENDA_NOVA_ALIANCA.href
   const furiaVideos = useFuriaVideos()
   const dicasVideos = useDicasVideos()
   const ets2Videos = useEts2Videos()
   const snowrunnerVideos = useSnowrunnerVideos()
-
-  useEffect(() => {
-    let active = true
-    function load() {
-      getLiveStatus().then((s) => {
-        if (active) setLive(s)
-      })
-    }
-    load()
-    const interval = setInterval(load, LIVE_POLL_INTERVAL_MS)
-    return () => {
-      active = false
-      clearInterval(interval)
-    }
-  }, [])
 
   const isLiveNow = live?.isLive && live.videoId === flagship?.videoId
 
