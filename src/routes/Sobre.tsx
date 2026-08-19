@@ -42,22 +42,6 @@ export function Sobre() {
   return (
     <>
       <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
-
-      {/* Banner com a foto do Galindo — imagem autocontida (borda dourada
-          própria), por isso vive num card em vez de virar fundo full-bleed
-          da página (ver about-bg.webp acima, que é o fundo fixo). */}
-      <section className="pt-16 sm:pt-24">
-        <Reveal>
-          <Container>
-            <img
-              src="/assets/about-galindo.webp"
-              alt="Galindo, criador do canal GalindoGamerBR"
-              className="w-full rounded-lg"
-            />
-          </Container>
-        </Reveal>
-      </section>
-
       <section className="py-16 sm:py-24">
         <Reveal>
           <Container className="max-w-3xl">
@@ -153,7 +137,7 @@ export function Sobre() {
               <img
                 src="/assets/logos/galindogamerbr.webp"
                 alt="Logo GalindoGamerBR"
-                className="h-28 w-28 shrink-0 sm:h-36 sm:w-36"
+                className="h-28 w-28 shrink-0 rounded-full object-cover sm:h-36 sm:w-36"
               />
             </div>
           </Container>
