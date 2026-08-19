@@ -10,6 +10,7 @@ import {
   getPostCountsCache,
   getSiteVisitsCache,
   getSocialStatsCache,
+  getTiktokLiveCache,
   upsertDiscordPresenceCache,
   upsertSiteVisitsCache,
   type SocialPlatform,
@@ -67,6 +68,15 @@ async function resolveKickLive(env: Env): Promise<LiveStatus> {
   return { isLive: false, viewerCount: null }
 }
 
+// TikTok não tem API oficial pra status "ao vivo" — diferente de
+// twitch/kick (busca fresco aqui), quem escreve esse valor é um job externo
+// (ver functions/api/webhooks/tiktok-live.ts), então aqui só lê o D1.
+async function resolveTiktokLive(env: Env): Promise<LiveStatus> {
+  const cached = await getTiktokLiveCache(env.DB)
+  if (!cached) return { isLive: false, viewerCount: null }
+  return { isLive: cached.is_live === 1, viewerCount: cached.viewer_count }
+}
+
 type DiscordCounts = { memberCount: number | null; onlineCount: number | null }
 
 // Discord não passa pelo worker (workers/social-stats-cron) — o endpoint
@@ -114,12 +124,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
   // runtime — é um método nativo que exige o this original, não uma função
   // livre. O wrapper abaixo preserva o binding.
   withEdgeCache(context.request, (promise) => context.waitUntil(promise), async () => {
-    const [socialCache, postCountsCache, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
+    const [socialCache, postCountsCache, visitsToday, twitchLive, kickLive, tiktokLive, discordCounts] = await Promise.all([
       getSocialStatsCache(context.env.DB),
       getPostCountsCache(context.env.DB),
       resolveSiteVisits(context.env),
       resolveTwitchLive(context.env),
       resolveKickLive(context.env),
+      resolveTiktokLive(context.env),
       resolveDiscordCounts(context.env),
     ])
 
@@ -178,6 +189,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
         siteVisits: { visitsToday },
         twitchLive,
         kickLive,
+        tiktokLive,
         discordOnline: discordCounts.onlineCount,
       },
       { publicCacheSeconds: 60 },

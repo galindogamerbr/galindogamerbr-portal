@@ -1,0 +1,10 @@
+{
+  "name": "tiktok-live-poll",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Roda só no GitHub Actions (ver .github/workflows/tiktok-live-poll.yml) — não faz parte do backend do site.",
+  "dependencies": {
+    "tiktok-live-connector": "^2.4.4"
+  }
+}

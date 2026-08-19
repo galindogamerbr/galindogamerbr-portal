@@ -70,3 +70,36 @@ export async function upsertSiteVisitsCache(db: D1Database, visitsToday: number)
     .bind(visitsToday)
     .run()
 }
+
+export type TiktokLiveCacheRow = {
+  is_live: number
+  viewer_count: number | null
+  room_hash: string | null
+  fetched_at: string
+}
+
+// Diferente de twitch/kick (buscados frescos a cada request): quem escreve
+// aqui é o job externo em scripts/tiktok-live-poll (ver
+// functions/api/webhooks/tiktok-live.ts) — não tem API oficial do TikTok
+// pra buscar isso na hora.
+export async function getTiktokLiveCache(db: D1Database): Promise<TiktokLiveCacheRow | null> {
+  const row = await db
+    .prepare('SELECT is_live, viewer_count, room_hash, fetched_at FROM tiktok_live_cache WHERE id = 1')
+    .first<TiktokLiveCacheRow>()
+  return row ?? null
+}
+
+export async function upsertTiktokLiveCache(
+  db: D1Database,
+  params: { isLive: boolean; viewerCount: number | null; roomHash: string | null },
+): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO tiktok_live_cache (id, is_live, viewer_count, room_hash, fetched_at)
+       VALUES (1, ?, ?, ?, datetime('now'))
+       ON CONFLICT (id) DO UPDATE SET is_live = excluded.is_live, viewer_count = excluded.viewer_count,
+         room_hash = excluded.room_hash, fetched_at = excluded.fetched_at`,
+    )
+    .bind(params.isLive ? 1 : 0, params.viewerCount, params.roomHash)
+    .run()
+}
