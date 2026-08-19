@@ -110,7 +110,10 @@ async function resolveChannelStatsFromCache(
 type ResolvedChannelStats = { count: number | undefined; postCount: number | undefined; fetchedAt: string | undefined }
 
 export const onRequestGet: PagesFunction<Env> = async (context) =>
-  withEdgeCache(context.request, context.waitUntil, async () => {
+  // context.waitUntil passado solto (sem o context como receiver) quebra em
+  // runtime — é um método nativo que exige o this original, não uma função
+  // livre. O wrapper abaixo preserva o binding.
+  withEdgeCache(context.request, (promise) => context.waitUntil(promise), async () => {
     const [socialCache, postCountsCache, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
       getSocialStatsCache(context.env.DB),
       getPostCountsCache(context.env.DB),

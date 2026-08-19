@@ -154,11 +154,18 @@ export function LiveBanner() {
       )}
       <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0">
-          <Eyebrow>{status ? 'Último vídeo' : 'Onde acompanhar'}</Eyebrow>
           {status ? (
-            <h3 className="mt-2 text-xl">{status.title}</h3>
+            <>
+              <Eyebrow>Último vídeo</Eyebrow>
+              <h3 className="mt-2 text-xl">{status.title}</h3>
+            </>
           ) : (
-            <div className="mt-3 h-5 w-2/3 animate-pulse rounded bg-panel2" />
+            // Ainda carregando — "Onde acompanhar" não faz sentido aqui, só
+            // faz sentido no fallback de falha total (ver bloco acima).
+            <>
+              <div className="h-3 w-24 animate-pulse rounded bg-panel2" />
+              <div className="mt-3 h-5 w-2/3 animate-pulse rounded bg-panel2" />
+            </>
           )}
         </div>
         {status && (

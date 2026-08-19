@@ -37,7 +37,10 @@ async function resolveViewerCount(env: Env, videoId: string): Promise<number | n
 // nenhum cache aqui pra isso. O viewer count (quando ao vivo) tem seu
 // próprio cache curto, ver resolveViewerCount.
 export const onRequestGet: PagesFunction<Env> = async (context) =>
-  withEdgeCache(context.request, context.waitUntil, async () => {
+  // context.waitUntil passado solto (sem o context como receiver) quebra em
+  // runtime — é um método nativo que exige o this original, não uma função
+  // livre. O wrapper abaixo preserva o binding.
+  withEdgeCache(context.request, (promise) => context.waitUntil(promise), async () => {
     const state = await resolveChannelLiveState(context.env)
     if (!state) {
       return json({ isLive: false, videoId: null, title: null, thumbnailUrl: null, viewerCount: null }, { publicCacheSeconds: 30 })
