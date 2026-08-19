@@ -97,6 +97,27 @@ export async function fetchViewerCount(env: Env, videoId: string): Promise<numbe
   return raw ? Number(raw) : null
 }
 
+export type ChannelStats = { count: number | null; postCount: number | null }
+
+// YouTube Data API v3 — inscritos e quantidade de vídeos numa chamada só.
+// Chamado direto de functions/api/community-stats.ts (busca sempre fresco,
+// cache em D1 só como fallback) — mesma chamada que o worker
+// workers/social-stats-cron faz de hora em hora, sem custo extra de cota
+// nem risco de renovação de token (essa API só precisa da API key, sem
+// token de usuário pra rotacionar).
+export async function fetchYoutubeStats(env: Env): Promise<ChannelStats> {
+  const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${env.YOUTUBE_CHANNEL_ID}&key=${env.YOUTUBE_API_KEY}`
+  const res = await fetch(url)
+  if (!res.ok) return { count: null, postCount: null }
+
+  const data = (await res.json()) as { items?: [{ statistics?: { subscriberCount?: string; videoCount?: string } }] }
+  const stats = data.items?.[0]?.statistics
+  return {
+    count: stats?.subscriberCount ? Number(stats.subscriberCount) : null,
+    postCount: stats?.videoCount ? Number(stats.videoCount) : null,
+  }
+}
+
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }
 
 // Sem API key: feed Atom público da playlist, do mais novo pro mais antigo —
