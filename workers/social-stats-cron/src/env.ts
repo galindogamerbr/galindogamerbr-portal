@@ -8,4 +8,10 @@ export type Env = {
   // do site (functions/api/admin/tiktok/*.ts), nunca aqui.
   TIKTOK_CLIENT_KEY: string
   TIKTOK_CLIENT_SECRET: string
+  // Token de usuário do Instagram (Instagram API with Instagram Login),
+  // gerado manualmente no App Dashboard da Meta e colado direto aqui como
+  // secret do Worker — sem painel admin no site pra isso (ver
+  // src/instagram.ts). Só usado como bootstrap na primeira rodada sem
+  // token em D1; depois disso o worker renova e persiste sozinho.
+  INSTAGRAM_ACCESS_TOKEN: string
 }

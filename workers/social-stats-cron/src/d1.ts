@@ -16,8 +16,9 @@ export async function upsertSocialStat(db: D1Database, platform: SocialPlatform,
 
 export type InstagramTokenRow = { access_token: string; ig_user_id: string; expires_at: string }
 
-// Token conectado uma vez via functions/api/admin/instagram/* (fluxo OAuth
-// no painel admin do site) — o worker só lê e renova, nunca inicia login.
+// Token bootstrapado a partir do secret INSTAGRAM_ACCESS_TOKEN na primeira
+// rodada (ver src/instagram.ts) — depois disso o worker renova e persiste
+// aqui sozinho, sem depender do secret de novo.
 export async function getInstagramToken(db: D1Database): Promise<InstagramTokenRow | null> {
   const row = await db
     .prepare('SELECT access_token, ig_user_id, expires_at FROM instagram_token WHERE id = 1')

@@ -22,14 +22,21 @@ async function refreshToken(accessToken: string): Promise<{ accessToken: string;
   return { accessToken: data.access_token, expiresAt: new Date(Date.now() + data.expires_in * 1000).toISOString() }
 }
 
-// Token de usuário do Instagram (Instagram API with Instagram Login) colado
-// manualmente uma vez pelo admin (functions/api/admin/instagram/connect.ts,
-// gerado no App Dashboard da Meta — sem fluxo OAuth próprio, ver comentário
-// lá) — aqui só lê do D1, renova sozinho antes de vencer via
-// ig_refresh_token, e busca o followers_count via graph.instagram.com. Se
-// nunca foi conectado, devolve null sem erro.
+// Token de usuário do Instagram (Instagram API with Instagram Login) — sem
+// painel admin no site, sem fluxo OAuth próprio. Gerado manualmente no App
+// Dashboard da Meta e colado direto como secret do Worker
+// (INSTAGRAM_ACCESS_TOKEN). Usa "me" como id da conta — a Graph API resolve
+// sozinha pro dono do token, sem precisar guardar/colar o id numérico. Na
+// primeira rodada sem nada em D1, bootstrapa a partir do secret com
+// expires_at no passado — força a renovação já nessa mesma rodada, que
+// grava o token renovado (de verdade, com expiração real) em D1. Daí em
+// diante, D1 é a única fonte — o secret só volta a ser usado se a tabela
+// for limpa.
 export async function getInstagramFollowers(env: Env): Promise<number | null> {
   let token = await getInstagramToken(env.DB)
+  if (!token && env.INSTAGRAM_ACCESS_TOKEN) {
+    token = { access_token: env.INSTAGRAM_ACCESS_TOKEN, ig_user_id: 'me', expires_at: new Date(0).toISOString() }
+  }
   if (!token) return null
 
   if (new Date(token.expires_at).getTime() - Date.now() < REFRESH_MARGIN_MS) {
