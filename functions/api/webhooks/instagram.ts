@@ -1,11 +1,12 @@
 import type { Env } from '../../lib/env'
 
-// Endpoint separado de functions/api/admin/instagram/callback.ts de
-// propósito: esse aqui é chamado pelos servidores da Meta (verificação do
-// produto Webhooks e notificações de evento), nunca pelo navegador de um
-// admin logado — não pode exigir sessão. Não processamos nenhum evento de
-// verdade ainda (não temos feature de responder comentário/DM), só
-// implementa o handshake de verificação pra não ficar com erro no painel.
+// Único endpoint de Instagram no site — sem painel admin, o token de acesso
+// é configurado direto como secret no worker (workers/social-stats-cron,
+// ver README lá). Esse aqui é chamado pelos servidores da Meta (verificação
+// do produto Webhooks e notificações de evento), nunca por um navegador —
+// não pode exigir sessão. Não processamos nenhum evento de verdade ainda
+// (não temos feature de responder comentário/DM), só implementa o
+// handshake de verificação pra não ficar com erro no painel.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url)
   const mode = url.searchParams.get('hub.mode')
