@@ -15,6 +15,24 @@ const CACHED_IN_KV_PLATFORMS: SocialPlatform[] = ['youtube', 'tiktok', 'instagra
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<Stats> }
 
+const DATABASE_BINDINGS = ['DB', 'PREVIEW_DB'] as const
+
+// Escreve em produção e preview igualzinho — o worker não tem "deploy de
+// preview" próprio (ver PREVIEW_DB em env.ts), então isso é o único jeito
+// do fallback de leitura do preview bater. Cada banco isolado: um falhar
+// não impede o outro (nem o resto da rodada) de gravar.
+async function upsertToAllDatabases(env: Env, write: (db: D1Database) => Promise<void>): Promise<void> {
+  await Promise.all(
+    DATABASE_BINDINGS.map(async (binding) => {
+      try {
+        await write(env[binding])
+      } catch (error) {
+        console.error(`[social-stats-cron] escrita em ${binding} falhou:`, error)
+      }
+    }),
+  )
+}
+
 // Discord não está aqui de propósito — sai ao vivo em
 // functions/api/community-stats.ts (endpoint público, sem risco de cota),
 // não precisa do cache de hora em hora do worker.
@@ -38,11 +56,11 @@ async function collectAll(env: Env): Promise<void> {
       if (count === null) {
         console.warn(`[social-stats-cron] ${platform}: sem dado nesta rodada`)
       } else {
-        await upsertSocialStat(env.DB, platform, count)
+        await upsertToAllDatabases(env, (db) => upsertSocialStat(db, platform, count))
         if (CACHED_IN_KV_PLATFORMS.includes(platform)) await cacheSocialStats(env, platform, stats)
       }
       if (postCount !== undefined && postCount !== null) {
-        await upsertPostCount(env.DB, platform, postCount)
+        await upsertToAllDatabases(env, (db) => upsertPostCount(db, platform, postCount))
       }
     }),
   )

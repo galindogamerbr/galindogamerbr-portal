@@ -1,5 +1,10 @@
 export type Env = {
   DB: D1Database
+  // Banco de preview (galindogamerbr_hub_preview, mesmo que deploy-preview.yml
+  // usa) — o worker não tem "deploy de preview" próprio, então escreve nos
+  // dois D1 pra não deixar o fallback de leitura do preview vazio/desatualizado
+  // (ver resolveChannelStatsFromCache em functions/api/community-stats.ts).
+  PREVIEW_DB: D1Database
   // Mesmo namespace KV que as Pages Functions usam (ver functions/lib/env.ts)
   // — esse worker escreve, o site público só lê (functions/api/community-stats.ts).
   PUBLIC_CACHE: KVNamespace
