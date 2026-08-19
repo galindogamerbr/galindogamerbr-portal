@@ -17,7 +17,7 @@ const TOPICS = [
   },
 ]
 
-export function ComeceAqui() {
+export function BemVindo() {
   return (
     <section className="py-16 sm:py-24">
       <Container className="max-w-3xl">

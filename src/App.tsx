@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Home } from './routes/Home'
-import { ComeceAqui } from './routes/ComeceAqui'
+import { BemVindo } from './routes/BemVindo'
 import { Conteudos } from './routes/Conteudos'
 import { Comunidade } from './routes/Comunidade'
 import { Sobre } from './routes/Sobre'
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/boas-vindas', element: <ComeceAqui /> },
+      { path: '/boas-vindas', element: <BemVindo /> },
       { path: '/comece-aqui', element: <Navigate to="/boas-vindas" replace /> },
       { path: '/conteudos', element: <Conteudos /> },
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },

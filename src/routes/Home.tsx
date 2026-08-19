@@ -34,7 +34,7 @@ export function Home() {
   return (
     <>
       <Hero />
-      <ComeceAquiTeaser />
+      <BemVindoTeaser />
       <TransmissoesTeaser />
       <JogosBannerCta />
       <ComunidadeTeaser />
@@ -102,7 +102,7 @@ function Hero() {
   )
 }
 
-function ComeceAquiTeaser() {
+function BemVindoTeaser() {
   return (
     <section className="py-16 sm:py-24">
       <Reveal>
