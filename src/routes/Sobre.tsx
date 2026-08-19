@@ -1,13 +1,15 @@
+import { useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
-import { NavButton } from '../components/ui/Button'
+import { Button, NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
+import { PartnershipModal } from '../components/shared/PartnershipModal'
 
-// Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
-// Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
-// escurecido junto do resto do fundo.
-const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
+// Igual ao escurecimento padrão (#03070b40) da metade pra frente, some antes
+// disso — o Galindo fica no lado esquerdo da imagem (about-bg.webp) e não
+// pode ficar escurecido junto do resto do fundo.
+const ABOUT_OVERLAY = 'linear-gradient(90deg, transparent 20%, #03070b40 50%, #03070b40 100%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
@@ -35,18 +37,22 @@ const STORY = [
 ]
 
 export function Sobre() {
+  const [modalOpen, setModalOpen] = useState(false)
+
   return (
     <>
-      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
+      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} position="left top" />
       <section className="py-16 sm:py-24">
         <Reveal>
-          <Container className="max-w-3xl">
-            <Eyebrow>A história por trás do canal</Eyebrow>
-            <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
-            <p className="mt-3 text-lg text-muted">
-              Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
-              muito antes das lives.
-            </p>
+          <Container>
+            <div className="ml-auto max-w-3xl">
+              <Eyebrow>A história por trás do canal</Eyebrow>
+              <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
+              <p className="mt-3 text-lg text-muted">
+                Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
+                muito antes das lives.
+              </p>
+            </div>
           </Container>
         </Reveal>
       </section>
@@ -54,7 +60,7 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
+            <div className="ml-auto max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
               <Eyebrow>Quem é o Galindo?</Eyebrow>
               <h2 className="text-2xl sm:text-3xl">
                 EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
@@ -113,8 +119,6 @@ export function Sobre() {
         </Reveal>
       </section>
 
-      {/* TODO: reativar seção de parceiros quando a página/fluxo estiver pronto (ver App.tsx) */}
-      {/*
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
@@ -127,14 +131,13 @@ export function Sobre() {
                 sentido para os dois lados</strong> e colocar marcas junto de uma comunidade real, ativa e
                 construída com proximidade.
               </p>
-              <NavButton variant="gold" className="mt-6" to="/parceiros">
+              <Button variant="gold" className="mt-6" onClick={() => setModalOpen(true)}>
                 Quero conhecer o projeto →
-              </NavButton>
+              </Button>
             </div>
           </Container>
         </Reveal>
       </section>
-      */}
 
       <section className="pb-16 sm:pb-24 text-center">
         <Reveal>
@@ -156,6 +159,8 @@ export function Sobre() {
           </Container>
         </Reveal>
       </section>
+
+      <PartnershipModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   )
 }

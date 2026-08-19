@@ -3,6 +3,12 @@ type PageBackgroundProps = {
   // Degradê escuro sobre a imagem (sintaxe de linear-gradient CSS). Página
   // que precisar de um contraste diferente passa o seu.
   overlay?: string
+  // Ponto de ancoragem do background-position (sintaxe CSS). Página com um
+  // elemento importante (ex: rosto numa foto) perto de uma borda em vez do
+  // centro passa a sua — o cover ainda corta as bordas em telas com aspect
+  // ratio diferente do da imagem, então o corte precisa sobrar do lado sem
+  // conteúdo relevante.
+  position?: string
 }
 
 const DEFAULT_OVERLAY = 'linear-gradient(#03070b40, #03070b40)'
@@ -15,7 +21,7 @@ const DEFAULT_OVERLAY = 'linear-gradient(#03070b40, #03070b40)'
 // porque esse último tem suporte inconsistente entre navegadores e, em
 // conteúdo bem mais alto que largo, faz o background-size:cover dar um
 // zoom gigante pra tentar cobrir a altura inteira da página em vez da tela.
-export function PageBackground({ image, overlay = DEFAULT_OVERLAY }: PageBackgroundProps) {
+export function PageBackground({ image, overlay = DEFAULT_OVERLAY, position = 'center top' }: PageBackgroundProps) {
   return (
     <div
       aria-hidden="true"
@@ -23,7 +29,7 @@ export function PageBackground({ image, overlay = DEFAULT_OVERLAY }: PageBackgro
       style={{
         backgroundImage: `${overlay}, url(${image})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        backgroundPosition: position,
         backgroundRepeat: 'no-repeat',
       }}
     />
