@@ -8,6 +8,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!email) return json({ error: 'unauthorized' }, { status: 401 })
 
   const versionId = Number(context.params.id)
-  await publishVersion(context.env.DB, versionId)
+  await publishVersion(context.env.DB, context.env.PUBLIC_CACHE, versionId)
   return json({ ok: true })
 }
