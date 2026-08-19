@@ -15,11 +15,13 @@ export function GameCard({ game }: { game: Game }) {
       className="group flex flex-col overflow-hidden rounded-lg border border-gold/30 bg-panel shadow-[0_0_0_4px_#070b10] transition-colors hover:border-gold/60"
     >
       <div className="flex min-h-[190px] items-center justify-center bg-[#070b10] p-3">
-        <img src={game.image} alt={game.title} className="w-full object-contain" />
+        <img src={game.image} alt={game.title} width={1672} height={941} loading="lazy" className="w-full object-contain" />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
         <div className="flex items-center gap-2">
-          {game.icon && <img src={game.icon} alt="" className="h-5 w-5 shrink-0 object-contain" />}
+          {game.icon && (
+            <img src={game.icon} alt="" width={20} height={20} loading="lazy" className="h-5 w-5 shrink-0 object-contain" />
+          )}
           <span className="text-xs font-semibold uppercase tracking-widest text-gold">{game.tag}</span>
         </div>
         <h3 className="text-xl">{game.title}</h3>

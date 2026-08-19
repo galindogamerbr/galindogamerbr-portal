@@ -17,8 +17,10 @@ Portal da comunidade GalindoGamerBR. React + TypeScript + Vite no front, Cloudfl
 
 - **Front**: Vite + React + TypeScript + Tailwind CSS
 - **Back**: Cloudflare Pages Functions (colocadas em `/functions`) + Cloudflare D1
+- **Cache**: Cloudflare Workers KV (binding `PUBLIC_CACHE`) — live status, viewer count, status Twitch/Kick, inscritos/posts de redes sociais e a programação publicada são cache-first no KV; D1 continua sendo a fonte de verdade normalizada. Compartilhado entre produção e preview (mesmo namespace).
 - **Auth**: código OTP por e-mail via Resend
 - **Live/vídeos**: sem API key do YouTube — feed Atom público + oEmbed (ver `functions/lib/youtube.ts`)
+- **Métricas de redes sociais**: coletadas por um worker separado (`workers/social-stats-cron`, cron a cada 20min) que escreve no KV (produção e preview) e no D1 (só produção) — ver seção própria abaixo
 
 ## Rodando local
 
@@ -77,21 +79,27 @@ Abre o PR no GitHub, revisa, e **merge pra `main`** — isso dispara o deploy au
 
 ### Produção (automático)
 
-Todo merge/push em `main` roda o workflow do GitHub Actions: typecheck → build → aplica migrations do D1 → `wrangler pages deploy` com `--branch=main`, publicando em produção (o domínio real).
+`deploy.yml` **não** dispara direto no push — dispara via `workflow_run` só depois que `ci.yml` terminar com sucesso num push em `main` (lint/typecheck/audit/sequência de migrations viram gate real do deploy, não só do PR). Reusa o `dist/` já buildado no `ci.yml` (`upload-artifact`/`download-artifact`) em vez de buildar de novo. Tem `concurrency` (`group: deploy-production`) pra nunca rodar duas migrations/deploys de D1 em paralelo. Também dá pra disparar manualmente (`workflow_dispatch`, ex.: pra pegar uma env var nova do dashboard da Cloudflare sem mudar código) — nesse caso builda direto, sem artefato de CI associado.
+
+Passos: aplica migrations do D1 → `wrangler pages deploy` com `--branch=main` → dispara uma rodada de coleta do worker de social stats (ver seção própria abaixo), sem esperar os até 20min do cron.
 
 Precisa desses secrets configurados no repositório (Settings → Secrets and variables → Actions):
 
-- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages e D1
+- `CLOUDFLARE_API_TOKEN` — token com permissão de editar Pages, D1 e Workers
 - `CLOUDFLARE_ACCOUNT_ID` — id da conta Cloudflare (não fica hardcoded em lugar nenhum do repo)
 - `CLOUDFLARE_D1_DATABASE_ID` — id do banco D1 de produção; o workflow substitui o placeholder do `wrangler.toml` por esse valor antes de aplicar migrations/deployar (o id real nunca fica commitado — só nesse secret e no working tree local, via `skip-worktree`)
+- `CLOUDFLARE_KV_NAMESPACE_ID` — id do namespace Workers KV (`PUBLIC_CACHE`) usado pelo cache-first de live/viewer/Twitch/Kick/social stats/programação — mesmo tratamento de placeholder que o `CLOUDFLARE_D1_DATABASE_ID`. Compartilhado entre produção e preview (mesmo namespace, id igual nos dois).
+- `CRON_TRIGGER_SECRET` — autoriza o gatilho manual de coleta do worker `workers/social-stats-cron` depois do deploy (ver seção própria). Não derruba o deploy se faltar/errar (só não aquece o cache antes da hora).
 
 ### Preview (manual, outras branches)
 
-O workflow `deploy-preview.yml` roda sob demanda (Actions → Deploy Preview → Run workflow, escolhendo a branch) — não dispara sozinho a cada push. Mesmos passos do deploy de produção (typecheck → build → migrations → deploy), mas publicando como *preview deployment* daquela branch, sem tocar produção.
+O workflow `deploy-preview.yml` roda sob demanda (Actions → Deploy Preview → Run workflow, escolhendo a branch) — não dispara sozinho a cada push. Mesmos passos do deploy de produção (typecheck → build → migrations → deploy), mas publicando como *preview deployment*.
 
-O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê/escreve no banco de produção. Cloudflare Pages ignora seções `[env.preview]` no `wrangler.toml` (isso é coisa de Workers, não de Pages — confirmado testando), então o workflow sobrescreve com `sed` o `database_id` e o `ENVIRONMENT` do bloco de topo antes de buildar, só nesse job (nunca fica commitado assim). Também precisa de:
+**URL fixa, não uma por branch**: todo run publica com `--branch=preview` (alias fixo), então a URL é sempre `https://preview.galindogamerbr-hub-portal.pages.dev`, não importa qual branch rodou o workflow. Antes de publicar o novo, o workflow apaga todo deployment de preview existente (`wrangler pages deployment list/delete`) — só existe "o" preview atual, nunca um acumulado de runs antigos com hash na URL.
 
-- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` — id do banco D1 de preview
+O preview usa banco D1 **separado** (`galindogamerbr_hub_preview`) — nunca lê/escreve no banco de produção. Cloudflare Pages ignora seções `[env.preview]` no `wrangler.toml` (isso é coisa de Workers, não de Pages — confirmado testando), então o workflow sobrescreve com `sed` o `database_id` e o `ENVIRONMENT` do bloco de topo antes de buildar, só nesse job (nunca fica commitado assim). O KV (`PUBLIC_CACHE`) **não** é separado — preview e produção compartilham o mesmo namespace de propósito (é só cache de dado público, sem custo em duplicar por ambiente). Também precisa de:
+
+- `CLOUDFLARE_D1_PREVIEW_DATABASE_ID` — id do banco D1 de preview (também usado pelo worker de social stats, ver abaixo, pra escrever nos dois D1)
 
 O e-mail de OTP em preview também sai de um remetente separado (`acesso-preview@galindogamerbr.com.br`, ver `functions/lib/resend.ts`), pra não misturar com o remetente de produção.
 
@@ -104,7 +112,11 @@ git checkout minha-mudanca
 npm run deploy
 ```
 
-Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-portal` **sem** `--branch` fixo — o wrangler detecta o branch git atual e publica como preview. Só que localmente o `wrangler.toml` tem o `database_id` de produção no `[[d1_databases]]` de topo (é o que o `skip-worktree` guarda) — então um deploy manual local com esse comando ainda aponta o binding padrão pro banco de produção; prefira deixar o `deploy-preview.yml` cuidar disso.
+Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-portal` **sem** `--branch` fixo — o wrangler detecta o branch git atual e publica como preview (numa URL própria daquela branch, diferente da URL fixa `/preview` que `deploy-preview.yml` usa). Só que localmente o `wrangler.toml` tem o `database_id`/KV `id` de produção nos bindings de topo (é o que o `skip-worktree` guarda) — então um deploy manual local com esse comando ainda aponta pro banco/cache de produção; prefira deixar o `deploy-preview.yml` cuidar disso.
+
+### Worker de social stats (`workers/social-stats-cron`)
+
+Worker separado (cron, não Pages Functions — ver `workers/social-stats-cron/README.md`) que coleta seguidores/posts do YouTube/TikTok/Instagram/Twitch/Kick a cada 20min, escrevendo no KV compartilhado (`PUBLIC_CACHE`, lido pelo site) e no D1 — nos **dois** bancos, produção e preview, pra nenhum dos dois ambientes ficar com o fallback de leitura vazio. Deploy próprio (`deploy-cron-worker.yml`, dispara em push que mexe em `workers/social-stats-cron/**` ou manualmente), com um `fetch()` handler protegido por secret (`CRON_TRIGGER_SECRET`, header `x-trigger-secret`) que `deploy.yml`, `deploy-preview.yml` e o próprio `deploy-cron-worker.yml` chamam depois de todo deploy — assim o cache nunca fica frio esperando os 20min do agendamento normal. Precisa, além dos secrets de produção/preview já citados, dos secrets próprios do worker (`YOUTUBE_API_KEY`, `INSTAGRAM_ACCESS_TOKEN`, `TIKTOK_CLIENT_KEY`/`TIKTOK_CLIENT_SECRET`, `CRON_TRIGGER_SECRET`) — ver `workers/social-stats-cron/README.md`.
 
 ### Banco remoto (D1)
 

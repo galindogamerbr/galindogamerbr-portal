@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -32,6 +34,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Injetar D1 database_id (produção e preview) e KV namespace id
+        working-directory: workers/social-stats-cron
+        run: |
+          sed -i "s/00000000-0000-0000-0000-000000000000/${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}/" wrangler.toml
+          sed -i "s/PENDING_D1_PREVIEW_DATABASE_ID/${{ secrets.CLOUDFLARE_D1_PREVIEW_DATABASE_ID }}/" wrangler.toml
+          sed -i "s/PENDING_KV_NAMESPACE_ID/${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}/" wrangler.toml
+
       - name: Deploy cron worker
         uses: cloudflare/wrangler-action@v4
         with:
@@ -39,3 +48,10 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/social-stats-cron
           command: deploy
+
+      # Roda uma coleta agora em vez de esperar até 20min pela próxima
+      # rodada agendada — não derruba o job se falhar (o deploy em si já
+      # teve sucesso, isso é só um bônus de cache morno).
+      - name: Disparar coleta de social stats agora
+        run: |
+          curl -s -X POST -H "x-trigger-secret: ${{ secrets.CRON_TRIGGER_SECRET }}" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/ || true

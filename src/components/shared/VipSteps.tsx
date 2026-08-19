@@ -3,8 +3,8 @@ import { LinkButton } from '../ui/Button'
 
 // Critério de entrada: um dos dois qualifica (não os dois ao mesmo tempo).
 const ELIGIBILITY = [
-  { title: 'YouTube', text: 'Membro Ouro ou acima.' },
-  { title: 'TikTok', text: 'Super Fan.' },
+  { title: 'YouTube', text: 'Membro Ouro ou acima.', icon: 'youtube' },
+  { title: 'TikTok', text: 'Super Fan.', icon: 'tiktok' },
 ]
 
 // Passos de verdade, sequenciais, depois de já se qualificar por um dos critérios acima.
@@ -30,6 +30,9 @@ export function VipSteps({ variant = 'full' }: VipStepsProps) {
         Um espaço exclusivo e propositalmente seleto — reconhece quem fortalece o canal e ajuda a manter vivo o
         servidor, os projetos e toda a resenha que construímos juntos.
       </p>
+      <p className="mt-2 max-w-2xl text-muted">
+        Já se qualifica? Bora fazer parte dessa comunidade — chega junto e ajuda a manter a resenha viva!
+      </p>
 
       {variant === 'full' && (
         <>
@@ -38,9 +41,12 @@ export function VipSteps({ variant = 'full' }: VipStepsProps) {
             <div className="mt-2 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
               {ELIGIBILITY.map((item, index) => (
                 <div key={item.title} className="flex flex-1 items-center gap-2 sm:contents">
-                  <div className="flex-1 rounded-md border border-line bg-panel2 p-4">
-                    <h4 className="text-sm font-semibold uppercase tracking-wide">{item.title}</h4>
-                    <p className="mt-1 text-xs text-muted">{item.text}</p>
+                  <div className="flex flex-1 items-center gap-3 rounded-md border border-line bg-panel2 p-4">
+                    <img src={`/assets/icons/${item.icon}.svg`} alt="" className="h-6 w-6 shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-semibold uppercase tracking-wide">{item.title}</h4>
+                      <p className="mt-1 text-xs text-muted">{item.text}</p>
+                    </div>
                   </div>
                   {index === 0 && (
                     <span className="shrink-0 self-center rounded-full border border-gold/40 px-2 py-1 text-xs font-bold text-gold">

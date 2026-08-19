@@ -1,6 +1,16 @@
+import { useEffect, useRef, useState } from 'react'
+import { preload } from 'react-dom'
 import { LinkButton } from '../ui/Button'
 
 type Video = { videoId: string; title: string; thumbnailUrl: string }
+
+function hqThumbnailUrl(videoId: string): string {
+  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+}
+
+function videoIdsKey(videos: Video[]): string {
+  return videos.map((video) => video.videoId).join(',')
+}
 
 // Cores por card — mesma paleta de marca usada nos <Button>, só que também
 // precisamos da borda/selo/sombra combinando. Classes escritas por extenso
@@ -64,9 +74,33 @@ export function GameHighlightCard({
   const colors = COLORS[variant]
   const fitClass = imageFit === 'contain' ? 'object-contain bg-bg' : 'object-cover'
 
+  // videos (prop) só muda de conteúdo de verdade quando o hook por trás
+  // (useLocalStorageCachedVideos) decide que a lista é diferente da exibida
+  // — nunca por causa de um polling que devolveu os mesmos vídeos. Ainda
+  // assim, guardamos displayedVideos à parte pra poder disparar o preload
+  // das novas thumbnails antes de trocar a UI (mesma ideia do LiveBanner) e
+  // pra ter uma key estável pro crossfade (só anima quando o conjunto de
+  // videoIds muda, nunca por causa de um novo array com o mesmo conteúdo).
+  const [displayedVideos, setDisplayedVideos] = useState(videos)
+  const displayedVideosRef = useRef(displayedVideos)
+  displayedVideosRef.current = displayedVideos
+
+  useEffect(() => {
+    if (videoIdsKey(videos) === videoIdsKey(displayedVideosRef.current)) return
+    for (const video of videos) preload(hqThumbnailUrl(video.videoId), { as: 'image' })
+    setDisplayedVideos(videos)
+  }, [videos])
+
   return (
     <div className={`grid grid-cols-1 overflow-hidden rounded-lg border-2 ${colors.border} ${colors.shadow} lg:grid-cols-2`}>
-      <img src={image} alt={title} className={`aspect-video w-full ${fitClass} lg:aspect-auto lg:h-full`} />
+      <img
+        src={image}
+        alt={title}
+        width={1672}
+        height={941}
+        loading="lazy"
+        className={`aspect-video w-full ${fitClass} lg:aspect-auto lg:h-full`}
+      />
       <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
         <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${colors.badge}`}>
           {badgeEmoji} {badgeLabel}
@@ -79,11 +113,15 @@ export function GameHighlightCard({
           </LinkButton>
         </div>
 
-        {videos.length > 0 && (
+        {displayedVideos.length > 0 && (
           <div className="mt-2 w-full">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/50">Últimos vídeos da playlist</p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              {videos.map((video) => (
+            {/* key troca só quando o conjunto de videoIds muda de verdade — o
+                React remonta o bloco inteiro, disparando o crossfade de uma
+                vez (ver .crossfade-in em src/styles/global.css). Nunca troca
+                thumbnail por thumbnail. */}
+            <div key={videoIdsKey(displayedVideos)} className="crossfade-in flex flex-col gap-3 sm:flex-row">
+              {displayedVideos.map((video) => (
                 <a
                   key={video.videoId}
                   href={`https://www.youtube.com/watch?v=${video.videoId}`}
@@ -91,7 +129,17 @@ export function GameHighlightCard({
                   rel="noopener noreferrer"
                   className={`flex flex-1 items-center gap-3 overflow-hidden rounded-md border border-line bg-panel2 p-2 transition ${colors.hover}`}
                 >
-                  <img src={video.thumbnailUrl} alt="" className="aspect-video w-20 shrink-0 rounded object-cover" />
+                  {/* hqdefault (480×360) em vez de maxresdefault (1280×720, o que vem em
+                      video.thumbnailUrl) — esses thumbnails renderizam em w-20 (80px), não
+                      faz sentido baixar a versão em resolução máxima aqui. */}
+                  <img
+                    src={hqThumbnailUrl(video.videoId)}
+                    alt=""
+                    width={480}
+                    height={360}
+                    loading="lazy"
+                    className="aspect-video w-20 shrink-0 rounded object-cover"
+                  />
                   <p className="line-clamp-2 text-xs font-semibold">{video.title}</p>
                 </a>
               ))}

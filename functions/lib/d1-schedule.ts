@@ -25,6 +25,14 @@ export type ScheduleBlockInput = {
   note?: string | null
 }
 
+export const PUBLISHED_SCHEDULE_CACHE_KEY = 'schedule:published-json'
+
+export type PublishedSchedule = {
+  label: string | null
+  cycleLength: number
+  weeks: { cycleIndex: number; blocks: { dayOfWeek: number; startTime: string; endTime: string; note: string | null }[] }[]
+}
+
 export async function getPublishedVersion(db: D1Database): Promise<ScheduleVersionRow | null> {
   const row = await db.prepare('SELECT * FROM schedule_versions WHERE is_published = 1 LIMIT 1').first<ScheduleVersionRow>()
   return row ?? null
@@ -92,9 +100,37 @@ export async function updateVersion(
   }
 }
 
-export async function publishVersion(db: D1Database, versionId: number): Promise<void> {
+// Monta o JSON público (mesmo shape que functions/api/schedule.ts devolve)
+// pra uma versão específica — usado tanto pelo write-through no publish
+// quanto pelo fallback de leitura direta em D1 (ver functions/api/schedule.ts).
+export async function buildPublishedScheduleJson(db: D1Database, versionId: number): Promise<PublishedSchedule> {
+  const version = await getVersion(db, versionId)
+  if (!version) return { label: null, cycleLength: 0, weeks: [] }
+
+  const blocks = await getBlocks(db, versionId)
+  const weeks = Array.from({ length: version.cycle_length }, (_, cycleIndex) => ({
+    cycleIndex,
+    blocks: blocks
+      .filter((block) => block.cycle_index === cycleIndex)
+      .map((block) => ({
+        dayOfWeek: block.day_of_week,
+        startTime: block.start_time,
+        endTime: block.end_time,
+        note: block.note,
+      })),
+  }))
+
+  return { label: version.label, cycleLength: version.cycle_length, weeks }
+}
+
+// D1 continua fonte de verdade normalizada; o KV (write-through aqui) é só a
+// cópia pronta que o endpoint público lê, pra não remontar o JSON aninhado
+// (2 queries + agrupamento em memória) em toda leitura — só quando publica.
+export async function publishVersion(db: D1Database, kv: KVNamespace, versionId: number): Promise<void> {
   await db.batch([
     db.prepare('UPDATE schedule_versions SET is_published = 0 WHERE is_published = 1'),
     db.prepare('UPDATE schedule_versions SET is_published = 1 WHERE id = ?').bind(versionId),
   ])
+  const publishedJson = await buildPublishedScheduleJson(db, versionId)
+  await kv.put(PUBLISHED_SCHEDULE_CACHE_KEY, JSON.stringify(publishedJson))
 }
