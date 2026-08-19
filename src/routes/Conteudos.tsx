@@ -4,6 +4,7 @@ import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { GameCard } from '../components/shared/GameCard'
 import { GameHighlightCard } from '../components/shared/GameHighlightCard'
+import { VideoEmbed } from '../components/shared/VideoEmbed'
 import { LinkButton } from '../components/ui/Button'
 import { GAMES, FAZENDA_NOVA_ALIANCA, FURIA_REBORN, DICAS, ETS2, SNOWRUNNER } from '../data/games'
 import { useTilt } from '../hooks/useTilt'
@@ -53,13 +54,7 @@ export function Conteudos() {
               >
                 <div className="relative aspect-video w-full">
                   {flagship?.videoId ? (
-                    <iframe
-                      src={`https://www.youtube.com/embed/${flagship.videoId}${isLiveNow ? '?autoplay=1&mute=1' : ''}`}
-                      title={flagship.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="h-full w-full border-0"
-                    />
+                    <VideoEmbed videoId={flagship.videoId} title={flagship.title} autoplay={isLiveNow} />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-panel2">
                       <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-white" />

@@ -1,27 +1,20 @@
 import { useLiveStatus } from '../../hooks/useLiveStatus'
 import { LinkButton } from '../ui/Button'
 import { Eyebrow } from '../ui/Eyebrow'
+import { VideoEmbed } from './VideoEmbed'
 
 // Estado da live domina a home quando ao vivo (Fase 2) — offline (ou ainda
 // carregando), mostra o último vídeo enviado (a mesma API já devolve
 // videoId/title/thumbnailUrl mesmo com isLive: false, ver
 // functions/api/live.ts) na mesma casca de card o tempo todo, com um
-// skeleton no lugar do player/título até chegar dado de verdade — evita
-// o layout pular de um card pequeno de "Carregando…" pro card grande do
-// vídeo assim que os dados chegam.
+// skeleton no lugar do player/título até chegar dado de verdade.
 export function LiveBanner() {
   const status = useLiveStatus()
 
   if (status?.isLive && status.videoId) {
     return (
       <div className="overflow-hidden rounded-lg border border-line bg-panel">
-        <iframe
-          src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1&mute=1`}
-          title={status.title ?? 'GalindoGamerBR'}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          className="aspect-video w-full border-0"
-        />
+        <VideoEmbed videoId={status.videoId} title={status.title ?? 'GalindoGamerBR'} autoplay />
         <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
@@ -64,21 +57,11 @@ export function LiveBanner() {
     )
   }
 
-  // Carregando (status === null) ou offline com último vídeo (status.videoId)
-  // — mesma casca de card nos dois casos. Embuti o player do YouTube direto
-  // (sem autoplay) em vez de uma thumbnail com botão de play desenhado à
-  // mão: o próprio YouTube já mostra a thumbnail + botão de play nativo
-  // antes do clique, então não tem por que replicar isso.
+  // Carregando (status === null) ou offline com último vídeo (status.videoId).
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-panel">
       {status?.videoId ? (
-        <iframe
-          src={`https://www.youtube.com/embed/${status.videoId}`}
-          title={status.title ?? 'GalindoGamerBR'}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          className="aspect-video w-full border-0"
-        />
+        <VideoEmbed videoId={status.videoId} title={status.title ?? 'GalindoGamerBR'} autoplay={false} />
       ) : (
         <div className="flex aspect-video w-full items-center justify-center bg-panel2">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
