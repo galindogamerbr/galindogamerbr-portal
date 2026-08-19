@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
-import { Button, NavButton, buttonClasses } from '../components/ui/Button'
+import { Button, NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
 import { PartnershipModal } from '../components/shared/PartnershipModal'
 
@@ -10,6 +10,8 @@ import { PartnershipModal } from '../components/shared/PartnershipModal'
 // Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
 // escurecido junto do resto do fundo.
 const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
+
+const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
 const STORY = [
   {
@@ -40,34 +42,64 @@ export function Sobre() {
   return (
     <>
       <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
-
-      {/* Banner com a foto do Galindo (imagem autocontida, borda dourada
-          própria — ver about-bg.webp acima, que é o fundo fixo da página)
-          ao lado do resumo "quem é o Galindo". */}
       <section className="py-16 sm:py-24">
         <Reveal>
-          <Container className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
-            <img
-              src="/assets/about-galindo.webp"
-              alt="Galindo, criador do canal GalindoGamerBR"
-              className="w-full rounded-lg"
-            />
-            <div>
-              <Eyebrow>Sobre o Galindo</Eyebrow>
-              <h1 className="text-4xl sm:text-5xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h1>
-              <p className="mt-3 text-lg text-muted">
-                41 anos, casado, trabalha na cidade e continua sendo aquele cara que se apaixonou por jogos quando
-                ainda era criança. O canal nasceu para criar encontros, não só transmissões.
-              </p>
-              <a href="#historia" className={buttonClasses('gold', 'md', 'mt-6')}>
-                Conheça minha história →
-              </a>
+          <Container className="max-w-3xl">
+            <Eyebrow>A história por trás do canal</Eyebrow>
+            <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
+            <p className="mt-3 text-lg text-muted">
+              Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
+              muito antes das lives.
+            </p>
+          </Container>
+        </Reveal>
+      </section>
+
+      <section className="pb-16 sm:pb-24">
+        <Reveal>
+          <Container>
+            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
+              <Eyebrow>Quem é o Galindo?</Eyebrow>
+              <h2 className="text-2xl sm:text-3xl">
+                EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
+              </h2>
+              <div className="mt-4 space-y-4 text-justify text-muted">
+                <p>
+                  <strong className="text-white">
+                    Tenho 41 anos, sou casado, trabalho na cidade e tenho uma vida como qualquer pessoa que corre
+                    atrás dos seus objetivos.
+                  </strong>{' '}
+                  Mas existe uma parte que nunca ficou para trás: aquele garoto que descobriu, nos videogames e na
+                  época do Windows 95, que uma tela podia abrir portas para mundos inteiros.
+                </p>
+                <p>
+                  Os anos passaram. Vieram responsabilidades, trabalho, família e uma vida cada vez mais corrida. Só
+                  que a paixão pelos jogos continuou ali. E foi justamente dessa paixão que nasceu o GalindoGamerBR.
+                </p>
+                <p>
+                  As lives são a maneira de colocar essa paixão para fora e mostrar um pedaço da vida para o mundo.
+                  Não é apenas ligar o jogo e transmitir: é entrar em contato com pessoas, conhecer histórias, rir,
+                  trocar ideia e construir lembranças que não existiriam jogando sozinho.
+                </p>
+                <p>
+                  <strong className="text-white">Uma boa live precisa fazer alguém querer voltar.</strong> Pode ser
+                  pela resenha, pelo gameplay, pela história de uma fazenda, por um momento inesperado no roleplay ou
+                  simplesmente porque existe alguém do outro lado disposto a conversar.
+                </p>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {CHIPS.map((chip) => (
+                  <span key={chip} className="rounded-full border border-gold bg-panel2 px-3 py-1 text-xs text-gold">
+                    {chip}
+                  </span>
+                ))}
+              </div>
             </div>
           </Container>
         </Reveal>
       </section>
 
-      <section id="historia" className="pb-16 sm:pb-24">
+      <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
             <Eyebrow>De onde veio tudo isso</Eyebrow>
