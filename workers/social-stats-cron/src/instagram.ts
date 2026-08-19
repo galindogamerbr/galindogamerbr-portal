@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { getInstagramToken, upsertInstagramToken } from './d1'
+import { getInstagramToken, upsertInstagramToken, type Stats } from './d1'
 
 const GRAPH_VERSION = 'v22.0'
 
@@ -32,12 +32,12 @@ async function refreshToken(accessToken: string): Promise<{ accessToken: string;
 // grava o token renovado (de verdade, com expiração real) em D1. Daí em
 // diante, D1 é a única fonte — o secret só volta a ser usado se a tabela
 // for limpa.
-export async function getInstagramFollowers(env: Env): Promise<number | null> {
+export async function getInstagramStats(env: Env): Promise<Stats> {
   let token = await getInstagramToken(env.DB)
   if (!token && env.INSTAGRAM_ACCESS_TOKEN) {
     token = { access_token: env.INSTAGRAM_ACCESS_TOKEN, ig_user_id: 'me', expires_at: new Date(0).toISOString() }
   }
-  if (!token) return null
+  if (!token) return { count: null }
 
   if (new Date(token.expires_at).getTime() - Date.now() < REFRESH_MARGIN_MS) {
     const refreshed = await refreshToken(token.access_token)
@@ -50,12 +50,12 @@ export async function getInstagramFollowers(env: Env): Promise<number | null> {
   }
 
   const url = new URL(`https://graph.instagram.com/${GRAPH_VERSION}/${token.ig_user_id}`)
-  url.searchParams.set('fields', 'followers_count')
+  url.searchParams.set('fields', 'followers_count,media_count')
   url.searchParams.set('access_token', token.access_token)
 
   const res = await fetch(url.toString())
-  if (!res.ok) return null
+  if (!res.ok) return { count: null }
 
-  const data = (await res.json()) as { followers_count?: number }
-  return data.followers_count ?? null
+  const data = (await res.json()) as { followers_count?: number; media_count?: number }
+  return { count: data.followers_count ?? null, postCount: data.media_count ?? null }
 }
