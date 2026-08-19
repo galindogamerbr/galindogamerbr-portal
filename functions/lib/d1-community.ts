@@ -93,22 +93,29 @@ export async function upsertKickLiveCache(db: D1Database, params: { isLive: bool
 
 export type DiscordPresenceCacheRow = {
   online_count: number
+  member_count: number | null
   fetched_at: string
 }
 
 export async function getDiscordPresenceCache(db: D1Database): Promise<DiscordPresenceCacheRow | null> {
-  const row = await db.prepare('SELECT online_count, fetched_at FROM discord_presence_cache WHERE id = 1').first<DiscordPresenceCacheRow>()
+  const row = await db
+    .prepare('SELECT online_count, member_count, fetched_at FROM discord_presence_cache WHERE id = 1')
+    .first<DiscordPresenceCacheRow>()
   return row ?? null
 }
 
-export async function upsertDiscordPresenceCache(db: D1Database, onlineCount: number): Promise<void> {
+export async function upsertDiscordPresenceCache(
+  db: D1Database,
+  params: { onlineCount: number; memberCount: number | null },
+): Promise<void> {
   await db
     .prepare(
-      `INSERT INTO discord_presence_cache (id, online_count, fetched_at)
-       VALUES (1, ?, datetime('now'))
-       ON CONFLICT (id) DO UPDATE SET online_count = excluded.online_count, fetched_at = excluded.fetched_at`,
+      `INSERT INTO discord_presence_cache (id, online_count, member_count, fetched_at)
+       VALUES (1, ?, ?, datetime('now'))
+       ON CONFLICT (id) DO UPDATE SET online_count = excluded.online_count, member_count = excluded.member_count,
+         fetched_at = excluded.fetched_at`,
     )
-    .bind(onlineCount)
+    .bind(params.onlineCount, params.memberCount)
     .run()
 }
 

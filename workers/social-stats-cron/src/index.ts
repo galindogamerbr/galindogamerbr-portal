@@ -1,18 +1,19 @@
 import type { Env } from './env'
 import { upsertSocialStat, type SocialPlatform } from './d1'
 import { fetchYoutubeSubscribers } from './youtube'
-import { fetchDiscordMembers } from './discord'
 import { fetchTwitchFollowers } from './twitch'
 import { fetchKickFollowers } from './scrape'
 import { getInstagramFollowers } from './instagram'
 import { getTiktokFollowers } from './tiktok'
-import { DISCORD_INVITE_CODE, KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
+import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<number | null> }
 
+// Discord não está aqui de propósito — sai ao vivo em
+// functions/api/community-stats.ts (endpoint público, sem risco de cota),
+// não precisa do cache de hora em hora do worker.
 const FETCHERS: Fetcher[] = [
   { platform: 'youtube', run: (env) => fetchYoutubeSubscribers(env, YOUTUBE_CHANNEL_ID) },
-  { platform: 'discord', run: () => fetchDiscordMembers(DISCORD_INVITE_CODE) },
   { platform: 'twitch', run: () => fetchTwitchFollowers(TWITCH_LOGIN) },
   { platform: 'instagram', run: (env) => getInstagramFollowers(env) },
   { platform: 'tiktok', run: (env) => getTiktokFollowers(env) },
