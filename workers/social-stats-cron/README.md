@@ -2,7 +2,9 @@
 
 Worker separado (não Pages Functions — Cloudflare Pages não suporta cron) que roda de hora em hora e popula `social_stats_cache` no D1 (`galindogamerbr_hub`, mesmo banco do site) com o número de seguidores/inscritos/membros de cada rede.
 
-Discord e Kick são **keyless**: scraping de páginas públicas ou endpoints não-autenticados que os próprios frontends das redes usam. Nenhuma credencial, nenhuma cota formal — mas também nenhuma garantia de estabilidade: qualquer rede pode mudar o formato da página/endpoint a qualquer momento. YouTube, Instagram e TikTok usam API oficial (menos frágil, mas precisam de credencial — ver abaixo). Uma falha numa rede não derruba as outras (`Promise.allSettled` em `src/index.ts`) nem apaga o último valor conhecido em cache.
+Kick é **keyless**: scraping de página pública/endpoint não-autenticado que o próprio frontend da rede usa. Nenhuma credencial, nenhuma cota formal — mas também nenhuma garantia de estabilidade: pode mudar o formato a qualquer momento. YouTube, Instagram e TikTok usam API oficial (menos frágil, mas precisam de credencial — ver abaixo). Uma falha numa rede não derruba as outras (`Promise.allSettled` em `src/index.ts`) nem apaga o último valor conhecido em cache.
+
+Discord **não está aqui** — sai direto em `functions/api/community-stats.ts` (endpoint público, sem risco de cota, busca sempre fresco a cada request no site), não precisa do cache de hora em hora.
 
 ## Credenciais necessárias
 

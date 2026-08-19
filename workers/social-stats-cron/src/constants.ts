@@ -3,7 +3,6 @@
 // FLAGSHIP_PLAYLIST_ID em functions/api/flagship.ts: é config pública que
 // não muda, não precisa de indireção.
 export const YOUTUBE_CHANNEL_ID = 'UCZGlbfvpoitCSFTsWVWVAow'
-export const DISCORD_INVITE_CODE = 'JggtZ7qGY3'
 export const TWITCH_LOGIN = 'galindogamerbr'
 export const KICK_USERNAME = 'galindogamerbr'
 
