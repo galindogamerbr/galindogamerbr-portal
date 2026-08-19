@@ -70,7 +70,7 @@ export function CommunityStatsGrid() {
             )}
             {!showLive && postLabel && postCount !== undefined && (
               <span className="text-[11px] font-semibold text-muted">
-                {formatCompactNumber(postCount)} {postLabel} recentes
+                {formatCompactNumber(postCount)} {postLabel}
               </span>
             )}
           </a>
