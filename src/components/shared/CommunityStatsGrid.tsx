@@ -11,7 +11,7 @@ import type { LiveStatus } from '../../lib/api/communityStats'
 // sem número — nunca mostra "0" como se fosse um dado real. YouTube,
 // Twitch e Kick são exceção: quando ao vivo, mostram também espectadores
 // agora (YouTube vem de /api/live via useLiveStatus, já compartilhado com
-// LiveBanner/LiveNowBadge; Twitch/Kick vêm de /api/community-stats, cada
+// LiveBanner; Twitch/Kick vêm de /api/community-stats, cada
 // uma com seu próprio fetch ao vivo, cache só como fallback). Discord
 // mostra "online agora" no lugar de "assistindo" (não é live/streaming).
 export function CommunityStatsGrid() {

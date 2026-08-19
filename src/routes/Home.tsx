@@ -10,7 +10,6 @@ import { VipSteps } from '../components/shared/VipSteps'
 import { ScheduleTabs } from '../components/shared/ScheduleTabs'
 import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
-import { LiveNowBadge } from '../components/shared/LiveNowBadge'
 import { useParallax } from '../hooks/useParallax'
 
 const HUB_TEASER = [
@@ -135,7 +134,6 @@ function TransmissoesTeaser() {
       <Reveal>
         <Container>
           <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
-          <LiveNowBadge />
           <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch">
             <div className="flex-1">
               <LiveBanner />
