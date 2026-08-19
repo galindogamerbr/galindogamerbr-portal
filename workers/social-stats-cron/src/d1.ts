@@ -1,5 +1,11 @@
 export type SocialPlatform = 'youtube' | 'discord' | 'twitch' | 'instagram' | 'tiktok' | 'kick'
 
+// count = seguidores/inscritos/membros (social_stats_cache); postCount =
+// quantidade de posts/vídeos (post_counts_cache), quando a rede/chamada
+// já traz esse dado de graça (YouTube/TikTok/Instagram) — undefined pras
+// redes que não têm esse conceito (Twitch/Kick/Discord).
+export type Stats = { count: number | null; postCount?: number | null }
+
 // Duplicado (não importado de functions/lib/) de propósito: esse worker roda
 // num runtime/deploy separado do Pages Functions do site — acoplar os dois
 // builds complicaria o tsc -b do projeto principal pra um helper de 6 linhas.
@@ -7,6 +13,19 @@ export async function upsertSocialStat(db: D1Database, platform: SocialPlatform,
   await db
     .prepare(
       `INSERT INTO social_stats_cache (platform, count, fetched_at)
+       VALUES (?, ?, datetime('now'))
+       ON CONFLICT (platform) DO UPDATE SET count = excluded.count, fetched_at = excluded.fetched_at`,
+    )
+    .bind(platform, count)
+    .run()
+}
+
+// Quantidade de posts/vídeos por rede — mesmo padrão do
+// upsertSocialStat (seguidores), tabela separada (post_counts_cache).
+export async function upsertPostCount(db: D1Database, platform: SocialPlatform, count: number): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO post_counts_cache (platform, count, fetched_at)
        VALUES (?, ?, datetime('now'))
        ON CONFLICT (platform) DO UPDATE SET count = excluded.count, fetched_at = excluded.fetched_at`,
     )

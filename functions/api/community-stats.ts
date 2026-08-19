@@ -7,6 +7,7 @@ import { fetchDiscordCounts } from '../lib/discord'
 import {
   getDiscordPresenceCache,
   getKickLiveCache,
+  getPostCountsCache,
   getSiteVisitsCache,
   getSocialStatsCache,
   getTwitchLiveCache,
@@ -81,8 +82,9 @@ async function resolveDiscordCounts(env: Env): Promise<DiscordCounts> {
 // exceto Twitch/Kick live e Discord (mais voláteis, cada um com seu próprio
 // cache curto/fallback) e visitas do site.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const [social, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
+  const [social, postCounts, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
     getSocialStatsCache(context.env.DB),
+    getPostCountsCache(context.env.DB),
     resolveSiteVisits(context.env),
     resolveTwitchLive(context.env),
     resolveKickLive(context.env),
@@ -95,6 +97,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       count: row.platform === 'discord' && discordCounts.memberCount !== null ? discordCounts.memberCount : row.count,
       fetchedAt: row.fetched_at,
     })),
+    postCounts: Object.fromEntries(postCounts.map((row) => [row.platform, row.count])),
     siteVisits: { visitsToday },
     twitchLive,
     kickLive,

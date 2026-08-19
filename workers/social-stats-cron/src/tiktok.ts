@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { getTiktokToken, upsertTiktokToken } from './d1'
+import { getTiktokToken, upsertTiktokToken, type Stats } from './d1'
 
 async function refreshToken(env: Env, currentRefreshToken: string): Promise<{ accessToken: string; refreshToken: string } | null> {
   const res = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
@@ -25,19 +25,19 @@ async function refreshToken(env: Env, currentRefreshToken: string): Promise<{ ac
 // cron roda — é natural, sem precisar checar expiração). A TikTok
 // rotaciona o refresh_token a cada troca, sempre salva o novo. Se nunca
 // foi conectado, devolve null sem erro.
-export async function getTiktokFollowers(env: Env): Promise<number | null> {
+export async function getTiktokStats(env: Env): Promise<Stats> {
   const token = await getTiktokToken(env.DB)
-  if (!token) return null
+  if (!token) return { count: null }
 
   const refreshed = await refreshToken(env, token.refresh_token)
-  if (!refreshed) return null
+  if (!refreshed) return { count: null }
   await upsertTiktokToken(env.DB, refreshed)
 
-  const res = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=follower_count', {
+  const res = await fetch('https://open.tiktokapis.com/v2/user/info/?fields=follower_count,video_count', {
     headers: { authorization: `Bearer ${refreshed.accessToken}` },
   })
-  if (!res.ok) return null
+  if (!res.ok) return { count: null }
 
-  const data = (await res.json()) as { data?: { user?: { follower_count?: number } } }
-  return data.data?.user?.follower_count ?? null
+  const data = (await res.json()) as { data?: { user?: { follower_count?: number; video_count?: number } } }
+  return { count: data.data?.user?.follower_count ?? null, postCount: data.data?.user?.video_count ?? null }
 }

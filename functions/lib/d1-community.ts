@@ -22,6 +22,17 @@ export async function upsertSocialStat(db: D1Database, platform: SocialPlatform,
     .run()
 }
 
+export type PostCountRow = {
+  platform: SocialPlatform
+  count: number
+  fetched_at: string
+}
+
+export async function getPostCountsCache(db: D1Database): Promise<PostCountRow[]> {
+  const { results } = await db.prepare('SELECT * FROM post_counts_cache').all<PostCountRow>()
+  return results
+}
+
 export type LiveViewerCacheRow = {
   video_id: string
   viewer_count: number

@@ -1,6 +1,6 @@
 # social-stats-cron
 
-Worker separado (não Pages Functions — Cloudflare Pages não suporta cron) que roda de hora em hora e popula `social_stats_cache` no D1 (`galindogamerbr_hub`, mesmo banco do site) com o número de seguidores/inscritos/membros de cada rede.
+Worker separado (não Pages Functions — Cloudflare Pages não suporta cron) que roda de hora em hora e popula `social_stats_cache` no D1 (`galindogamerbr_hub`, mesmo banco do site) com o número de seguidores/inscritos/membros de cada rede. YouTube/TikTok/Instagram também populam `post_counts_cache` (quantidade de posts/vídeos) — vem de graça no mesmo campo das chamadas de seguidores, sem custo extra de API.
 
 Kick é **keyless**: scraping de página pública/endpoint não-autenticado que o próprio frontend da rede usa. Nenhuma credencial, nenhuma cota formal — mas também nenhuma garantia de estabilidade: pode mudar o formato a qualquer momento. YouTube, Instagram e TikTok usam API oficial (menos frágil, mas precisam de credencial — ver abaixo). Uma falha numa rede não derruba as outras (`Promise.allSettled` em `src/index.ts`) nem apaga o último valor conhecido em cache.
 
@@ -20,6 +20,7 @@ Esse worker tem seu próprio D1 local (`workers/social-stats-cron/.wrangler/stat
 wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0008_community_stats.sql
 wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0009_instagram_oauth.sql
 wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0013_tiktok_oauth.sql
+wrangler d1 execute galindogamerbr_hub --local --file=../../migrations/0018_post_counts_cache.sql
 ```
 
 Depois:

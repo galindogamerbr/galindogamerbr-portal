@@ -6,6 +6,7 @@ export type LiveStatus = { isLive: boolean; viewerCount: number | null }
 
 export type CommunityStats = {
   social: SocialStat[]
+  postCounts: Partial<Record<SocialPlatform, number>>
   siteVisits: { visitsToday: number | null }
   twitchLive: LiveStatus
   kickLive: LiveStatus
