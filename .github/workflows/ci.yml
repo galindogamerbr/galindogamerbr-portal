@@ -39,3 +39,39 @@ jobs:
       # nem deploy de verdade, e pega esse tipo de erro antes do merge.
       - name: Build Pages Functions (valida imports em functions/)
         run: npx wrangler pages functions build --outdir=/tmp/functions-build-check
+
+      # Só nas dependências de produção — as de dev (wrangler etc.) têm
+      # transitivas fora do nosso controle (ex: undici/ws) que não valem
+      # travar todo PR por falta de fix upstream.
+      - name: Audit de dependências de produção
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Sequência das migrations
+        run: |
+          expected=1
+          for f in $(ls migrations/*.sql | sort); do
+            base=$(basename "$f")
+            num=$(echo "$base" | grep -oE '^[0-9]+')
+            num=$((10#$num))
+            if [ "$num" != "$expected" ]; then
+              echo "::error::Migration fora de sequência: esperava $(printf '%04d' "$expected"), achei $base"
+              exit 1
+            fi
+            expected=$((expected + 1))
+          done
+          echo "OK: $((expected - 1)) migrations em sequência, sem buracos nem duplicatas."
+
+  secrets-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
