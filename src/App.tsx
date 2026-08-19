@@ -12,6 +12,7 @@ import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
 import { Termos } from './routes/Termos'
 import { Creditos } from './routes/Creditos'
+import { MapaDoSite } from './routes/MapaDoSite'
 import { NotFound } from './routes/NotFound'
 
 // Rotas /admin/*: ninguém que não seja o próprio admin visita — importar
@@ -53,6 +54,7 @@ const router = createBrowserRouter([
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/termos', element: <Termos /> },
       { path: '/creditos', element: <Creditos /> },
+      { path: '/mapa-do-site', element: <MapaDoSite /> },
       { path: '/admin', element: withAdminSuspense(<AdminIndex />) },
       { path: '/admin/login', element: withAdminSuspense(<Login />) },
       { path: '/admin/programacao', element: withAdminSuspense(<Schedule />) },

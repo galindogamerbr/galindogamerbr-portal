@@ -40,7 +40,7 @@ export function Login() {
       const result = await verifyCode(email, code)
       if (result.ok) {
         refresh()
-        navigate('/admin/programacao')
+        navigate('/admin')
       } else {
         setMessage('Código inválido ou expirado.')
       }

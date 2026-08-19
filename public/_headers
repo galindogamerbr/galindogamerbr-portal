@@ -6,4 +6,6 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
   X-Frame-Options: DENY
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://i.ytimg.com data:; connect-src 'self'; frame-src https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  # CSP tirada por ora — bloqueou recursos em teste real no browser (ver PR)
+  # e não dá pra validar direito sem sessão interativa de browser. Os outros
+  # headers acima não têm esse risco (não afetam carregamento de recurso).
