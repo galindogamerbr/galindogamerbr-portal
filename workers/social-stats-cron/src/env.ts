@@ -17,4 +17,8 @@ export type Env = {
   // src/instagram.ts). Só usado como bootstrap na primeira rodada sem
   // token em D1; depois disso o worker renova e persiste sozinho.
   INSTAGRAM_ACCESS_TOKEN: string
+  // Autoriza o gatilho manual via HTTP (ver fetch() em src/index.ts) — só
+  // quem sabe esse valor consegue forçar uma rodada de coleta fora do
+  // agendamento normal.
+  CRON_TRIGGER_SECRET: string
 }

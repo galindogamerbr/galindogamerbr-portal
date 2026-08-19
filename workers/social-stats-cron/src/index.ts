@@ -58,4 +58,17 @@ export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(collectAll(env))
   },
+  // Gatilho manual via HTTP — CI chama isso depois de todo deploy (do site
+  // ou do próprio worker, ver .github/workflows/*.yml) pra não esperar até
+  // 20min pela próxima rodada agendada e já sair com o cache (PUBLIC_CACHE)
+  // morno. Protegido por secret pra não deixar qualquer um forçar rodadas
+  // extra à toa.
+  async fetch(request, env) {
+    const secret = request.headers.get('x-trigger-secret')
+    if (!secret || secret !== env.CRON_TRIGGER_SECRET) {
+      return new Response('Not found', { status: 404 })
+    }
+    await collectAll(env)
+    return new Response('ok')
+  },
 } satisfies ExportedHandler<Env>

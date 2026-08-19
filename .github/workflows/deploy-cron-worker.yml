@@ -47,3 +47,10 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: workers/social-stats-cron
           command: deploy
+
+      # Roda uma coleta agora em vez de esperar até 20min pela próxima
+      # rodada agendada — não derruba o job se falhar (o deploy em si já
+      # teve sucesso, isso é só um bônus de cache morno).
+      - name: Disparar coleta de social stats agora
+        run: |
+          curl -s -X POST -H "x-trigger-secret: ${{ secrets.CRON_TRIGGER_SECRET }}" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/ || true

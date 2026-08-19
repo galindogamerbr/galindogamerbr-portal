@@ -11,6 +11,15 @@ Discord **não está aqui** — sai direto em `functions/api/community-stats.ts`
 - **`YOUTUBE_API_KEY`** (secret do Worker, `wrangler secret put YOUTUBE_API_KEY` rodando dentro desta pasta) — API key do YouTube Data API v3 (Google Cloud Console → habilitar "YouTube Data API v3" → Credentials → Create API key).
 - **`INSTAGRAM_ACCESS_TOKEN`** (secret do Worker) — token de usuário do Instagram gerado manualmente no App Dashboard da Meta (Casos de uso → Gerenciar mensagens e conteúdo no Instagram → "Gerar tokens de acesso") e colado direto aqui, sem painel admin no site. Usa `me` como id da conta (a Graph API resolve sozinha pro dono do token). Usado só como bootstrap na primeira rodada sem nada em D1 (`instagram_token`); a partir daí o worker renova sozinho via `ig_refresh_token` e persiste em D1, sem precisar do secret de novo (`src/instagram.ts`). Se nunca foi configurado, o Instagram simplesmente fica de fora da coleta (sem erro).
 - **`TIKTOK_CLIENT_KEY`** e **`TIKTOK_CLIENT_SECRET`** (secrets do Worker, mesmos valores do app "Login Kit" em developers.tiktok.com) — mesmo espírito do Instagram: login inicial uma vez em `/admin/tiktok` (`functions/api/admin/tiktok/*.ts`), token salvo no D1 (`tiktok_token`), este worker só lê e renova (`src/tiktok.ts`) a cada rodada (access token do TikTok dura só 24h).
+- **`CRON_TRIGGER_SECRET`** (secret do Worker, valor arbitrário aleatório) — autoriza o gatilho manual via HTTP (`fetch()` em `src/index.ts`, header `x-trigger-secret`). Os workflows de deploy (`deploy.yml`, `deploy-preview.yml`, `deploy-cron-worker.yml`) chamam isso depois de todo deploy, pra não esperar até 20min pela próxima rodada agendada — precisa do mesmo valor configurado como secret do GitHub Actions (`CRON_TRIGGER_SECRET`, Settings → Secrets and variables → Actions).
+
+## Gatilho manual (fora do cron)
+
+```
+curl -X POST -H "x-trigger-secret: <CRON_TRIGGER_SECRET>" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/
+```
+
+Sem o header certo, devolve 404 (não revela se o secret está certo ou errado, nem que essa rota existe).
 
 ## Rodar localmente
 
