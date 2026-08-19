@@ -51,7 +51,7 @@ async function resolveTwitchLive(env: Env): Promise<LiveStatus> {
 }
 
 async function resolveKickLive(env: Env): Promise<LiveStatus> {
-  const fresh = await fetchKickLiveStatus()
+  const fresh = await fetchKickLiveStatus(env)
   if (fresh) {
     await upsertKickLiveCache(env.DB, fresh)
     return fresh

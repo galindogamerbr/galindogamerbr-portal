@@ -46,6 +46,13 @@ export type Env = {
   // não usamos aqui — ver workers/social-stats-cron/src/twitch.ts).
   TWITCH_CLIENT_ID: string
   TWITCH_CLIENT_SECRET: string
+  // Status ao vivo/espectadores do Kick (ver functions/lib/kick.ts) — API
+  // oficial (docs.kick.com), mesmo espírito da Twitch: só credencial de app
+  // (client_credentials), dado público. followers_count não existe nessa
+  // API oficial, então seguidores continua vindo do endpoint interno em
+  // workers/social-stats-cron/src/scrape.ts.
+  KICK_CLIENT_ID: string
+  KICK_CLIENT_SECRET: string
   // OAuth do TikTok (Login Kit, ver functions/api/admin/tiktok/*.ts) —
   // conectado uma vez pelo admin, o worker renova o token sozinho depois.
   TIKTOK_CLIENT_KEY: string

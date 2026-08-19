@@ -51,6 +51,14 @@ INSTAGRAM_WEBHOOK_VERIFY_TOKEN=
 TWITCH_CLIENT_ID=
 TWITCH_CLIENT_SECRET=
 
+# Status ao vivo/espectadores do Kick (functions/lib/kick.ts) — Client ID/
+# Secret do app criado em kick.com/settings/developer (API oficial, mesmo
+# espírito da Twitch: client_credentials, dado público, sem login de
+# ninguém). Não dá pra pegar seguidores por aqui (a API oficial não expõe
+# esse campo) — isso continua vindo do endpoint interno usado pelo worker.
+KICK_CLIENT_ID=
+KICK_CLIENT_SECRET=
+
 # OAuth do TikTok (functions/api/admin/tiktok/*.ts) — Client Key e Client
 # Secret do app criado em developers.tiktok.com (produto "Login Kit").
 # Conectar uma vez em /admin/tiktok; o worker (workers/social-stats-cron)
