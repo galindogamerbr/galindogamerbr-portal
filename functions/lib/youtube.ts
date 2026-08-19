@@ -65,7 +65,9 @@ async function fetchTitle(videoId: string): Promise<string | null> {
 }
 
 const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
-const LIVE_STATE_CACHE_TTL_SECONDS = 45
+// 60 é o mínimo que o Workers KV aceita pra expirationTtl (PUT falha com
+// 400 abaixo disso) — não dá pra ir mais curto que isso.
+const LIVE_STATE_CACHE_TTL_SECONDS = 60
 
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
 // publicado se não houver live) — cache-first no KV (PUBLIC_CACHE), TTL
