@@ -52,16 +52,14 @@ export function Conteudos() {
                 className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5"
               >
                 <div className="relative aspect-video w-full">
-                  {isLiveNow && flagship?.videoId ? (
+                  {flagship?.videoId ? (
                     <iframe
-                      src={`https://www.youtube.com/embed/${flagship.videoId}?autoplay=1&mute=1`}
+                      src={`https://www.youtube.com/embed/${flagship.videoId}${isLiveNow ? '?autoplay=1&mute=1' : ''}`}
                       title={flagship.title}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                       className="h-full w-full border-0"
                     />
-                  ) : flagship?.thumbnailUrl ? (
-                    <img src={flagship.thumbnailUrl} alt="Fazenda Nova Aliança" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-panel2">
                       <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/25 border-t-white" />
