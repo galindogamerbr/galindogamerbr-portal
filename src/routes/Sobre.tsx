@@ -6,10 +6,10 @@ import { Button, NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
 import { PartnershipModal } from '../components/shared/PartnershipModal'
 
-// Igual ao escurecimento padrão (#03070b40) da metade pra frente, some antes
-// disso — o Galindo fica no lado esquerdo da imagem (about-bg.webp) e não
-// pode ficar escurecido junto do resto do fundo.
-const ABOUT_OVERLAY = 'linear-gradient(90deg, transparent 20%, #03070b40 50%, #03070b40 100%)'
+// Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
+// Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
+// escurecido junto do resto do fundo.
+const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
@@ -41,18 +41,32 @@ export function Sobre() {
 
   return (
     <>
-      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} position="left top" />
-      <section className="py-16 sm:py-24">
+      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
+
+      {/* Banner com a foto do Galindo — imagem autocontida (borda dourada
+          própria), por isso vive num card em vez de virar fundo full-bleed
+          da página (ver about-bg.webp acima, que é o fundo fixo). */}
+      <section className="pt-16 sm:pt-24">
         <Reveal>
           <Container>
-            <div className="ml-auto max-w-3xl">
-              <Eyebrow>A história por trás do canal</Eyebrow>
-              <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
-              <p className="mt-3 text-lg text-muted">
-                Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
-                muito antes das lives.
-              </p>
-            </div>
+            <img
+              src="/assets/about-galindo.webp"
+              alt="Galindo, criador do canal GalindoGamerBR"
+              className="w-full rounded-lg"
+            />
+          </Container>
+        </Reveal>
+      </section>
+
+      <section className="py-16 sm:py-24">
+        <Reveal>
+          <Container className="max-w-3xl">
+            <Eyebrow>A história por trás do canal</Eyebrow>
+            <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
+            <p className="mt-3 text-lg text-muted">
+              Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
+              muito antes das lives.
+            </p>
           </Container>
         </Reveal>
       </section>
@@ -60,7 +74,7 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="ml-auto max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
+            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
               <Eyebrow>Quem é o Galindo?</Eyebrow>
               <h2 className="text-2xl sm:text-3xl">
                 EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
@@ -122,18 +136,25 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="rounded-lg border border-gold/40 bg-panel p-6 sm:p-8">
-              <Eyebrow>Um projeto feito para crescer</Eyebrow>
-              <h2 className="text-2xl sm:text-3xl">QUANDO UMA COMUNIDADE ACREDITA, UMA PAIXÃO PODE IR MUITO MAIS LONGE.</h2>
-              <p className="mt-3 max-w-2xl text-muted">
-                O GalindoGamerBR está sendo construído com tempo, trabalho e dedicação. A ideia não é simplesmente
-                colocar uma logo em uma página: é <strong className="text-white">criar uma parceria que faça
-                sentido para os dois lados</strong> e colocar marcas junto de uma comunidade real, ativa e
-                construída com proximidade.
-              </p>
-              <Button variant="gold" className="mt-6" onClick={() => setModalOpen(true)}>
-                Quero conhecer o projeto →
-              </Button>
+            <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div>
+                <Eyebrow>Um projeto feito para crescer</Eyebrow>
+                <h2 className="text-2xl sm:text-3xl">QUANDO UMA COMUNIDADE ACREDITA, UMA PAIXÃO PODE IR MUITO MAIS LONGE.</h2>
+                <p className="mt-3 max-w-2xl text-muted">
+                  O GalindoGamerBR está sendo construído com tempo, trabalho e dedicação. A ideia não é simplesmente
+                  colocar uma logo em uma página: é <strong className="text-white">criar uma parceria que faça
+                  sentido para os dois lados</strong> e colocar marcas junto de uma comunidade real, ativa e
+                  construída com proximidade.
+                </p>
+                <Button variant="gold" className="mt-6" onClick={() => setModalOpen(true)}>
+                  Quero conhecer o projeto →
+                </Button>
+              </div>
+              <img
+                src="/assets/logos/galindogamerbr.webp"
+                alt="Logo GalindoGamerBR"
+                className="h-28 w-28 shrink-0 sm:h-36 sm:w-36"
+              />
             </div>
           </Container>
         </Reveal>
