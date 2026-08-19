@@ -21,6 +21,7 @@ export function LiveBanner() {
   const status = useLiveStatus()
   const [thumbLoaded, setThumbLoaded] = useState(false)
   const [thumbFailed, setThumbFailed] = useState(false)
+  const [playing, setPlaying] = useState(false)
 
   if (status?.isLive && status.videoId) {
     return (
@@ -76,47 +77,58 @@ export function LiveBanner() {
 
   // Carregando (status === null) ou offline com último vídeo (status.videoId)
   // — mesma casca de card nos dois casos, só o conteúdo troca de skeleton
-  // pro dado real conforme chega.
+  // pro dado real conforme chega. Clicar na thumbnail toca o vídeo embutido
+  // ali mesmo (troca pro iframe) em vez de navegar pro YouTube — só o botão
+  // "Ver no YouTube" abre em outra aba.
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-panel">
-      <a
-        href={status ? `https://www.youtube.com/watch?v=${status.videoId}` : undefined}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block"
-        aria-disabled={!status}
-      >
-        <div className="relative aspect-video w-full overflow-hidden bg-panel2">
-          {!thumbLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
-            </div>
-          )}
-          {status?.videoId && (
-            <>
-              <img
-                src={thumbnailUrl(status.videoId, thumbFailed ? 'hqdefault' : 'maxresdefault')}
-                alt=""
-                onLoad={() => setThumbLoaded(true)}
-                onError={() => {
-                  if (!thumbFailed) setThumbFailed(true)
-                  else setThumbLoaded(true)
-                }}
-                className={`h-full w-full object-cover transition-opacity duration-300 group-hover:scale-105 ${thumbLoaded ? 'opacity-100' : 'opacity-0'}`}
-              />
-              {thumbLoaded && (
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red/90 shadow-lg transition group-hover:scale-110">
-                    <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+      {playing && status?.videoId ? (
+        <iframe
+          src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1`}
+          title={status.title ?? 'GalindoGamerBR'}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="aspect-video w-full border-0"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => status?.videoId && setPlaying(true)}
+          disabled={!status?.videoId}
+          className="group block w-full"
+        >
+          <div className="relative aspect-video w-full overflow-hidden bg-panel2">
+            {!thumbLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
+              </div>
+            )}
+            {status?.videoId && (
+              <>
+                <img
+                  src={thumbnailUrl(status.videoId, thumbFailed ? 'hqdefault' : 'maxresdefault')}
+                  alt=""
+                  onLoad={() => setThumbLoaded(true)}
+                  onError={() => {
+                    if (!thumbFailed) setThumbFailed(true)
+                    else setThumbLoaded(true)
+                  }}
+                  className={`h-full w-full object-cover transition-opacity duration-300 group-hover:scale-105 ${thumbLoaded ? 'opacity-100' : 'opacity-0'}`}
+                />
+                {thumbLoaded && (
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red/90 shadow-lg transition group-hover:scale-110">
+                      <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </a>
+                )}
+              </>
+            )}
+          </div>
+        </button>
+      )}
       <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0">
           <Eyebrow>{status ? 'Último vídeo' : 'Onde acompanhar'}</Eyebrow>
