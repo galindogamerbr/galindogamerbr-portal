@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { preload } from 'react-dom'
 import { useLiveStatus } from '../../hooks/useLiveStatus'
 import { LinkButton } from '../ui/Button'
 import { Eyebrow } from '../ui/Eyebrow'
@@ -21,7 +22,26 @@ export function LiveBanner() {
   const status = useLiveStatus()
   const [thumbLoaded, setThumbLoaded] = useState(false)
   const [thumbFailed, setThumbFailed] = useState(false)
-  const [playing, setPlaying] = useState(false)
+  const [isInlinePlayerActive, setIsInlinePlayerActive] = useState(false)
+  const displayedVideoIdRef = useRef<string | null>(null)
+
+  // useLiveStatus faz polling a cada 60s — a maioria das vezes devolve o
+  // mesmo videoId de antes, e nesse caso não deve acontecer nada (a
+  // thumbnail já carregada continua na tela, sem re-render de "carregando").
+  // Só quando o videoId muda de verdade (novo upload virou "último vídeo",
+  // ou o canal ficou ao vivo agora) é que reseta o estado de loading pra
+  // mostrar o spinner até a nova imagem carregar — e dispara o preload dela
+  // assim que o videoId chega, antes mesmo de decidir trocar a UI, pra
+  // minimizar esse tempo de spinner.
+  useEffect(() => {
+    if (!status?.videoId) return
+    preload(thumbnailUrl(status.videoId, 'maxresdefault'), { as: 'image' })
+
+    if (status.videoId === displayedVideoIdRef.current) return
+    displayedVideoIdRef.current = status.videoId
+    setThumbLoaded(false)
+    setThumbFailed(false)
+  }, [status?.videoId])
 
   if (status?.isLive && status.videoId) {
     return (
@@ -82,7 +102,7 @@ export function LiveBanner() {
   // "Ver no YouTube" abre em outra aba.
   return (
     <div className="overflow-hidden rounded-lg border border-line bg-panel">
-      {playing && status?.videoId ? (
+      {isInlinePlayerActive && status?.videoId ? (
         <iframe
           src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1`}
           title={status.title ?? 'GalindoGamerBR'}
@@ -93,7 +113,7 @@ export function LiveBanner() {
       ) : (
         <button
           type="button"
-          onClick={() => status?.videoId && setPlaying(true)}
+          onClick={() => status?.videoId && setIsInlinePlayerActive(true)}
           disabled={!status?.videoId}
           className="group block w-full"
         >
@@ -108,6 +128,9 @@ export function LiveBanner() {
                 <img
                   src={thumbnailUrl(status.videoId, thumbFailed ? 'hqdefault' : 'maxresdefault')}
                   alt=""
+                  width={1280}
+                  height={720}
+                  fetchPriority="high"
                   onLoad={() => setThumbLoaded(true)}
                   onError={() => {
                     if (!thumbFailed) setThumbFailed(true)

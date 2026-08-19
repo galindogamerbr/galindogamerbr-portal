@@ -44,6 +44,22 @@ a {
   }
 }
 
+/* Crossfade do bloco de vídeos recentes (GameHighlightCard) quando a lista
+   troca — ver src/hooks/useLocalStorageCachedVideos.ts. Só o bloco inteiro
+   anima (troca de key faz o React remontar), nunca thumbnail por thumbnail. */
+@keyframes crossfade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.crossfade-in {
+  animation: crossfade-in 400ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
