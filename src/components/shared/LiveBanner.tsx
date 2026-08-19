@@ -139,9 +139,12 @@ export function LiveBanner() {
                   className={`h-full w-full object-cover transition-opacity duration-300 group-hover:scale-105 ${thumbLoaded ? 'opacity-100' : 'opacity-0'}`}
                 />
                 {thumbLoaded && (
+                  // Formato do botão de play original do YouTube: retângulo
+                  // arredondado (não círculo) em vermelho sólido da marca,
+                  // não a cor "red" do nosso tema.
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red/90 shadow-lg transition group-hover:scale-110">
-                      <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white">
+                    <div className="flex h-14 w-20 items-center justify-center rounded-2xl bg-[#FF0000] shadow-lg transition group-hover:scale-110">
+                      <svg viewBox="0 0 24 24" className="ml-1 h-8 w-8 fill-white">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
