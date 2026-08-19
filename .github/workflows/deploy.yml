@@ -96,7 +96,7 @@ jobs:
           COMMIT_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
         run: |
           npx wrangler pages deploy dist --project-name=galindogamerbr-portal --branch=main \
-            --commit-hash="$COMMIT_SHA" --commit-message="$COMMIT_MESSAGE"
+            --commit-hash="$COMMIT_SHA" --commit-message="$COMMIT_MESSAGE" --commit-dirty=true
 
       # Roda uma coleta de social stats agora em vez de esperar até 20min
       # pela próxima rodada agendada do worker (ver
