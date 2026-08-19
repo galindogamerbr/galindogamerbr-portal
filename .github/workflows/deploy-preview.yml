@@ -42,9 +42,28 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: d1 migrations apply DB --remote
 
+      # Todo preview publica sob o mesmo alias fixo (--branch=preview abaixo),
+      # não o nome da branch de verdade — só existe "o" preview atual, nunca
+      # um por branch. Apaga qualquer deployment de preview anterior (de
+      # qualquer branch) antes de publicar o novo, pra não acumular
+      # deployments órfãos acessíveis pelas URLs com hash.
+      - name: Apagar deployments de preview antigos
+        run: |
+          ids=$(npx wrangler pages deployment list --project-name=galindogamerbr-portal --environment=preview --json | jq -r '.[].Id')
+          for id in $ids; do
+            echo "Apagando deployment de preview antigo: $id"
+            npx wrangler pages deployment delete "$id" --project-name=galindogamerbr-portal --force
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      # Alias fixo em vez do nome da branch — URL estável
+      # (https://preview.galindogamerbr-hub-portal.pages.dev) pra qualquer
+      # branch que rodar este workflow, em vez de uma URL nova por branch.
       - name: Deploy preview to Cloudflare Pages
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=galindogamerbr-portal --branch=${{ github.ref_name }}
+          command: pages deploy dist --project-name=galindogamerbr-portal --branch=preview
