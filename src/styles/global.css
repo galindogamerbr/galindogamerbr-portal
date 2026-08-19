@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Mantém o theme/breakpoints/content em tailwind.config.ts (fonte única
+   compartilhada com src/styles/theme.ts) em vez de migrar pra @theme em
+   CSS — evita duplicar as cores da marca em dois formatos diferentes. */
+@config '../../tailwind.config.ts';
 
 html,
 body,
