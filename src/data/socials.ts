@@ -22,9 +22,9 @@ export type Social = {
 // com "posts" (YouTube/TikTok/Instagram) ficam juntas primeiro, separadas
 // das redes só de live/chat (Twitch/Kick/Discord).
 export const SOCIALS: Social[] = [
+  { platform: 'instagram', name: 'Instagram', href: 'https://www.instagram.com/galindogamerbr', icon: 'instagram', logo: 'instagram.png', color: '#E1306C' },
   { platform: 'youtube', name: 'YouTube', href: 'https://www.youtube.com/@galindogamerbr', icon: 'youtube', logo: 'youtube.png', color: '#FF0000' },
   { platform: 'tiktok', name: 'TikTok', href: 'https://www.tiktok.com/@galindogamerbr', icon: 'tiktok', logo: 'tiktok.png', color: '#FE2C55' },
-  { platform: 'instagram', name: 'Instagram', href: 'https://www.instagram.com/galindogamerbr', icon: 'instagram', logo: 'instagram.png', color: '#E1306C' },
   { platform: 'twitch', name: 'Twitch', href: 'https://www.twitch.tv/galindogamerbr', icon: 'twitch', logo: 'twitch.png', color: '#9146FF' },
   { platform: 'kick', name: 'Kick', href: 'https://kick.com/galindogamerbr', icon: 'kick', logo: 'kick.svg', color: '#53FC18' },
   { platform: 'discord', name: 'Discord', href: 'https://discord.com/invite/JggtZ7qGY3', icon: 'discord', logo: 'discord.png', color: '#5865F2' },

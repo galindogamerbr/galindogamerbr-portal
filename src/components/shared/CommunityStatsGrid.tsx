@@ -17,11 +17,13 @@ const POST_LABEL: Partial<Record<SocialPlatform, string>> = {
 // keyless, sem API key). Enquanto o cache ainda não tem uma rede (worker
 // não rodou ainda, ou aquela rede falhou), o card mostra só o ícone/link,
 // sem número — nunca mostra "0" como se fosse um dado real. YouTube,
-// Twitch e Kick são exceção: quando ao vivo, mostram também espectadores
-// agora (YouTube vem de /api/live via useLiveStatus, já compartilhado com
-// LiveBanner; Twitch/Kick vêm de /api/community-stats, cada
-// uma com seu próprio fetch ao vivo, cache só como fallback). Discord
-// mostra "online agora" no lugar de "assistindo" (não é live/streaming).
+// Twitch, Kick e TikTok são exceção: quando ao vivo, mostram também
+// espectadores agora (YouTube vem de /api/live via useLiveStatus, já
+// compartilhado com LiveBanner; Twitch/Kick vêm de /api/community-stats,
+// cada uma com seu próprio fetch ao vivo, cache só como fallback; TikTok
+// não tem API oficial pra isso — vem de um job externo, ver
+// functions/api/webhooks/tiktok-live.ts). Discord mostra "online agora" no
+// lugar de "assistindo" (não é live/streaming).
 // YouTube/TikTok/Instagram mostram também a quantidade de posts/vídeos
 // (postCounts, mesma origem dos seguidores — vem de graça na mesma
 // chamada de API que já buscava seguidores, ver workers/social-stats-cron).
@@ -33,6 +35,7 @@ export function CommunityStatsGrid() {
     youtube: youtubeLive ? { isLive: youtubeLive.isLive, viewerCount: youtubeLive.viewerCount } : undefined,
     twitch: stats?.twitchLive,
     kick: stats?.kickLive,
+    tiktok: stats?.tiktokLive,
   }
 
   return (
