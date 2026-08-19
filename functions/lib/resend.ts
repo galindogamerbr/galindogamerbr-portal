@@ -4,6 +4,8 @@ import { otpEmailHtml, partnershipEmailHtml, type PartnershipSubmission } from '
 const FROM_ADDRESS = 'GalindoGamerBR <acesso@galindogamerbr.com.br>'
 const FROM_ADDRESS_PREVIEW = 'GalindoGamerBR (preview) <acesso-preview@galindogamerbr.com.br>'
 const PARTNERSHIP_TO = 'parcerias@galindogamerbr.com.br'
+const PARTNERSHIP_FROM = 'GalindoGamerBR <parcerias@galindogamerbr.com.br>'
+const PARTNERSHIP_FROM_PREVIEW = 'GalindoGamerBR (preview) <parcerias-preview@galindogamerbr.com.br>'
 
 export async function sendOtpEmail(env: Env, to: string, code: string): Promise<void> {
   if (env.ENVIRONMENT === 'development') {
@@ -45,7 +47,7 @@ export async function sendPartnershipEmail(env: Env, submission: PartnershipSubm
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.ENVIRONMENT === 'preview' ? FROM_ADDRESS_PREVIEW : FROM_ADDRESS,
+      from: env.ENVIRONMENT === 'preview' ? PARTNERSHIP_FROM_PREVIEW : PARTNERSHIP_FROM,
       to: PARTNERSHIP_TO,
       // Responder o e-mail já vai direto pro visitante, sem precisar copiar o endereço dele à mão.
       reply_to: submission.email,
