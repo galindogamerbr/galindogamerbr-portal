@@ -2,6 +2,7 @@
 
 [![Deploy](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/deploy.yml)
 [![CI](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/ci.yml)
+[![Security Scan](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/security-scan.yml/badge.svg)](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/security-scan.yml)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)

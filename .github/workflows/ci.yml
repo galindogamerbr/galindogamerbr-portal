@@ -63,18 +63,3 @@ jobs:
             expected=$((expected + 1))
           done
           echo "OK: $((expected - 1)) migrations em sequência, sem buracos nem duplicatas."
-
-  secrets-scan:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
