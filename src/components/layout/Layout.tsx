@@ -8,7 +8,11 @@ export function Layout() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    // scroll-behavior: auto !important (global.css) só cobre rolagem via
+    // CSS/anchor — behavior explícito no scrollTo() ignora isso, então
+    // checa prefers-reduced-motion aqui também.
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    window.scrollTo({ top: 0, behavior })
   }, [pathname])
 
   return (
