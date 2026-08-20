@@ -52,9 +52,4 @@ export type Env = {
   // conectado uma vez pelo admin, o worker renova o token sozinho depois.
   TIKTOK_CLIENT_KEY: string
   TIKTOK_CLIENT_SECRET: string
-  // Status "ao vivo" do TikTok — sem API oficial pra isso, então quem
-  // escreve é um job externo no GitHub Actions (scripts/tiktok-live-poll),
-  // via functions/api/webhooks/tiktok-live.ts. Esse secret protege o
-  // endpoint pra só aquele job conseguir escrever.
-  TIKTOK_LIVE_WEBHOOK_SECRET: string
 }
