@@ -9,7 +9,6 @@ import { Mods } from './routes/Mods'
 import { Comunidade } from './routes/Comunidade'
 import { Sobre } from './routes/Sobre'
 import { Parceiros } from './routes/Parceiros'
-import { Contato } from './routes/Contato'
 import { Privacidade } from './routes/Privacidade'
 import { Termos } from './routes/Termos'
 import { Creditos } from './routes/Creditos'
@@ -53,7 +52,7 @@ const router = createBrowserRouter([
       { path: '/comunidade', element: <Comunidade /> },
       { path: '/sobre', element: <Sobre /> },
       { path: '/parceiros', element: <Parceiros /> },
-      { path: '/contato', element: <Contato /> },
+      { path: '/contato', element: <Navigate to="/parceiros" replace /> },
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/termos', element: <Termos /> },
       { path: '/creditos', element: <Creditos /> },
