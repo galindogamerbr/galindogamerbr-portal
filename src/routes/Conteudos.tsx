@@ -46,7 +46,7 @@ export function Conteudos() {
         <Reveal>
           <Container>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-              <div className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5">
+              <div className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] transition-transform duration-300 ease-out hover:-translate-y-1 lg:col-span-5">
                 <div className="relative aspect-video w-full">
                   {flagship?.videoId ? (
                     <VideoEmbed videoId={flagship.videoId} title={flagship.title} autoplay={isLiveNow} />
