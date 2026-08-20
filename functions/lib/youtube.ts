@@ -2,6 +2,7 @@ import type { Env } from './env'
 import { extractVideoIds } from './atom'
 import { BROWSER_USER_AGENT } from './socialConstants'
 import { fetchWithTimeout } from './http'
+import { logError } from './log'
 
 export type VideoState = {
   videoId: string
@@ -126,11 +127,33 @@ async function fetchLiveStreamingDetails(env: Env, videoId: string): Promise<Liv
   }
 }
 
+// Monta o VideoState de um vídeo específico — título e status de live não
+// dependem um do outro, roda os dois ao mesmo tempo em vez de esperar um
+// pra só depois começar o outro. Usado tanto pelo polling
+// (resolveChannelLiveState) quanto pelo webhook do WebSub
+// (updateLiveStateFromWebhook) — mesma lógica, dois gatilhos diferentes.
+async function buildVideoState(env: Env, videoId: string): Promise<VideoState | null> {
+  const [title, { isLive, viewerCount }] = await Promise.all([fetchTitle(videoId), fetchLiveStreamingDetails(env, videoId)])
+  if (!title) return null
+
+  return {
+    videoId,
+    title,
+    thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
+    isLive,
+    startedAt: null,
+    viewerCount,
+  }
+}
+
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
 // publicado se não houver live) — cache-first no KV (PUBLIC_CACHE), TTL
 // curto: cada miss custa até 4 fetches sequenciais pro YouTube (scrape +
 // feed Atom + shorts-check + oEmbed + Data API), então vale a pena servir
-// do cache pra qualquer visitante que caia dentro da janela do TTL.
+// do cache pra qualquer visitante que caia dentro da janela do TTL. Na
+// prática o cache é populado bem mais cedo pelo webhook do WebSub (ver
+// updateLiveStateFromWebhook) sempre que a inscrição está ativa — isso aqui
+// é o fallback de quando o KV expira sem notificação ter chegado.
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
   if (cached) return cached
@@ -139,31 +162,57 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   try {
     liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
   } catch (err) {
-    console.error('[youtube] scrape de /live falhou, caindo pro endpoint oficial:', err)
+    logError('youtube', 'Scrape de /live falhou, caindo pro endpoint oficial', { err })
     liveVideoId = await findLiveVideoIdViaApi(env)
   }
 
   const candidateVideoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
   if (!candidateVideoId) return null
 
-  // Título e status de live não dependem um do outro — roda os dois ao
-  // mesmo tempo em vez de esperar um pra só depois começar o outro.
-  const [title, { isLive, viewerCount }] = await Promise.all([
-    fetchTitle(candidateVideoId),
-    fetchLiveStreamingDetails(env, candidateVideoId),
-  ])
-  if (!title) return null
+  const state = await buildVideoState(env, candidateVideoId)
+  if (!state) return null
 
-  const state: VideoState = {
-    videoId: candidateVideoId,
-    title,
-    thumbnailUrl: `https://i.ytimg.com/vi/${candidateVideoId}/maxresdefault.jpg`,
-    isLive,
-    startedAt: null,
-    viewerCount,
-  }
   await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
   return state
+}
+
+// Notificação do WebSub (ver functions/api/webhooks/youtube.ts) — o hub
+// avisa que um vídeo específico mudou, mas não diz o quê (pode ser a live
+// começando, terminando, ou só uma edição de metadado num vídeo antigo
+// qualquer, sem relação com o estado atual). Por isso decide o que fazer
+// com base no isLive de verdade (Data API), não no fato de ter chegado
+// notificação:
+// - vídeo notificado está ao vivo agora → é a live atual, sempre atualiza.
+// - não está ao vivo, mas É o vídeo que tínhamos cacheado como atual →
+//   provavelmente acabou de terminar, recalcula (cai pro último upload).
+// - não está ao vivo e não é o vídeo cacheado → edição irrelevante em outro
+//   vídeo, ignora (não sobrescreve o cache com algo desatualizado).
+export async function updateLiveStateFromWebhook(env: Env, notifiedVideoId: string): Promise<void> {
+  const { isLive } = await fetchLiveStreamingDetails(env, notifiedVideoId)
+
+  let targetVideoId = notifiedVideoId
+  if (!isLive) {
+    const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
+    if (cached?.videoId !== notifiedVideoId) return
+    targetVideoId = (await getLatestUploadedVideoId(env)) ?? notifiedVideoId
+  }
+
+  const state = await buildVideoState(env, targetVideoId)
+  if (!state) return
+
+  await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
+}
+
+const PUBSUB_LEASE_CACHE_KEY = 'youtube:pubsub-lease'
+
+// Grava o lease_seconds de verdade que o hub concedeu na verificação (GET
+// de functions/api/webhooks/youtube.ts) — o Google costuma ignorar o valor
+// pedido no POST /subscribe (workers/social-stats-cron/src/youtubePubsub.ts)
+// e conceder o dele próprio (~5 dias), então só dá pra saber quando renovar
+// lendo esse header na hora da confirmação, não assumindo o valor pedido.
+export async function recordPubsubLease(env: Env, leaseSeconds: number): Promise<void> {
+  const expiresAt = Date.now() + leaseSeconds * 1000
+  await env.PUBLIC_CACHE.put(PUBSUB_LEASE_CACHE_KEY, JSON.stringify({ expiresAt }))
 }
 
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }
