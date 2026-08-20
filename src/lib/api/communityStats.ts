@@ -14,7 +14,15 @@ export type CommunityStats = {
   discordOnline: number | null
 }
 
-export async function getCommunityStats(): Promise<CommunityStats> {
-  const res = await fetch('/api/community-stats')
-  return res.json() as Promise<CommunityStats>
+// null em qualquer falha (rede, 500, JSON inválido) — quem chama decide o
+// fallback (useCommunityStats mantém o último dado bom em vez de sobrescrever
+// com nada).
+export async function getCommunityStats(): Promise<CommunityStats | null> {
+  try {
+    const res = await fetch('/api/community-stats')
+    if (!res.ok) return null
+    return (await res.json()) as CommunityStats
+  } catch {
+    return null
+  }
 }

@@ -56,22 +56,31 @@ const LIFETIME_GAP_CACHE_TTL_SECONDS = 600
 
 type LifetimeCheckpoint = { total: number; asOf: string }
 
+// Toda a leitura (KV, D1, chamada à Analytics API) fica dentro do try — uma
+// falha aqui não pode derrubar o Promise.all do handler principal e quebrar
+// o resto do /api/community-stats (social stats, live status etc.) por
+// causa só do contador de visitas.
 async function resolveLifetimeVisits(env: Env): Promise<number | null> {
-  const kvCheckpoint = await env.PUBLIC_CACHE.get<LifetimeCheckpoint>(LIFETIME_KV_KEY, 'json')
-  const checkpoint =
-    kvCheckpoint ??
-    (await getSiteVisitsLifetime(env.DB).then((row) =>
-      row?.last_counted_at ? { total: row.total_visits, asOf: row.last_counted_at } : null,
-    ))
-  if (!checkpoint) return null
+  try {
+    const kvCheckpoint = await env.PUBLIC_CACHE.get<LifetimeCheckpoint>(LIFETIME_KV_KEY, 'json')
+    const checkpoint =
+      kvCheckpoint ??
+      (await getSiteVisitsLifetime(env.DB).then((row) =>
+        row?.last_counted_at ? { total: row.total_visits, asOf: row.last_counted_at } : null,
+      ))
+    if (!checkpoint) return null
 
-  let gap = await env.PUBLIC_CACHE.get<number>(LIFETIME_GAP_KV_KEY, 'json')
-  if (gap === null) {
-    gap = (await fetchVisitsSince(env, checkpoint.asOf)) ?? 0
-    await env.PUBLIC_CACHE.put(LIFETIME_GAP_KV_KEY, JSON.stringify(gap), { expirationTtl: LIFETIME_GAP_CACHE_TTL_SECONDS })
+    let gap = await env.PUBLIC_CACHE.get<number>(LIFETIME_GAP_KV_KEY, 'json')
+    if (gap === null) {
+      gap = (await fetchVisitsSince(env, checkpoint.asOf)) ?? 0
+      await env.PUBLIC_CACHE.put(LIFETIME_GAP_KV_KEY, JSON.stringify(gap), { expirationTtl: LIFETIME_GAP_CACHE_TTL_SECONDS })
+    }
+
+    return checkpoint.total + gap
+  } catch (err) {
+    logError('community-stats', 'resolveLifetimeVisits falhou', { err })
+    return null
   }
-
-  return checkpoint.total + gap
 }
 
 const TWITCH_LIVE_CACHE_KEY = 'twitch:live-status'

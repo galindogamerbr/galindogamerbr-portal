@@ -23,7 +23,7 @@ export function useCommunityStats(): CommunityStats | null {
     let active = true
     function load() {
       getCommunityStats().then((s) => {
-        if (!active) return
+        if (!active || !s) return
         setStats(s)
         try {
           localStorage.setItem(CACHE_KEY, JSON.stringify(s))
