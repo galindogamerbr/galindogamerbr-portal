@@ -65,7 +65,7 @@ export function Mods() {
             Baixar versão mais recente
           </LinkButton>
           <LinkButton variant="default" href={MODSYNC_URL} target="_blank" rel="noopener noreferrer">
-            Ver notas de versão
+            Confira nosso app
           </LinkButton>
           {latestVersion && (
             <span className="text-xs font-semibold uppercase tracking-widest text-muted">Versão atual: {latestVersion}</span>
