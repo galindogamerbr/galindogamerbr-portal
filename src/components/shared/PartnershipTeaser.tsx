@@ -24,8 +24,11 @@ export function PartnershipTeaser({ onOpenModal }: PartnershipTeaserProps) {
           Quero conhecer o projeto →
         </Button>
       </div>
-      {/* sm:ml-auto empurra pra ponta direita do card — ajuste o tamanho aqui. */}
-      <Logo className="h-28 w-28 shrink-0 sm:ml-auto sm:h-36 sm:w-36" />
+      {/* sm:flex-1 + sm:justify-center centraliza a logo no espaço que sobra
+          depois do texto (não gruda nele, nem vai até a ponta direita). */}
+      <div className="sm:flex sm:flex-1 sm:justify-center">
+        <Logo className="h-28 w-28 shrink-0 sm:h-36 sm:w-36" />
+      </div>
     </div>
   )
 }

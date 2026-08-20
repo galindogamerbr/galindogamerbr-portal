@@ -29,7 +29,9 @@ export function Parceiros() {
                 Quero ser parceiro
               </Button>
             </div>
-            <Logo className="h-28 w-28 shrink-0 sm:ml-auto sm:h-36 sm:w-36" />
+            <div className="sm:flex sm:flex-1 sm:justify-center">
+              <Logo className="h-28 w-28 shrink-0 sm:h-36 sm:w-36" />
+            </div>
           </div>
         </Container>
       </section>
