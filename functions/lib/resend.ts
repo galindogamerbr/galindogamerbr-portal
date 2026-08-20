@@ -1,5 +1,6 @@
 import type { Env } from './env'
 import { otpEmailHtml, partnershipEmailHtml, type PartnershipSubmission } from './emailTemplates'
+import { fetchWithTimeout } from './http'
 
 const FROM_ADDRESS = 'GalindoGamerBR <acesso@galindogamerbr.com.br>'
 const FROM_ADDRESS_PREVIEW = 'GalindoGamerBR (preview) <acesso-preview@galindogamerbr.com.br>'
@@ -14,7 +15,7 @@ export async function sendOtpEmail(env: Env, to: string, code: string): Promise<
     return
   }
 
-  const res = await fetch('https://api.resend.com/emails', {
+  const res = await fetchWithTimeout('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -40,7 +41,7 @@ export async function sendPartnershipEmail(env: Env, submission: PartnershipSubm
     return
   }
 
-  const res = await fetch('https://api.resend.com/emails', {
+  const res = await fetchWithTimeout('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,

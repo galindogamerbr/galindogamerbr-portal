@@ -11,7 +11,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
   // runtime — é um método nativo que exige o this original, não uma função
   // livre. O wrapper abaixo preserva o binding.
   withEdgeCache(context.request, (promise) => context.waitUntil(promise), async () => {
-    const state = await resolveChannelLiveState(context.env)
+    // Nunca deixa uma falha aqui (timeout, exceção) derrubar o request do
+    // visitante com 500/524 — todo fetch externo já tem timeout (ver
+    // fetchWithTimeout em lib/http.ts), mas esse catch é o último resort.
+    let state
+    try {
+      state = await resolveChannelLiveState(context.env)
+    } catch (err) {
+      console.error('resolveChannelLiveState falhou', err)
+      state = null
+    }
     if (!state) {
       return json({ isLive: false, videoId: null, title: null, thumbnailUrl: null, viewerCount: null }, { publicCacheSeconds: 30 })
     }

@@ -1,6 +1,7 @@
 import type { Env } from './env'
 import { extractVideoIds } from './atom'
 import { BROWSER_USER_AGENT } from './socialConstants'
+import { fetchWithTimeout } from './http'
 
 export type VideoState = {
   videoId: string
@@ -25,29 +26,38 @@ type OEmbedResponse = { title: string }
 // bot-detection do lado do YouTube) e erra o isLiveNow/canonical mesmo com
 // a live rolando de verdade.
 async function getLiveVideoId(channelId: string): Promise<string | null> {
-  const res = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
-    redirect: 'follow',
-    headers: { 'user-agent': BROWSER_USER_AGENT },
-    cf: { cacheTtl: 0, cacheEverything: false },
-  })
-  const body = await res.text()
-  const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
-  const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
-  return videoId ? videoId[1] : null
+  try {
+    const res = await fetchWithTimeout(`https://www.youtube.com/channel/${channelId}/live`, {
+      redirect: 'follow',
+      headers: { 'user-agent': BROWSER_USER_AGENT },
+      cf: { cacheTtl: 0, cacheEverything: false },
+    })
+    const body = await res.text()
+    const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
+    const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
+    return videoId ? videoId[1] : null
+  } catch {
+    // Timeout ou falha de rede — trata como "sem palpite", cai pro feed Atom.
+    return null
+  }
 }
 
 // Sem API key: um Short de verdade é servido direto em /shorts/{id} (200);
 // um vídeo normal, ao pedir essa mesma URL, redireciona pra /watch (3xx).
 async function isShort(videoId: string): Promise<boolean> {
-  const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, { redirect: 'manual' })
-  return res.status === 200
+  try {
+    const res = await fetchWithTimeout(`https://www.youtube.com/shorts/${videoId}`, { redirect: 'manual' })
+    return res.status === 200
+  } catch {
+    return false
+  }
 }
 
 // Sem API key: feed Atom público do canal, do mais novo pro mais antigo —
 // pula Shorts e devolve o primeiro vídeo "de verdade" (live ou normal).
 export async function getLatestUploadedVideoId(env: Env): Promise<string | null> {
   const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${env.YOUTUBE_CHANNEL_ID}`
-  const res = await fetch(url)
+  const res = await fetchWithTimeout(url)
   if (!res.ok) throw new Error(`Falha ao buscar feed do canal: ${res.status}`)
 
   const videoIds = extractVideoIds(await res.text())
@@ -60,11 +70,15 @@ export async function getLatestUploadedVideoId(env: Env): Promise<string | null>
 // Sem API key: oEmbed público só devolve título — thumbnail vem direto da
 // URL previsível do i.ytimg.com (mesmo padrão do update-live.yml antigo).
 async function fetchTitle(videoId: string): Promise<string | null> {
-  const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`)}&format=json`
-  const res = await fetch(url)
-  if (!res.ok) return null
-  const data = (await res.json()) as OEmbedResponse
-  return data.title
+  try {
+    const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`)}&format=json`
+    const res = await fetchWithTimeout(url)
+    if (!res.ok) return null
+    const data = (await res.json()) as OEmbedResponse
+    return data.title
+  } catch {
+    return null
+  }
 }
 
 const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
@@ -83,17 +97,21 @@ type LiveStreamingState = { isLive: boolean; viewerCount: number | null }
 // datacenter) e erra o isLiveNow/canonical mesmo com a live rolando —
 // a Data API não tem esse problema.
 async function fetchLiveStreamingDetails(env: Env, videoId: string): Promise<LiveStreamingState> {
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
-  const res = await fetch(url)
-  if (!res.ok) return { isLive: false, viewerCount: null }
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
+    const res = await fetchWithTimeout(url)
+    if (!res.ok) return { isLive: false, viewerCount: null }
 
-  const data = (await res.json()) as {
-    items?: [{ liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string; concurrentViewers?: string } }]
+    const data = (await res.json()) as {
+      items?: [{ liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string; concurrentViewers?: string } }]
+    }
+    const details = data.items?.[0]?.liveStreamingDetails
+    if (!details?.actualStartTime || details.actualEndTime) return { isLive: false, viewerCount: null }
+
+    return { isLive: true, viewerCount: details.concurrentViewers ? Number(details.concurrentViewers) : null }
+  } catch {
+    return { isLive: false, viewerCount: null }
   }
-  const details = data.items?.[0]?.liveStreamingDetails
-  if (!details?.actualStartTime || details.actualEndTime) return { isLive: false, viewerCount: null }
-
-  return { isLive: true, viewerCount: details.concurrentViewers ? Number(details.concurrentViewers) : null }
 }
 
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
@@ -130,17 +148,21 @@ export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: stri
 // Sem API key: feed Atom público da playlist, do mais novo pro mais antigo —
 // resolve título dos primeiros `count` de uma vez (em paralelo).
 export async function getRecentPlaylistVideos(playlistId: string, count: number): Promise<PlaylistVideo[]> {
-  const url = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`
-  const res = await fetch(url)
-  if (!res.ok) return []
+  try {
+    const url = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`
+    const res = await fetchWithTimeout(url)
+    if (!res.ok) return []
 
-  const videoIds = extractVideoIds(await res.text()).slice(0, count)
-  const videos = await Promise.all(
-    videoIds.map(async (videoId): Promise<PlaylistVideo | null> => {
-      const title = await fetchTitle(videoId)
-      if (!title) return null
-      return { videoId, title, thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` }
-    }),
-  )
-  return videos.filter((v): v is PlaylistVideo => v !== null)
+    const videoIds = extractVideoIds(await res.text()).slice(0, count)
+    const videos = await Promise.all(
+      videoIds.map(async (videoId): Promise<PlaylistVideo | null> => {
+        const title = await fetchTitle(videoId)
+        if (!title) return null
+        return { videoId, title, thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` }
+      }),
+    )
+    return videos.filter((v): v is PlaylistVideo => v !== null)
+  } catch {
+    return []
+  }
 }

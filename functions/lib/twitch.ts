@@ -1,12 +1,13 @@
 import type { Env } from './env'
 import { TWITCH_LOGIN } from './socialConstants'
+import { fetchWithTimeout } from './http'
 
 // App Access Token (client_credentials) — sem OAuth de usuário, sem
 // moderador, sem broadcaster autorizando nada. helix/streams é dado
 // público (o mesmo "N assistindo" que qualquer um vê no site da Twitch),
 // só exige credencial de aplicativo pra chamar a API oficial.
 async function getAppAccessToken(env: Env): Promise<string | null> {
-  const res = await fetch('https://id.twitch.tv/oauth2/token', {
+  const res = await fetchWithTimeout('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
@@ -23,15 +24,19 @@ async function getAppAccessToken(env: Env): Promise<string | null> {
 export type TwitchLiveStatus = { isLive: boolean; viewerCount: number | null }
 
 export async function fetchTwitchLiveStatus(env: Env): Promise<TwitchLiveStatus | null> {
-  const accessToken = await getAppAccessToken(env)
-  if (!accessToken) return null
+  try {
+    const accessToken = await getAppAccessToken(env)
+    if (!accessToken) return null
 
-  const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${TWITCH_LOGIN}`, {
-    headers: { authorization: `Bearer ${accessToken}`, 'client-id': env.TWITCH_CLIENT_ID },
-  })
-  if (!res.ok) return null
+    const res = await fetchWithTimeout(`https://api.twitch.tv/helix/streams?user_login=${TWITCH_LOGIN}`, {
+      headers: { authorization: `Bearer ${accessToken}`, 'client-id': env.TWITCH_CLIENT_ID },
+    })
+    if (!res.ok) return null
 
-  const data = (await res.json()) as { data?: [{ viewer_count?: number }] }
-  const stream = data.data?.[0]
-  return { isLive: !!stream, viewerCount: stream?.viewer_count ?? null }
+    const data = (await res.json()) as { data?: [{ viewer_count?: number }] }
+    const stream = data.data?.[0]
+    return { isLive: !!stream, viewerCount: stream?.viewer_count ?? null }
+  } catch {
+    return null
+  }
 }
