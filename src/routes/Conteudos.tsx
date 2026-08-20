@@ -90,7 +90,7 @@ export function Conteudos() {
                       Ver playlist completa
                     </LinkButton>
                     <NavButton variant="default" to="/mods">
-                      🚜 Confira nosso app
+                      🚜 App para baixar mods
                     </NavButton>
                   </div>
                 </div>
