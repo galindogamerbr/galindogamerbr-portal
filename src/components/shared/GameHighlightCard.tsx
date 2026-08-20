@@ -92,14 +92,14 @@ export function GameHighlightCard({
   }, [videos])
 
   return (
-    <div className={`grid grid-cols-1 overflow-hidden rounded-lg border-2 ${colors.border} ${colors.shadow} lg:grid-cols-2`}>
+    <div className={`group grid grid-cols-1 overflow-hidden rounded-lg border-2 ${colors.border} ${colors.shadow} lg:grid-cols-2`}>
       <img
         src={image}
         alt={title}
         width={1672}
         height={941}
         loading="lazy"
-        className={`aspect-video w-full ${fitClass} lg:aspect-auto lg:h-full`}
+        className={`aspect-video w-full transition duration-500 group-hover:scale-105 ${fitClass} lg:aspect-auto lg:h-full`}
       />
       <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
         <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${colors.badge}`}>

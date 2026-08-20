@@ -54,7 +54,11 @@ export function CommunityStatsGrid() {
             rel="noopener noreferrer"
             className="group flex flex-col items-center gap-2 rounded-lg border border-line bg-panel p-4 text-center transition-colors hover:border-gold/60"
           >
-            <img src={`/assets/logos/${social.logo}`} alt="" className="h-8 w-8 rounded object-contain" />
+            <img
+              src={`/assets/logos/${social.logo}`}
+              alt=""
+              className="h-8 w-8 rounded object-contain transition duration-300 group-hover:scale-110"
+            />
             <span className="text-lg font-semibold">{count !== undefined ? formatCompactNumber(count) : '—'}</span>
             <span className="text-xs uppercase tracking-widest text-muted">{social.name}</span>
             {showLive && (
