@@ -20,6 +20,19 @@ export function Mods() {
           baixe, instale e jogue com exatamente os mesmos mods usados nas lives.
         </p>
 
+        <div className="mt-8 space-y-3 text-muted">
+          <p>
+            Quem já tentou acompanhar a fazenda sabe a dor: baixar mod por mod em sites diferentes, comparar versão
+            com versão, e só descobrir que tava tudo desatualizado (ou sobrando arquivo velho na pasta) bem na hora
+            de entrar no servidor. Cada atualização virava uma caçada.
+          </p>
+          <p>
+            O Mod Sync acabou com isso. Aponta ele pra sua pasta de mods e ele cuida do resto: baixa o que falta,
+            remove o que não bate mais e mantém tudo sincronizado direto com a versão oficial usada nas lives — sem
+            link pra procurar, sem versão pra adivinhar, sem surpresa na hora de jogar.
+          </p>
+        </div>
+
         <div className="mt-8 flex flex-col items-start gap-6 rounded-lg border border-line bg-panel p-6 sm:p-8">
           <div className="flex aspect-video w-full items-center justify-center rounded-md border border-dashed border-line bg-panel2 text-sm text-muted">
             Demonstração em breve
