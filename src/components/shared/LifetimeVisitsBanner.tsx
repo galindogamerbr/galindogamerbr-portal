@@ -1,9 +1,9 @@
 import { useCommunityStats } from '../../hooks/useCommunityStats'
 import { formatNumber } from '../../lib/formatNumber'
-import { Container } from '../ui/Container'
 
-// Faixa fina logo abaixo do Hero — total de visitas desde o início do site
-// (ver workers/social-stats-cron/src/siteVisitsLifetime.ts e
+// Badge dentro do próprio Hero, logo abaixo dos botões de rede — total de
+// visitas desde o início do site (ver
+// workers/social-stats-cron/src/siteVisitsLifetime.ts e
 // functions/api/community-stats.ts, resolveLifetimeVisits). Sem dado ainda
 // (primeira visita antes do worker rodar, ou falha) — não mostra nada, nunca
 // um "0" ou um traço genérico no lugar de um marco de verdade.
@@ -14,13 +14,11 @@ export function LifetimeVisitsBanner() {
   if (!visits) return null
 
   return (
-    <div className="border-b border-line bg-panel py-3">
-      <Container className="flex items-center justify-center gap-2 text-center">
-        <span className="text-lg">🎉</span>
-        <p className="text-sm text-muted">
-          <span className="font-semibold text-gold">{formatNumber(visits)}</span> visitas desde o início
-        </p>
-      </Container>
+    <div className="mt-2 inline-flex w-fit items-center gap-3 rounded-lg border border-gold/40 bg-panel px-6 py-3 shadow-[0_0_30px_-12px_rgba(217,177,79,0.4)]">
+      <span className="text-2xl">🏆</span>
+      <p className="text-sm text-[#dfe6ec]">
+        <span className="text-lg font-bold text-gold">{formatNumber(visits)}</span> pessoas já passaram por aqui
+      </p>
     </div>
   )
 }
