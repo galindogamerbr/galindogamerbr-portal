@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { NAV_ITEMS } from './navItems'
 import { SocialLinks } from './SocialLinks'
 import { MobileMenu } from './MobileMenu'
+import { Logo } from '../ui/Logo'
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -11,11 +12,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-container items-center justify-between gap-4 px-5 py-3 sm:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="GalindoGamerBR — início">
-          <img
-            src="/assets/logos/galindogamerbr.webp"
-            alt="Logo GalindoGamerBR"
-            className="h-[52px] w-[52px] rounded-full object-cover"
-          />
+          <Logo className="h-[52px] w-[52px]" />
           <div className="leading-tight">
             <strong className="block text-sm tracking-wide">GALINDOGAMERBR</strong>
             <small className="block text-[10px] uppercase tracking-widest text-muted">Streaming Community</small>
