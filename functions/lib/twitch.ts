@@ -1,6 +1,7 @@
 import type { Env } from './env'
 import { TWITCH_LOGIN } from './socialConstants'
 import { fetchWithTimeout } from './http'
+import { logWarn, logError } from './log'
 
 // App Access Token (client_credentials) — sem OAuth de usuário, sem
 // moderador, sem broadcaster autorizando nada. helix/streams é dado
@@ -26,17 +27,24 @@ export type TwitchLiveStatus = { isLive: boolean; viewerCount: number | null }
 export async function fetchTwitchLiveStatus(env: Env): Promise<TwitchLiveStatus | null> {
   try {
     const accessToken = await getAppAccessToken(env)
-    if (!accessToken) return null
+    if (!accessToken) {
+      logWarn('twitch', 'Falha ao obter access token')
+      return null
+    }
 
     const res = await fetchWithTimeout(`https://api.twitch.tv/helix/streams?user_login=${TWITCH_LOGIN}`, {
       headers: { authorization: `Bearer ${accessToken}`, 'client-id': env.TWITCH_CLIENT_ID },
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      logWarn('twitch', 'helix/streams retornou erro', { status: res.status })
+      return null
+    }
 
     const data = (await res.json()) as { data?: [{ viewer_count?: number }] }
     const stream = data.data?.[0]
     return { isLive: !!stream, viewerCount: stream?.viewer_count ?? null }
-  } catch {
+  } catch (err) {
+    logError('twitch', 'fetchTwitchLiveStatus falhou', { err })
     return null
   }
 }

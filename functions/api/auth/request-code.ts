@@ -3,6 +3,7 @@ import { isAllowlisted, insertOtpCode } from '../../lib/d1'
 import { generateCode, hashCode } from '../../lib/otp'
 import { checkRateLimit } from '../../lib/rateLimit'
 import { sendOtpEmail } from '../../lib/resend'
+import { logError } from '../../lib/log'
 import { sqliteDatetimePlus } from '../../lib/time'
 import { json } from '../../lib/http'
 
@@ -37,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         // Não deixa uma falha no envio (ex.: domínio ainda não verificado
         // na Resend) quebrar a resposta — o código já foi salvo no D1 e
         // a resposta genérica não deve variar por causa disso.
-        console.error('Falha ao enviar e-mail de OTP', err)
+        logError('auth', 'Falha ao enviar e-mail de OTP', { err })
       }
     }
     // E-mail fora da allowlist ou rate limit estourado: nenhuma ação além

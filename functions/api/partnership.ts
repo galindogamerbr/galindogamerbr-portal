@@ -1,6 +1,7 @@
 import type { Env } from '../lib/env'
 import { checkRateLimit } from '../lib/rateLimit'
 import { sendPartnershipEmail } from '../lib/resend'
+import { logError } from '../lib/log'
 import { json } from '../lib/http'
 
 function clean(value: unknown, maxLength: number): string {
@@ -37,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     await sendPartnershipEmail(env, submission)
   } catch (err) {
-    console.error('Falha ao enviar e-mail de parceria', err)
+    logError('partnership', 'Falha ao enviar e-mail de parceria', { err })
     return json({ ok: false, error: 'send_failed' }, { status: 502 })
   }
 

@@ -26,3 +26,10 @@ database_id = "PENDING_D1_PREVIEW_DATABASE_ID" # placeholder — id real injetad
 [[kv_namespaces]]
 binding = "PUBLIC_CACHE"
 id = "PENDING_KV_NAMESPACE_ID" # placeholder — id real injetado no deploy via secret CLOUDFLARE_KV_NAMESPACE_ID (ver deploy-cron-worker.yml)
+
+# Workers Logs da Cloudflare — persiste console.log/warn/error de cada
+# execução (consultável em Workers & Pages → galindogamerbr-social-stats-cron
+# → Logs), inclusive as do cron agendado (scheduled), sem precisar de
+# wrangler tail ao vivo.
+[observability]
+enabled = true

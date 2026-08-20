@@ -1,5 +1,6 @@
 import type { Env } from '../lib/env'
 import { resolveChannelLiveState } from '../lib/youtube'
+import { logError } from '../lib/log'
 import { json } from '../lib/http'
 import { withEdgeCache } from '../lib/edgeCache'
 
@@ -18,7 +19,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
     try {
       state = await resolveChannelLiveState(context.env)
     } catch (err) {
-      console.error('resolveChannelLiveState falhou', err)
+      logError('live', 'resolveChannelLiveState falhou', { err })
       state = null
     }
     if (!state) {
