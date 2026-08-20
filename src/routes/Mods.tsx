@@ -59,7 +59,7 @@ export function Mods() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <LinkButton variant="gold" href={DOWNLOAD_LATEST_URL} target="_blank" rel="noopener noreferrer">
+          <LinkButton variant="green" href={DOWNLOAD_LATEST_URL} target="_blank" rel="noopener noreferrer">
             Baixar versão mais recente
           </LinkButton>
           <LinkButton variant="default" href={MODSYNC_URL} target="_blank" rel="noopener noreferrer">
