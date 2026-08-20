@@ -34,7 +34,7 @@ export async function fetchVisitsInRange(env: Env, sinceISO: string, untilISO: s
     })
 
     const data = (await res.json()) as {
-      data?: { viewer?: { accounts?: [{ rumPageloadEventsAdaptiveGroups?: [{ sum?: { visits?: number } }] }] } }
+      data?: { viewer?: { accounts?: [{ rumPageloadEventsAdaptiveGroups?: Array<{ sum?: { visits?: number } }> }] } }
       errors?: unknown
     }
 
@@ -43,7 +43,12 @@ export async function fetchVisitsInRange(env: Env, sinceISO: string, untilISO: s
     // denuncia isso.
     if (!res.ok || data.errors) return null
 
-    const visits = data.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups?.[0]?.sum?.visits
+    const groups = data.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups
+    // Array vazio é resposta válida (zero visitas na janela) — a API não
+    // devolve uma linha com sum: 0, só omite a linha.
+    if (groups?.length === 0) return 0
+
+    const visits = groups?.[0]?.sum?.visits
     return typeof visits === 'number' ? visits : null
   } catch {
     return null
