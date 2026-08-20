@@ -1,4 +1,5 @@
 import type { Env } from './env'
+import { fetchWithTimeout } from './http'
 
 // "Visitas do site" via Cloudflare Web Analytics (RUM) real — dataset
 // rumPageloadEventsAdaptiveGroups, que é account-scoped (não zone-scoped:
@@ -18,6 +19,15 @@ const BRT_OFFSET_HOURS = 3 // UTC-3 fixo, sem horário de verão desde 2019
 export async function fetchTodayVisits(env: Env): Promise<number | null> {
   if (!env.CLOUDFLARE_ANALYTICS_API_TOKEN || !env.CLOUDFLARE_ACCOUNT_ID) return null
 
+  try {
+    return await fetchTodayVisitsUnsafe(env)
+  } catch (err) {
+    console.error('[cfAnalytics] falha ao buscar visitas:', err)
+    return null
+  }
+}
+
+async function fetchTodayVisitsUnsafe(env: Env): Promise<number | null> {
   const until = new Date()
   const brtShifted = new Date(until.getTime() - BRT_OFFSET_HOURS * 60 * 60 * 1000)
   const brtMidnightShifted = new Date(Date.UTC(brtShifted.getUTCFullYear(), brtShifted.getUTCMonth(), brtShifted.getUTCDate()))
@@ -38,7 +48,7 @@ export async function fetchTodayVisits(env: Env): Promise<number | null> {
     }
   `
 
-  const res = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+  const res = await fetchWithTimeout('https://api.cloudflare.com/client/v4/graphql', {
     method: 'POST',
     headers: {
       authorization: `Bearer ${env.CLOUDFLARE_ANALYTICS_API_TOKEN}`,
