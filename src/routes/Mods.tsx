@@ -8,9 +8,12 @@ const DOWNLOAD_LATEST_URL = 'https://modsync.phmoreira.dev/download/latest'
 const LATEST_VERSION_URL = 'https://modsync.phmoreira.dev/latest'
 
 const FEATURES = [
+  { icon: '⚡', title: 'Muito mais rápido', text: 'Baixa bem mais rápido que pelo gerenciador de mods do próprio Farming Simulator.' },
   { icon: '🔄', title: 'Sincronização automática', text: 'Pasta de mods e servidor sempre alinhados, sem esforço manual.' },
   { icon: '📦', title: 'Direto da fonte oficial', text: 'Sempre a mesma versão usada nas lives, sem garimpar link perdido.' },
-  { icon: '⚡', title: 'Um clique', text: 'Baixa o que falta e remove o que não bate mais, automaticamente.' },
+  { icon: '🧹', title: 'Limpeza automática', text: 'Remove sozinho os mods antigos que não estão mais no servidor.' },
+  { icon: '🎯', title: 'Configura uma vez', text: 'Aponta a pasta e o servidor uma única vez — depois é só jogar.' },
+  { icon: '🖥️', title: 'Código aberto', text: 'Projeto open-source, qualquer um pode conferir como funciona.' },
 ] as const
 
 // TODO: confirmar com o Pedro o formato real da resposta de /latest quando
@@ -70,7 +73,7 @@ export function Mods() {
           )}
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
             <div key={feature.title} className="rounded-md border border-line bg-panel2 p-4">
               <span className="text-2xl">{feature.icon}</span>
@@ -89,7 +92,8 @@ export function Mods() {
           <p>
             O Mod Sync acabou com isso. Aponta ele pra sua pasta de mods e ele cuida do resto: baixa o que falta,
             remove o que não bate mais e mantém tudo sincronizado direto com a versão oficial usada nas lives — sem
-            link pra procurar, sem versão pra adivinhar, sem surpresa na hora de jogar.
+            link pra procurar, sem versão pra adivinhar, sem surpresa na hora de jogar. E o download é bem mais
+            rápido do que baixar cada mod pelo gerenciador do próprio Farming Simulator.
           </p>
         </div>
 
