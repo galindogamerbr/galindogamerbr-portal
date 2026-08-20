@@ -1,6 +1,7 @@
 import { useId, useState, type FormEvent } from 'react'
 import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
+import { Logo } from '../ui/Logo'
 import { sendPartnershipMessage } from '../../lib/api/partnership'
 
 type PartnershipModalProps = {
@@ -57,11 +58,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
         </div>
       ) : (
         <>
-          <img
-            src="/assets/logos/galindogamerbr.webp"
-            alt="Logo GalindoGamerBR"
-            className="h-14 w-14 rounded-full object-cover"
-          />
+          <Logo className="h-14 w-14" />
           <h2 id={titleId} className="mt-3 text-2xl">
             QUERO SER PARCEIRO
           </h2>

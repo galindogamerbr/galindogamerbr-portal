@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
+import { Logo } from '../components/ui/Logo'
 import { SectionHead } from '../components/ui/SectionHead'
 import { Reveal } from '../components/ui/Reveal'
 import { LinkButton, NavButton } from '../components/ui/Button'
@@ -18,7 +19,7 @@ const HUB_TEASER = [
     eyebrow: 'Farming Simulator 25',
     title: 'MODS DA FAZENDA',
     description: 'Central de mods da Fazenda Nova Aliança.',
-    href: 'https://modsync.phmoreira.dev/',
+    href: '/mods',
   },
   {
     icon: '🎮',
@@ -70,7 +71,7 @@ function Hero() {
       />
       <Container className="relative z-10 flex h-full flex-col justify-center gap-4 py-16 xl:py-0">
         <div className="flex items-center gap-3.5">
-          <img src="/assets/logos/galindogamerbr.webp" alt="" className="h-10 w-10 rounded-full object-cover sm:h-[58px] sm:w-[58px]" />
+          <Logo alt="" className="h-10 w-10 sm:h-[58px] sm:w-[58px]" />
           <span className="text-xs font-bold uppercase tracking-widest text-gold">Bem-vindo ao universo</span>
         </div>
         <h1 className="max-w-[600px] text-[clamp(32px,5.4vw,64px)] leading-[0.95]">

@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
-import { Button, NavButton } from '../components/ui/Button'
+import { NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
 import { PartnershipModal } from '../components/shared/PartnershipModal'
+import { PartnershipTeaser } from '../components/shared/PartnershipTeaser'
 
 // Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
 // Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
@@ -120,46 +121,29 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:gap-16 sm:p-8">
-              <div>
-                <Eyebrow>Um projeto feito para crescer</Eyebrow>
-                <h2 className="text-2xl sm:text-3xl">QUANDO UMA COMUNIDADE ACREDITA, UMA PAIXÃO PODE IR MUITO MAIS LONGE.</h2>
-                <p className="mt-3 max-w-2xl text-muted">
-                  O GalindoGamerBR está sendo construído com tempo, trabalho e dedicação. A ideia não é simplesmente
-                  colocar uma logo em uma página: é <strong className="text-white">criar uma parceria que faça
-                  sentido para os dois lados</strong> e colocar marcas junto de uma comunidade real, ativa e
-                  construída com proximidade.
-                </p>
-                <Button variant="gold" className="mt-6" onClick={() => setModalOpen(true)}>
-                  Quero conhecer o projeto →
-                </Button>
-              </div>
-              <img
-                src="/assets/logos/galindogamerbr.webp"
-                alt="Logo GalindoGamerBR"
-                className="h-28 w-28 shrink-0 rounded-full object-cover sm:h-36 sm:w-36"
-              />
-            </div>
+            <PartnershipTeaser onOpenModal={() => setModalOpen(true)} />
           </Container>
         </Reveal>
       </section>
 
-      <section className="pb-16 sm:pb-24 text-center">
+      <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container className="max-w-2xl">
-            <Eyebrow>Se você chegou até aqui...</Eyebrow>
-            <h2 className="text-3xl sm:text-4xl">ENTÃO TALVEZ VOCÊ JÁ FAÇA PARTE DESSA HISTÓRIA.</h2>
-            <p className="mt-4 text-muted">
-              Esse é o GalindoGamerBR: um projeto feito por uma pessoa comum, apaixonada por games, tentando
-              transformar algumas horas de diversão em encontros que tenham significado.
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <NavButton variant="red" to="/">
-                Conhecer o canal →
-              </NavButton>
-              <NavButton variant="blue" to="/comunidade">
-                Fazer parte da comunidade →
-              </NavButton>
+            <div className="rounded-lg border border-gold/40 bg-panel p-6 text-center sm:p-8">
+              <Eyebrow>Se você chegou até aqui...</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl">ENTÃO TALVEZ VOCÊ JÁ FAÇA PARTE DESSA HISTÓRIA.</h2>
+              <p className="mt-4 text-muted">
+                Esse é o GalindoGamerBR: um projeto feito por uma pessoa comum, apaixonada por games, tentando
+                transformar algumas horas de diversão em encontros que tenham significado.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <NavButton variant="red" to="/">
+                  Conhecer o canal →
+                </NavButton>
+                <NavButton variant="blue" to="/comunidade">
+                  Fazer parte da comunidade →
+                </NavButton>
+              </div>
             </div>
           </Container>
         </Reveal>

@@ -12,7 +12,7 @@ const HUB_LINKS = [
     eyebrow: 'Farming Simulator 25',
     title: 'MODS DA FAZENDA',
     description: 'Central de mods da Fazenda Nova Aliança.',
-    href: 'https://modsync.phmoreira.dev/',
+    href: '/mods',
   },
   {
     icon: '💬',
