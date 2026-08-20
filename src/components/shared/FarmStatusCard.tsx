@@ -66,7 +66,7 @@ export function FarmStatusCard() {
   const players = sortPlayers(status.players.list)
 
   return (
-    <div className="pop-in flex h-full flex-col justify-center rounded-lg border border-line bg-panel bg-[radial-gradient(circle_at_top,rgba(217,177,79,0.08),transparent_60%)] p-8 sm:p-10">
+    <div className="pop-in flex h-full flex-col justify-center rounded-lg border border-line bg-panel bg-[radial-gradient(circle_at_top,rgba(217,177,79,0.08),transparent_60%)] p-6 sm:p-8">
       <div className="flex flex-col items-start gap-2">
         <span
           className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${
@@ -81,7 +81,7 @@ export function FarmStatusCard() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-[1fr_1fr_1.3fr] gap-1">
         <div className="flex flex-col items-center gap-1 text-center">
           <span className="text-lg font-semibold text-gold">
             {status.players.count}/{status.players.max}
