@@ -41,7 +41,7 @@ async function fetchVisitsRange(env: Env, sinceISO: string, untilISO: string): P
   })
 
   const data = (await res.json()) as {
-    data?: { viewer?: { accounts?: [{ rumPageloadEventsAdaptiveGroups?: [{ sum?: { visits?: number } }] }] } }
+    data?: { viewer?: { accounts?: [{ rumPageloadEventsAdaptiveGroups?: Array<{ sum?: { visits?: number } }> }] } }
     errors?: unknown
   }
 
@@ -53,7 +53,13 @@ async function fetchVisitsRange(env: Env, sinceISO: string, untilISO: string): P
     return null
   }
 
-  const visits = data.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups?.[0]?.sum?.visits
+  const groups = data.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups
+  // Array vazio é resposta válida (zero visitas na janela, ex.: janela muito
+  // curta ou sem tráfego ainda) — a API não devolve uma linha com sum: 0,
+  // só omite a linha. Só é erro de verdade se veio linha mas sem o campo.
+  if (groups?.length === 0) return 0
+
+  const visits = groups?.[0]?.sum?.visits
   if (typeof visits !== 'number') {
     logError('cfAnalytics', 'Campo sum.visits não encontrado na resposta', { data })
     return null
