@@ -78,7 +78,7 @@ function Hero() {
           <h1 className="max-w-[600px] text-[clamp(32px,5.4vw,64px)] leading-[0.95]">
             GALINDO<span className="text-gold">GAMER</span>BR
           </h1>
-          <p className="col-start-2 text-center text-sm font-extrabold uppercase tracking-[0.1em] text-[#dfe6ec]">
+          <p className="col-start-2 text-sm font-extrabold uppercase tracking-[0.1em] text-[#dfe6ec]">
             Simuladores <span className="text-gold">•</span> Games <span className="text-gold">•</span> Comunidade
           </p>
         </div>
