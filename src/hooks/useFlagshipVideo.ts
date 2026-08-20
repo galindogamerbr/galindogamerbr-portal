@@ -4,17 +4,23 @@ import { useLocalStorageCachedVideos } from './useLocalStorageCachedVideos'
 
 const CACHE_KEY = 'ggb:flagship-videos'
 
-// Se o canal estiver ao vivo agora, a live vira o primeiro item (destaque)
-// mesmo que a ordem da playlist não coloque ela em primeiro — cria uma
-// entrada a partir do /api/live quando a live ainda não aparece na playlist.
+// Se o canal estiver ao vivo agora E essa live já for um vídeo da playlist
+// da Fazenda Nova Aliança, ela vira o primeiro item (destaque) mesmo que a
+// ordem da playlist não coloque ela em primeiro. /api/live é o status geral
+// do canal (qualquer jogo) — nunca inventa uma entrada a partir dele sem
+// checar se o videoId pertence mesmo a essa playlist, senão uma live de
+// outro jogo (ex: Fúria Reborn) aparecia como se fosse o carro-chefe.
 function withLiveFeatured(videos: FlagshipVideo[], live: Awaited<ReturnType<typeof getLiveStatus>>): FlagshipVideo[] {
   if (!live.isLive || !live.videoId) return videos
+
+  const match = videos.find((v) => v.videoId === live.videoId)
+  if (!match) return videos
 
   const rest = videos.filter((v) => v.videoId !== live.videoId)
   const liveVideo: FlagshipVideo = {
     videoId: live.videoId,
-    title: live.title ?? videos.find((v) => v.videoId === live.videoId)?.title ?? '',
-    thumbnailUrl: live.thumbnailUrl ?? `https://i.ytimg.com/vi/${live.videoId}/maxresdefault.jpg`,
+    title: live.title ?? match.title,
+    thumbnailUrl: live.thumbnailUrl ?? match.thumbnailUrl,
   }
   return [liveVideo, ...rest]
 }

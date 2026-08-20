@@ -1,4 +1,25 @@
+import type { Env } from './env'
+import { logError } from './log'
+
 export type SocialPlatform = 'youtube' | 'discord' | 'twitch' | 'instagram' | 'tiktok' | 'kick'
+
+const DATABASE_BINDINGS = ['DB', 'PREVIEW_DB'] as const
+
+// Escreve em produção e preview igualzinho — o worker não tem "deploy de
+// preview" próprio (ver PREVIEW_DB em env.ts), então isso é o único jeito
+// do fallback de leitura do preview bater. Cada banco isolado: um falhar
+// não impede o outro (nem o resto da rodada) de gravar.
+export async function upsertToAllDatabases(env: Env, write: (db: D1Database) => Promise<void>): Promise<void> {
+  await Promise.all(
+    DATABASE_BINDINGS.map(async (binding) => {
+      try {
+        await write(env[binding])
+      } catch (error) {
+        logError('social-stats-cron', `Escrita em ${binding} falhou`, { binding, error })
+      }
+    }),
+  )
+}
 
 // count = seguidores/inscritos/membros (social_stats_cache); postCount =
 // quantidade de posts/vídeos (post_counts_cache), quando a rede/chamada
@@ -78,5 +99,26 @@ export async function upsertTiktokToken(db: D1Database, params: { accessToken: s
          updated_at = excluded.updated_at`,
     )
     .bind(params.accessToken, params.refreshToken)
+    .run()
+}
+
+export type SiteVisitsLifetimeRow = { total_visits: number; last_counted_at: string | null }
+
+// Total acumulado de visitas (ver src/siteVisitsLifetime.ts) — last_counted_at
+// é o cursor (timestamp ISO exato) até onde a Analytics API já foi somada.
+export async function getSiteVisitsLifetime(db: D1Database): Promise<SiteVisitsLifetimeRow | null> {
+  const row = await db.prepare('SELECT total_visits, last_counted_at FROM site_visits_lifetime WHERE id = 1').first<SiteVisitsLifetimeRow>()
+  return row ?? null
+}
+
+export async function upsertSiteVisitsLifetime(db: D1Database, params: { totalVisits: number; lastCountedAt: string }): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO site_visits_lifetime (id, total_visits, last_counted_at, updated_at)
+       VALUES (1, ?, ?, datetime('now'))
+       ON CONFLICT (id) DO UPDATE SET total_visits = excluded.total_visits, last_counted_at = excluded.last_counted_at,
+         updated_at = excluded.updated_at`,
+    )
+    .bind(params.totalVisits, params.lastCountedAt)
     .run()
 }

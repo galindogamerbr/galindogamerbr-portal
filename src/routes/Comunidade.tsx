@@ -4,7 +4,6 @@ import { Reveal } from '../components/ui/Reveal'
 import { HubLink } from '../components/shared/HubLink'
 import { VipSteps } from '../components/shared/VipSteps'
 import { CommunityStatsGrid } from '../components/shared/CommunityStatsGrid'
-import { SiteVisitsCard } from '../components/shared/SiteVisitsCard'
 
 const HUB_LINKS = [
   {
@@ -40,12 +39,9 @@ export function Comunidade() {
           <Container>
             <Eyebrow>Comunidade em números</Eyebrow>
             <h2 className="text-3xl sm:text-4xl">A GALERA CRESCENDO</h2>
-            <p className="mt-3 max-w-xl text-muted">
-              Seguidores em cada rede, atualizados a cada hora, e as visitas do site — tudo num só lugar.
-            </p>
-            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_14rem]">
+            <p className="mt-3 max-w-xl text-muted">Seguidores em cada rede, atualizados a cada hora — tudo num só lugar.</p>
+            <div className="mt-8">
               <CommunityStatsGrid />
-              <SiteVisitsCard />
             </div>
           </Container>
         </Reveal>

@@ -32,6 +32,54 @@ export function Conteudos() {
 
   const isLiveNow = live?.isLive && live.videoId === flagship?.videoId
 
+  // Fúria Reborn, ETS2, SnowRunner — se o canal estiver ao vivo com um vídeo
+  // que já apareceu na playlist recente de um desses jogos (mesma checagem
+  // de pertencimento usada no carro-chefe, ver useFlagshipVideo.ts), esse
+  // jogo sobe pra cima do carro-chefe, em destaque, com a live embutida em
+  // vez da imagem estática (liveVideoId, ver GameHighlightCard.tsx) — sai da
+  // lista normal de "Outros jogos" enquanto estiver promovido.
+  const otherGameHighlights = [
+    {
+      slug: 'furia-reborn-rp',
+      image: FURIA_REBORN.image,
+      title: 'FÚRIA REBORN — GTA RP',
+      badgeEmoji: '🎮',
+      badgeLabel: 'Roleplay do canal',
+      description: FURIA_REBORN.description,
+      href: FURIA_REBORN.href,
+      variant: 'purple' as const,
+      videos: furiaVideos,
+    },
+    {
+      slug: 'ets2',
+      image: ETS2.image,
+      title: 'EURO TRUCK SIMULATOR 2',
+      badgeEmoji: '🚚',
+      badgeLabel: 'Estradas do canal',
+      description: ETS2.description,
+      href: ETS2.href,
+      variant: 'red' as const,
+      videos: ets2Videos,
+    },
+    {
+      slug: 'snowrunner',
+      image: SNOWRUNNER.image,
+      title: 'SNOWRUNNER',
+      badgeEmoji: '🚛',
+      badgeLabel: 'Simulação off-road',
+      description: SNOWRUNNER.description,
+      href: SNOWRUNNER.href,
+      variant: 'blue' as const,
+      videos: snowrunnerVideos,
+    },
+  ].map((game) => ({
+    ...game,
+    liveVideoId: live?.isLive && game.videos.some((video) => video.videoId === live.videoId) ? live.videoId : null,
+  }))
+  const liveHighlightIndex = otherGameHighlights.findIndex((game) => game.liveVideoId)
+  const promotedLiveGame = liveHighlightIndex >= 0 ? otherGameHighlights[liveHighlightIndex] : null
+  const remainingGameHighlights = otherGameHighlights.filter((_, index) => index !== liveHighlightIndex)
+
   return (
     <>
       <section className="pt-16 pb-8 sm:pt-24 sm:pb-12">
@@ -40,6 +88,20 @@ export function Conteudos() {
           <h1 className="text-4xl sm:text-5xl">NOSSOS CONTEÚDOS</h1>
         </Container>
       </section>
+
+      {/* Se tiver ao vivo com Fúria/ETS2/SnowRunner, esse destaque assume o
+          topo da página, acima até do carro-chefe — "o que tá rolando agora"
+          importa mais que o vídeo mais recente da série fixa. */}
+      {promotedLiveGame && (
+        <section className="pb-8 sm:pb-12">
+          <Reveal>
+            <Container>
+              <Eyebrow>Ao vivo agora</Eyebrow>
+              <GameHighlightCard {...promotedLiveGame} />
+            </Container>
+          </Reveal>
+        </section>
+      )}
 
       {/* Carro-chefe do canal — destaque acima de tudo o resto. */}
       <section id="fazenda-nova-alianca" className="pb-8 sm:pb-12">
@@ -89,11 +151,14 @@ export function Conteudos() {
                     <NavButton variant="blue" to="/mods">
                       Sincronize seus mods
                     </NavButton>
+                    <NavButton variant="purple" to="/fazenda">
+                      Participe da Fazenda
+                    </NavButton>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 lg:col-span-2">
+              <div className="hidden flex-col gap-3 lg:col-span-2 lg:flex">
                 {recent.map((video) => (
                   <a
                     key={video.videoId}
@@ -137,38 +202,13 @@ export function Conteudos() {
             <SectionHead eyebrow="Descubra mais" title="OUTROS JOGOS DO CANAL" />
 
             {/* Fúria Reborn, ETS2 e SnowRunner — destaques secundários, mesmo
-                formato do teaser da Home (imagem+conteúdo 50/50, full width). */}
+                formato do teaser da Home (imagem+conteúdo 50/50, full width).
+                O que estiver ao vivo agora não aparece aqui — está promovido
+                acima do carro-chefe (ver promotedLiveGame). */}
             <div className="mt-8 flex flex-col gap-6">
-              <GameHighlightCard
-                image={FURIA_REBORN.image}
-                title="FÚRIA REBORN — GTA RP"
-                badgeEmoji="🎮"
-                badgeLabel="Roleplay do canal"
-                description={FURIA_REBORN.description}
-                href={FURIA_REBORN.href}
-                variant="purple"
-                videos={furiaVideos}
-              />
-              <GameHighlightCard
-                image={ETS2.image}
-                title="EURO TRUCK SIMULATOR 2"
-                badgeEmoji="🚚"
-                badgeLabel="Estradas do canal"
-                description={ETS2.description}
-                href={ETS2.href}
-                variant="red"
-                videos={ets2Videos}
-              />
-              <GameHighlightCard
-                image={SNOWRUNNER.image}
-                title="SNOWRUNNER"
-                badgeEmoji="🚛"
-                badgeLabel="Simulação off-road"
-                description={SNOWRUNNER.description}
-                href={SNOWRUNNER.href}
-                variant="blue"
-                videos={snowrunnerVideos}
-              />
+              {remainingGameHighlights.map((game) => (
+                <GameHighlightCard key={game.slug} {...game} />
+              ))}
             </div>
 
             <div className="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">

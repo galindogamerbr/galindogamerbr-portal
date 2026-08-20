@@ -4,6 +4,7 @@
 // (que tem sua própria cópia, runtime/deploy separado).
 export const TWITCH_LOGIN = 'galindogamerbr'
 export const KICK_USERNAME = 'galindogamerbr'
+export const TIKTOK_USERNAME = 'galindogamerbr'
 export const DISCORD_INVITE_CODE = 'JggtZ7qGY3'
 
 export const BROWSER_USER_AGENT =

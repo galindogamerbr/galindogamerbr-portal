@@ -2,6 +2,7 @@ export const NAV_ITEMS = [
   { label: 'Início', to: '/' },
   { label: 'Boas-vindas', to: '/boas-vindas' },
   { label: 'Conteúdos', to: '/conteudos' },
+  { label: 'Participe da Fazenda', to: '/fazenda' },
   { label: 'Comunidade', to: '/comunidade' },
   { label: 'Sobre', to: '/sobre' },
   { label: 'Parceiros', to: '/parceiros' },
@@ -11,7 +12,6 @@ export const NAV_ITEMS = [
 // dois lugares era redundante. O mapa do site (/mapa-do-site) reúne os dois
 // grupos pra quem quiser ver tudo num lugar só.
 export const FOOTER_ITEMS = [
-  { label: 'Mod Sync', to: '/mods' },
   { label: 'Contato', to: '/contato' },
   { label: 'Privacidade', to: '/privacidade' },
   { label: 'Termos', to: '/termos' },

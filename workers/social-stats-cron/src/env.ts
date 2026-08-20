@@ -30,4 +30,10 @@ export type Env = {
   // valor configurado como secret nas Pages Functions (YOUTUBE_PUBSUB_SECRET
   // em functions/lib/env.ts), que é quem valida a assinatura das notificações.
   YOUTUBE_PUBSUB_SECRET: string
+  // Total de visitas desde o início (ver src/siteVisitsLifetime.ts) — mesmos
+  // valores já configurados nas Pages Functions (functions/lib/env.ts,
+  // usados por functions/lib/cfAnalytics.ts pras visitas "de hoje"); esse
+  // worker precisa da própria cópia porque roda num Worker separado.
+  CLOUDFLARE_ANALYTICS_API_TOKEN: string
+  CLOUDFLARE_ACCOUNT_ID: string
 }

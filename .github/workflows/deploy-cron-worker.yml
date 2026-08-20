@@ -13,6 +13,11 @@ on:
       - workers/social-stats-cron/**
       - .github/workflows/deploy-cron-worker.yml
   workflow_dispatch:
+    inputs:
+      backfill_lifetime_visits:
+        description: 'Rodar o backfill do total de visitas desde sempre agora (ver siteVisitsLifetime.ts), sem esperar a janela semanal'
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -55,3 +60,11 @@ jobs:
       - name: Disparar coleta de social stats agora
         run: |
           curl -s -X POST -H "x-trigger-secret: ${{ secrets.CRON_TRIGGER_SECRET }}" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/ || true
+
+      # Só quando disparado manualmente com o input marcado — não faz parte
+      # do fluxo normal de deploy (ver README do worker, seção "Bootstrap
+      # único do total de visitas").
+      - name: Backfill do total de visitas desde sempre
+        if: ${{ inputs.backfill_lifetime_visits == true }}
+        run: |
+          curl -s -X POST -H "x-trigger-secret: ${{ secrets.CRON_TRIGGER_SECRET }}" "https://galindogamerbr-social-stats-cron.dignanet.workers.dev/?backfillLifetimeVisits=1"

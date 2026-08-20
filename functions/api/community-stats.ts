@@ -1,8 +1,9 @@
 import type { Env } from '../lib/env'
 import { json } from '../lib/http'
-import { fetchTodayVisits } from '../lib/cfAnalytics'
+import { fetchTodayVisits, fetchVisitsSince } from '../lib/cfAnalytics'
 import { fetchTwitchLiveStatus } from '../lib/twitch'
 import { fetchKickLiveStatus } from '../lib/kick'
+import { fetchTiktokLiveStatus } from '../lib/tiktokLive'
 import { fetchDiscordCounts } from '../lib/discord'
 import { resolveChannelLiveState } from '../lib/youtube'
 import { logError } from '../lib/log'
@@ -11,6 +12,7 @@ import {
   getDiscordPresenceCache,
   getPostCountsCache,
   getSiteVisitsCache,
+  getSiteVisitsLifetime,
   getSocialStatsCache,
   upsertDiscordPresenceCache,
   upsertSiteVisitsCache,
@@ -41,8 +43,40 @@ async function resolveSiteVisits(env: Env): Promise<number | null> {
   return cached?.visits_today ?? null
 }
 
+// Checkpoint semanal escrito pelo worker (workers/social-stats-cron/src/
+// siteVisitsLifetime.ts) — { total, asOf }. O site nunca escreve aqui, só
+// lê e soma o intervalo desde `asOf` até agora (fetchVisitsSince), pra o
+// número não ficar parado a semana inteira entre uma rodada do cron e
+// outra. Esse "gap" fica cacheado 10min (mesmo espírito de
+// SITE_VISITS_CACHE_MINUTES) — não é limite de cota, é só pra não repetir
+// a chamada a cada visitante.
+const LIFETIME_KV_KEY = 'site-visits:lifetime'
+const LIFETIME_GAP_KV_KEY = 'site-visits:lifetime-gap'
+const LIFETIME_GAP_CACHE_TTL_SECONDS = 600
+
+type LifetimeCheckpoint = { total: number; asOf: string }
+
+async function resolveLifetimeVisits(env: Env): Promise<number | null> {
+  const kvCheckpoint = await env.PUBLIC_CACHE.get<LifetimeCheckpoint>(LIFETIME_KV_KEY, 'json')
+  const checkpoint =
+    kvCheckpoint ??
+    (await getSiteVisitsLifetime(env.DB).then((row) =>
+      row?.last_counted_at ? { total: row.total_visits, asOf: row.last_counted_at } : null,
+    ))
+  if (!checkpoint) return null
+
+  let gap = await env.PUBLIC_CACHE.get<number>(LIFETIME_GAP_KV_KEY, 'json')
+  if (gap === null) {
+    gap = (await fetchVisitsSince(env, checkpoint.asOf)) ?? 0
+    await env.PUBLIC_CACHE.put(LIFETIME_GAP_KV_KEY, JSON.stringify(gap), { expirationTtl: LIFETIME_GAP_CACHE_TTL_SECONDS })
+  }
+
+  return checkpoint.total + gap
+}
+
 const TWITCH_LIVE_CACHE_KEY = 'twitch:live-status'
 const KICK_LIVE_CACHE_KEY = 'kick:live-status'
+const TIKTOK_LIVE_CACHE_KEY = 'tiktok:live-status'
 const LIVE_STATUS_CACHE_TTL_SECONDS = 90
 
 async function resolveTwitchLive(env: Env): Promise<LiveStatus> {
@@ -64,6 +98,24 @@ async function resolveKickLive(env: Env): Promise<LiveStatus> {
   const fresh = await fetchKickLiveStatus(env)
   if (fresh) {
     await env.PUBLIC_CACHE.put(KICK_LIVE_CACHE_KEY, JSON.stringify(fresh), { expirationTtl: LIVE_STATUS_CACHE_TTL_SECONDS })
+    return fresh
+  }
+  return { isLive: false, viewerCount: null }
+}
+
+// TikTok, diferente de Twitch/Kick, não é gated pela live do YouTube — o
+// Galindo transmite no TikTok de forma independente (não é sempre simulcast
+// do evento do YouTube), então checa sempre, com cache de 90s (mesmo TTL do
+// Twitch/Kick) só pra não bater no endpoint a cada request de cada
+// visitante. fetchTiktokLiveStatus é uma chamada HTTP só, sem OAuth, sem
+// cron externo nem worker rodando sem parar (ver functions/lib/tiktokLive.ts).
+async function resolveTiktokLive(env: Env): Promise<LiveStatus> {
+  const cached = await env.PUBLIC_CACHE.get<LiveStatus>(TIKTOK_LIVE_CACHE_KEY, 'json')
+  if (cached) return cached
+
+  const fresh = await fetchTiktokLiveStatus()
+  if (fresh) {
+    await env.PUBLIC_CACHE.put(TIKTOK_LIVE_CACHE_KEY, JSON.stringify(fresh), { expirationTtl: LIVE_STATUS_CACHE_TTL_SECONDS })
     return fresh
   }
   return { isLive: false, viewerCount: null }
@@ -136,14 +188,17 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
     const isYoutubeLive = await resolveYoutubeIsLive(context.env)
     const noLiveStatus: LiveStatus = { isLive: false, viewerCount: null }
 
-    const [socialCache, postCountsCache, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
-      getSocialStatsCache(context.env.DB),
-      getPostCountsCache(context.env.DB),
-      resolveSiteVisits(context.env),
-      isYoutubeLive ? resolveTwitchLive(context.env) : Promise.resolve(noLiveStatus),
-      isYoutubeLive ? resolveKickLive(context.env) : Promise.resolve(noLiveStatus),
-      resolveDiscordCounts(context.env),
-    ])
+    const [socialCache, postCountsCache, visitsToday, lifetimeVisits, twitchLive, kickLive, tiktokLive, discordCounts] =
+      await Promise.all([
+        getSocialStatsCache(context.env.DB),
+        getPostCountsCache(context.env.DB),
+        resolveSiteVisits(context.env),
+        resolveLifetimeVisits(context.env),
+        isYoutubeLive ? resolveTwitchLive(context.env) : Promise.resolve(noLiveStatus),
+        isYoutubeLive ? resolveKickLive(context.env) : Promise.resolve(noLiveStatus),
+        resolveTiktokLive(context.env),
+        resolveDiscordCounts(context.env),
+      ])
 
     const countByPlatform = new Map(socialCache.map((row) => [row.platform, row.count]))
     const postCountByPlatform = new Map(postCountsCache.map((row) => [row.platform, row.count]))
@@ -197,9 +252,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
           }))
           .filter((row): row is { platform: SocialPlatform; count: number; fetchedAt: string | null } => row.count !== undefined),
         postCounts,
-        siteVisits: { visitsToday },
+        siteVisits: { visitsToday, lifetimeVisits },
         twitchLive,
         kickLive,
+        tiktokLive,
         discordOnline: discordCounts.onlineCount,
       },
       { publicCacheSeconds: 60 },

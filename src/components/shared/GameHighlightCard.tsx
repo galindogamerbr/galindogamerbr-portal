@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { preload } from 'react-dom'
 import { LinkButton } from '../ui/Button'
+import { VideoEmbed } from './VideoEmbed'
 
 type Video = { videoId: string; title: string; thumbnailUrl: string }
 
@@ -55,6 +56,10 @@ type GameHighlightCardProps = {
   // 'contain' pra artes com bastante espaço vazio ao redor da logo (ex:
   // Dicas do Galindo) — object-cover cortava a arte de forma perceptível.
   imageFit?: 'cover' | 'contain'
+  // Quando o canal está ao vivo com um vídeo desse jogo (ver Conteudos.tsx),
+  // troca a imagem estática pelo embed ao vivo, autoplay, com selo "Ao vivo
+  // agora" — mesmo tratamento do card carro-chefe.
+  liveVideoId?: string | null
 }
 
 // Segundo/terceiro destaque de um jogo (não carro-chefe) — mesmo formato do
@@ -70,6 +75,7 @@ export function GameHighlightCard({
   variant,
   videos,
   imageFit = 'cover',
+  liveVideoId = null,
 }: GameHighlightCardProps) {
   const colors = COLORS[variant]
   const fitClass = imageFit === 'contain' ? 'object-contain bg-bg' : 'object-cover'
@@ -93,18 +99,34 @@ export function GameHighlightCard({
 
   return (
     <div className={`group grid grid-cols-1 overflow-hidden rounded-lg border-2 ${colors.border} ${colors.shadow} lg:grid-cols-2`}>
-      <img
-        src={image}
-        alt={title}
-        width={1672}
-        height={941}
-        loading="lazy"
-        className={`aspect-video w-full transition duration-500 group-hover:scale-105 ${fitClass} lg:aspect-auto lg:h-full`}
-      />
+      {liveVideoId ? (
+        <VideoEmbed
+          videoId={liveVideoId}
+          title={title}
+          autoplay
+          className="w-full transition duration-500 group-hover:scale-105 lg:aspect-auto lg:h-full"
+        />
+      ) : (
+        <img
+          src={image}
+          alt={title}
+          width={1672}
+          height={941}
+          loading="lazy"
+          className={`aspect-video w-full transition duration-500 group-hover:scale-105 ${fitClass} lg:aspect-auto lg:h-full`}
+        />
+      )}
       <div className="flex flex-col items-start justify-center gap-3 bg-panel p-6 sm:p-10">
-        <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${colors.badge}`}>
-          {badgeEmoji} {badgeLabel}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${colors.badge}`}>
+            {badgeEmoji} {badgeLabel}
+          </span>
+          {liveVideoId && (
+            <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
+            </span>
+          )}
+        </div>
         <h2 className="text-2xl sm:text-3xl">{title}</h2>
         <p className="max-w-xl text-justify text-muted">{description}</p>
         <div className="mt-2 flex flex-wrap gap-3">

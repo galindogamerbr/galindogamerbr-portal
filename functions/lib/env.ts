@@ -56,4 +56,8 @@ export type Env = {
   // conectado uma vez pelo admin, o worker renova o token sozinho depois.
   TIKTOK_CLIENT_KEY: string
   TIKTOK_CLIENT_SECRET: string
+  // Function key (query param `code`) do Azure Function fs25-discord-monitor
+  // (functions/lib/farmStatus.ts) — monitora o servidor dedicado da Fazenda
+  // Nova Aliança. Sem essa key o endpoint responde 401.
+  FS25_MONITOR_FUNCTION_CODE: string
 }

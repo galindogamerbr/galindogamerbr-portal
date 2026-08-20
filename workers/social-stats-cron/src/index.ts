@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { upsertSocialStat, upsertPostCount, type SocialPlatform, type Stats } from './d1'
+import { upsertSocialStat, upsertPostCount, upsertToAllDatabases, type SocialPlatform, type Stats } from './d1'
 import { cacheSocialStats } from './cache'
 import { fetchYoutubeStats } from './youtube'
 import { fetchTwitchFollowers } from './twitch'
@@ -8,6 +8,7 @@ import { getInstagramStats } from './instagram'
 import { getTiktokStats } from './tiktok'
 import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 import { renewYoutubeSubscriptionIfNeeded } from './youtubePubsub'
+import { updateSiteVisitsLifetime } from './siteVisitsLifetime'
 import { logWarn, logError } from './log'
 
 // Únicas plataformas que o endpoint público lê do KV (ver
@@ -16,24 +17,6 @@ import { logWarn, logError } from './log'
 const CACHED_IN_KV_PLATFORMS: SocialPlatform[] = ['youtube', 'tiktok', 'instagram']
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<Stats> }
-
-const DATABASE_BINDINGS = ['DB', 'PREVIEW_DB'] as const
-
-// Escreve em produção e preview igualzinho — o worker não tem "deploy de
-// preview" próprio (ver PREVIEW_DB em env.ts), então isso é o único jeito
-// do fallback de leitura do preview bater. Cada banco isolado: um falhar
-// não impede o outro (nem o resto da rodada) de gravar.
-async function upsertToAllDatabases(env: Env, write: (db: D1Database) => Promise<void>): Promise<void> {
-  await Promise.all(
-    DATABASE_BINDINGS.map(async (binding) => {
-      try {
-        await write(env[binding])
-      } catch (error) {
-        logError('social-stats-cron', `Escrita em ${binding} falhou`, { binding, error })
-      }
-    }),
-  )
-}
 
 // Discord não está aqui de propósito — sai ao vivo em
 // functions/api/community-stats.ts (endpoint público, sem risco de cota),
@@ -76,9 +59,23 @@ async function collectAll(env: Env): Promise<void> {
   })
 }
 
+// Precisa bater exatamente com o segundo cron em wrangler.toml — domingo
+// 03:00 UTC = domingo meia-noite BRT (UTC-3, sem horário de verão desde
+// 2019). Gatilho fixo (não "quando já fez uma semana"), pra sempre rodar no
+// mesmo horário da semana. Cloudflare exige domingo como "7", não "0"
+// (testado: "0 3 * * 0" foi rejeitado pela API com "invalid cron string").
+const LIFETIME_BACKFILL_CRON = '0 3 * * 7'
+
 export default {
-  async scheduled(_event, env, ctx) {
+  async scheduled(event, env, ctx) {
     ctx.waitUntil(collectAll(env))
+    if (event.cron === LIFETIME_BACKFILL_CRON) {
+      ctx.waitUntil(
+        updateSiteVisitsLifetime(env).catch((error) =>
+          logError('social-stats-cron', 'updateSiteVisitsLifetime falhou', { error }),
+        ),
+      )
+    }
   },
   // Gatilho manual via HTTP — CI chama isso depois de todo deploy (do site
   // ou do próprio worker, ver .github/workflows/*.yml) pra não esperar até
@@ -89,6 +86,14 @@ export default {
     const secret = request.headers.get('x-trigger-secret')
     if (!secret || secret !== env.CRON_TRIGGER_SECRET) {
       return new Response('Not found', { status: 404 })
+    }
+    // Gatilho separado (?backfillLifetimeVisits=1) pra rodar o cálculo de
+    // visitas desde sempre agora, sem esperar a janela semanal normal —
+    // pensado pra bootstrap único (primeira vez que a tabela é populada),
+    // não faz parte do fluxo do dia a dia.
+    if (new URL(request.url).searchParams.has('backfillLifetimeVisits')) {
+      await updateSiteVisitsLifetime(env)
+      return new Response('ok')
     }
     await collectAll(env)
     return new Response('ok')

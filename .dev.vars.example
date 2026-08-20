@@ -67,3 +67,9 @@ KICK_CLIENT_SECRET=
 # renova o token sozinho depois.
 TIKTOK_CLIENT_KEY=
 TIKTOK_CLIENT_SECRET=
+
+# Function key do Azure Function fs25-discord-monitor (functions/lib/farmStatus.ts,
+# card de status do servidor em /fazenda) — https://fs25-discord-monitor.azurewebsites.net/api/status
+# exige esse code como query param (auth level "function"). Pegue em
+# portal.azure.com → a Function App → Functions → status → "Get Function Url".
+FS25_MONITOR_FUNCTION_CODE=
