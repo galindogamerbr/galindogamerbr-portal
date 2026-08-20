@@ -47,7 +47,6 @@ function useLatestVersion(): string | null {
 // na Fazenda Nova Aliança — antes só linkado direto no card "Mods da
 // Fazenda" da Comunidade (ver src/routes/Comunidade.tsx); esta página
 // existe pra explicar o que é antes de mandar pro app externo.
-// TODO: trocar o placeholder abaixo pelo gif de demonstração quando chegar.
 export function Mods() {
   const latestVersion = useLatestVersion()
 
@@ -97,8 +96,8 @@ export function Mods() {
           </p>
         </div>
 
-        <div className="mt-8 flex aspect-video w-full items-center justify-center rounded-lg border border-dashed border-line bg-panel p-6 text-sm text-muted sm:p-8">
-          Demonstração em breve
+        <div className="mt-8 overflow-hidden rounded-lg border border-line bg-panel p-4 sm:p-6">
+          <img src="/assets/mod-sync-demo.gif" alt="Demonstração do Mod Sync sincronizando os mods" className="w-full rounded-md" />
         </div>
       </Container>
     </section>
