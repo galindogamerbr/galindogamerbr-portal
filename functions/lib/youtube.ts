@@ -194,7 +194,15 @@ export async function updateLiveStateFromWebhook(env: Env, notifiedVideoId: stri
   if (!isLive) {
     const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
     if (cached?.videoId !== notifiedVideoId) return
+    // actualEndTime apareceu pro vídeo que tínhamos como live atual — a
+    // live acabou. Loga o evento (LIVE_ENDED) pra dar visibilidade no Log
+    // Explorer de quando cada transmissão termina, sem precisar inferir
+    // isso a partir do TTL do polling (que nem chega a rodar na prática
+    // com o webhook ativo).
+    logWarn('youtube-webhook', 'LIVE_ENDED', { videoId: notifiedVideoId })
     targetVideoId = (await getLatestUploadedVideoId(env)) ?? notifiedVideoId
+  } else {
+    logWarn('youtube-webhook', 'LIVE_STARTED', { videoId: notifiedVideoId })
   }
 
   const state = await buildVideoState(env, targetVideoId)
