@@ -19,7 +19,7 @@ Discord **não está aqui** — sai direto em `functions/api/community-stats.ts`
 
 Dois agendamentos em `[triggers]` (`wrangler.toml`):
 - `*/20 * * * *` — coleta normal de seguidores/posts (`collectAll`).
-- `0 3 * * 0` (domingo 03:00 UTC = domingo meia-noite BRT) — só o backfill do total de visitas desde sempre (`updateSiteVisitsLifetime`, ver `LIFETIME_BACKFILL_CRON` em `src/index.ts`). Horário fixo de propósito, não "quando já fez uma semana desde a última rodada" — se esse gatilho falhar uma semana, só soma o intervalo maior (até ~90 dias) na próxima.
+- `0 3 * * 7` (domingo 03:00 UTC = domingo meia-noite BRT; Cloudflare exige `7` pra domingo, `0` é rejeitado pela API) — só o backfill do total de visitas desde sempre (`updateSiteVisitsLifetime`, ver `LIFETIME_BACKFILL_CRON` em `src/index.ts`). Horário fixo de propósito, não "quando já fez uma semana desde a última rodada" — se esse gatilho falhar uma semana, só soma o intervalo maior (até ~90 dias) na próxima.
 
 ## Gatilho manual (fora do cron)
 

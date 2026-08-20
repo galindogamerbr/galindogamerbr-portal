@@ -62,8 +62,9 @@ async function collectAll(env: Env): Promise<void> {
 // Precisa bater exatamente com o segundo cron em wrangler.toml — domingo
 // 03:00 UTC = domingo meia-noite BRT (UTC-3, sem horário de verão desde
 // 2019). Gatilho fixo (não "quando já fez uma semana"), pra sempre rodar no
-// mesmo horário da semana.
-const LIFETIME_BACKFILL_CRON = '0 3 * * 0'
+// mesmo horário da semana. Cloudflare exige domingo como "7", não "0"
+// (testado: "0 3 * * 0" foi rejeitado pela API com "invalid cron string").
+const LIFETIME_BACKFILL_CRON = '0 3 * * 7'
 
 export default {
   async scheduled(event, env, ctx) {
