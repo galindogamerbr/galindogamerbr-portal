@@ -146,10 +146,13 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   const candidateVideoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
   if (!candidateVideoId) return null
 
-  const title = await fetchTitle(candidateVideoId)
+  // Título e status de live não dependem um do outro — roda os dois ao
+  // mesmo tempo em vez de esperar um pra só depois começar o outro.
+  const [title, { isLive, viewerCount }] = await Promise.all([
+    fetchTitle(candidateVideoId),
+    fetchLiveStreamingDetails(env, candidateVideoId),
+  ])
   if (!title) return null
-
-  const { isLive, viewerCount } = await fetchLiveStreamingDetails(env, candidateVideoId)
 
   const state: VideoState = {
     videoId: candidateVideoId,
