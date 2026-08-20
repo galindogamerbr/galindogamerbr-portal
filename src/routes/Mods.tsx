@@ -7,6 +7,17 @@ const MODSYNC_URL = 'https://modsync.phmoreira.dev/'
 const DOWNLOAD_LATEST_URL = 'https://modsync.phmoreira.dev/download/latest'
 const LATEST_VERSION_URL = 'https://modsync.phmoreira.dev/latest'
 
+// Mesmo ícone do botão de baixar programação (ver PublicScheduleExportButton.tsx).
+function DownloadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3v12" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M5 21h14" />
+    </svg>
+  )
+}
+
 const FEATURES = [
   { icon: '⚡', title: 'Muito mais rápido', text: 'Baixa bem mais rápido que pelo gerenciador de mods do próprio Farming Simulator.' },
   { icon: '🔄', title: 'Sincronização automática', text: 'Pasta de mods e servidor sempre alinhados, sem esforço manual.' },
@@ -62,7 +73,8 @@ export function Mods() {
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <LinkButton variant="green" href={DOWNLOAD_LATEST_URL}>
-            ⬇️ Baixar versão mais recente
+            <DownloadIcon />
+            Baixar versão mais recente
           </LinkButton>
           <LinkButton variant="default" href={MODSYNC_URL} target="_blank" rel="noopener noreferrer">
             Confira nosso app
