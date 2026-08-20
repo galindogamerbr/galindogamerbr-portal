@@ -18,26 +18,38 @@ type OEmbedResponse = { title: string }
 // não faz mais redirect HTTP de verdade pra essa URL (é servida como SPA).
 // O <link rel="canonical"> da página aponta pro vídeo ao vivo quando o
 // canal está transmitindo, e pro próprio canal (sem "v=") quando não está.
-// Só usado como palpite de QUAL vídeo checar (ver resolveChannelLiveState)
-// — quem decide se está ao vivo de verdade é a Data API
-// (fetchLiveStreamingDetails), porque o fetch daqui pro YouTube, rodando
-// dentro do Workers, às vezes recebe um HTML diferente do que um navegador
-// comum vê (IP de datacenter provavelmente tratado diferente por algum
-// bot-detection do lado do YouTube) e erra o isLiveNow/canonical mesmo com
-// a live rolando de verdade.
+// Caminho principal por ser de graça (sem cota de API) — mas o fetch pra
+// lá, rodando dentro do Workers, às vezes recebe um HTML diferente do que
+// um navegador comum vê (IP de datacenter provavelmente tratado diferente
+// por algum bot-detection do lado do YouTube). Por isso deixa o erro subir
+// em vez de engolir aqui: resolveChannelLiveState pega essa falha e cai
+// pro endpoint oficial (findLiveVideoIdViaApi) só nesse caso raro — não dá
+// pra usar a API oficial sempre porque search.list custa 100 unidades de
+// cota (10k/dia é o padrão), e com esse endpoint sendo checado a cada 60s
+// isso estouraria a cota rapidinho.
 async function getLiveVideoId(channelId: string): Promise<string | null> {
+  const res = await fetchWithTimeout(`https://www.youtube.com/channel/${channelId}/live`, {
+    redirect: 'follow',
+    headers: { 'user-agent': BROWSER_USER_AGENT },
+    cf: { cacheTtl: 0, cacheEverything: false },
+  })
+  const body = await res.text()
+  const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
+  const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
+  return videoId ? videoId[1] : null
+}
+
+// Fallback oficial (search.list, eventType=live) — só chamado quando o
+// scrape acima falha/trava. Custa 100 unidades de cota por chamada, mas
+// como só roda no caminho de erro (raro), não é um problema na prática.
+async function findLiveVideoIdViaApi(env: Env): Promise<string | null> {
   try {
-    const res = await fetchWithTimeout(`https://www.youtube.com/channel/${channelId}/live`, {
-      redirect: 'follow',
-      headers: { 'user-agent': BROWSER_USER_AGENT },
-      cf: { cacheTtl: 0, cacheEverything: false },
-    })
-    const body = await res.text()
-    const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
-    const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
-    return videoId ? videoId[1] : null
+    const url = `https://www.googleapis.com/youtube/v3/search?part=id&channelId=${env.YOUTUBE_CHANNEL_ID}&eventType=live&type=video&key=${env.YOUTUBE_API_KEY}`
+    const res = await fetchWithTimeout(url)
+    if (!res.ok) return null
+    const data = (await res.json()) as { items?: [{ id?: { videoId?: string } }] }
+    return data.items?.[0]?.id?.videoId ?? null
   } catch {
-    // Timeout ou falha de rede — trata como "sem palpite", cai pro feed Atom.
     return null
   }
 }
@@ -123,13 +135,24 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
   if (cached) return cached
 
-  const candidateVideoId = (await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)) ?? (await getLatestUploadedVideoId(env))
+  let liveVideoId: string | null
+  try {
+    liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
+  } catch (err) {
+    console.error('[youtube] scrape de /live falhou, caindo pro endpoint oficial:', err)
+    liveVideoId = await findLiveVideoIdViaApi(env)
+  }
+
+  const candidateVideoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
   if (!candidateVideoId) return null
 
-  const title = await fetchTitle(candidateVideoId)
+  // Título e status de live não dependem um do outro — roda os dois ao
+  // mesmo tempo em vez de esperar um pra só depois começar o outro.
+  const [title, { isLive, viewerCount }] = await Promise.all([
+    fetchTitle(candidateVideoId),
+    fetchLiveStreamingDetails(env, candidateVideoId),
+  ])
   if (!title) return null
-
-  const { isLive, viewerCount } = await fetchLiveStreamingDetails(env, candidateVideoId)
 
   const state: VideoState = {
     videoId: candidateVideoId,
