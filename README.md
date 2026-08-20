@@ -6,9 +6,9 @@
 [![CodeQL](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/codeql.yml/badge.svg)](https://github.com/galindogamerbr/galindogamerbr-portal/actions/workflows/codeql.yml)
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
 
 Portal da comunidade GalindoGamerBR. React + TypeScript + Vite no front, Cloudflare Pages Functions (`/functions`) + Cloudflare D1 no back — mesmo repositório, deploy único.
@@ -52,6 +52,14 @@ npm run db:migrate:local
 ```
 
 Aplica as migrations em `/migrations` num D1 local (sqlite via `wrangler`, isolado do banco de produção).
+
+Pra testar com dado real em vez de um banco local vazio/desatualizado, dá pra puxar um snapshot completo do D1 de produção pro local (`wrangler pages dev`/`dev:full` continuam sempre lendo do D1 local — não existe `--remote` pra Pages dev):
+
+```
+npm run db:sync-from-prod
+```
+
+Roda `wrangler d1 export --remote` no banco de produção e importa o resultado no D1 local (`scripts/db-sync-from-prod.mjs`), substituindo o conteúdo local inteiro. Sob demanda, não é automático — roda de novo sempre que precisar atualizar o snapshot.
 
 ### Outros comandos úteis
 
@@ -116,7 +124,7 @@ Isso builda e faz `wrangler pages deploy dist --project-name=galindogamerbr-port
 
 ### Worker de social stats (`workers/social-stats-cron`)
 
-Worker separado (cron, não Pages Functions — ver `workers/social-stats-cron/README.md`) que coleta seguidores/posts do YouTube/TikTok/Instagram/Twitch/Kick a cada 20min, escrevendo no KV compartilhado (`PUBLIC_CACHE`, lido pelo site) e no D1 — nos **dois** bancos, produção e preview, pra nenhum dos dois ambientes ficar com o fallback de leitura vazio. Deploy próprio (`deploy-cron-worker.yml`, dispara em push que mexe em `workers/social-stats-cron/**` ou manualmente), com um `fetch()` handler protegido por secret (`CRON_TRIGGER_SECRET`, header `x-trigger-secret`) que `deploy.yml`, `deploy-preview.yml` e o próprio `deploy-cron-worker.yml` chamam depois de todo deploy — assim o cache nunca fica frio esperando os 20min do agendamento normal. Precisa, além dos secrets de produção/preview já citados, dos secrets próprios do worker (`YOUTUBE_API_KEY`, `INSTAGRAM_ACCESS_TOKEN`, `TIKTOK_CLIENT_KEY`/`TIKTOK_CLIENT_SECRET`, `CRON_TRIGGER_SECRET`) — ver `workers/social-stats-cron/README.md`.
+Worker separado (cron, não Pages Functions — ver `workers/social-stats-cron/README.md`) que coleta seguidores/posts do YouTube/TikTok/Instagram/Twitch/Kick a cada 20min, escrevendo no KV compartilhado (`PUBLIC_CACHE`, lido pelo site) e no D1 — nos **dois** bancos, produção e preview, pra nenhum dos dois ambientes ficar com o fallback de leitura vazio. Um segundo agendamento, fixo aos domingos meia-noite BRT, soma o total de visitas do site desde o início (a GraphQL Analytics API da Cloudflare só cobre ~90 dias por consulta) e persiste em D1 + KV — lido pelo contador de visitas lifetime na Home (`resolveLifetimeVisits` em `functions/api/community-stats.ts`). Deploy próprio (`deploy-cron-worker.yml`, dispara em push que mexe em `workers/social-stats-cron/**` ou manualmente), com um `fetch()` handler protegido por secret (`CRON_TRIGGER_SECRET`, header `x-trigger-secret`) que `deploy.yml`, `deploy-preview.yml` e o próprio `deploy-cron-worker.yml` chamam depois de todo deploy — assim o cache nunca fica frio esperando os 20min do agendamento normal. Precisa, além dos secrets de produção/preview já citados, dos secrets próprios do worker (`YOUTUBE_API_KEY`, `INSTAGRAM_ACCESS_TOKEN`, `TIKTOK_CLIENT_KEY`/`TIKTOK_CLIENT_SECRET`, `CRON_TRIGGER_SECRET`, `CLOUDFLARE_ANALYTICS_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) — ver `workers/social-stats-cron/README.md`.
 
 ### Banco remoto (D1)
 

@@ -12,7 +12,6 @@ export const NAV_ITEMS = [
 // dois lugares era redundante. O mapa do site (/mapa-do-site) reúne os dois
 // grupos pra quem quiser ver tudo num lugar só.
 export const FOOTER_ITEMS = [
-  { label: 'Contato', to: '/contato' },
   { label: 'Privacidade', to: '/privacidade' },
   { label: 'Termos', to: '/termos' },
   { label: 'Créditos', to: '/creditos' },
