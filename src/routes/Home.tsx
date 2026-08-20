@@ -227,9 +227,10 @@ function SobreTeaser() {
             <Eyebrow>Sobre o Galindo</Eyebrow>
             <h2 className="text-3xl sm:text-4xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h2>
             <p className="mt-3 text-muted">
-              41 anos, casado, trabalha na cidade e continua sendo aquele cara que se apaixonou por jogos quando
-              ainda era criança. O canal nasceu para criar encontros, não só transmissões.
+              Sou apaixonado por simuladores e jogos desde sempre. Criei o GalindoGamerBR para compartilhar minha
+              paixão, criar conteúdo de qualidade e construir uma comunidade incrível!
             </p>
+            <p className="mt-3 text-muted">Aqui você encontra gameplay de verdade, diversão e aprendizado em cada interação!</p>
             <NavButton to="/sobre" variant="default" className="mt-6">
               Conheça minha história →
             </NavButton>

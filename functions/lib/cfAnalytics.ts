@@ -1,5 +1,6 @@
 import type { Env } from './env'
 import { fetchWithTimeout } from './http'
+import { logError } from './log'
 
 // "Visitas do site" via Cloudflare Web Analytics (RUM) real — dataset
 // rumPageloadEventsAdaptiveGroups, que é account-scoped (não zone-scoped:
@@ -22,7 +23,7 @@ export async function fetchTodayVisits(env: Env): Promise<number | null> {
   try {
     return await fetchTodayVisitsUnsafe(env)
   } catch (err) {
-    console.error('[cfAnalytics] falha ao buscar visitas:', err)
+    logError('cfAnalytics', 'Falha ao buscar visitas', { err })
     return null
   }
 }
@@ -66,13 +67,13 @@ async function fetchTodayVisitsUnsafe(env: Env): Promise<number | null> {
   // API devolve 200 mesmo quando a query tem erro (fica em `errors`), então
   // `res.ok` sozinho não denuncia problema de token/conta/campo errado.
   if (!res.ok || data.errors) {
-    console.error('[cfAnalytics] resposta inesperada da GraphQL Analytics API:', res.status, JSON.stringify(data))
+    logError('cfAnalytics', 'Resposta inesperada da GraphQL Analytics API', { status: res.status, data })
     return null
   }
 
   const visits = data.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups?.[0]?.sum?.visits
   if (typeof visits !== 'number') {
-    console.error('[cfAnalytics] campo sum.visits não encontrado na resposta:', JSON.stringify(data))
+    logError('cfAnalytics', 'Campo sum.visits não encontrado na resposta', { data })
     return null
   }
   return visits

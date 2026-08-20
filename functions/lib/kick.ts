@@ -1,6 +1,7 @@
 import type { Env } from './env'
 import { KICK_USERNAME } from './socialConstants'
 import { fetchWithTimeout } from './http'
+import { logWarn, logError } from './log'
 
 export type KickLiveStatus = { isLive: boolean; viewerCount: number | null }
 
@@ -28,18 +29,25 @@ async function getAppAccessToken(env: Env): Promise<string | null> {
 export async function fetchKickLiveStatus(env: Env): Promise<KickLiveStatus | null> {
   try {
     const accessToken = await getAppAccessToken(env)
-    if (!accessToken) return null
+    if (!accessToken) {
+      logWarn('kick', 'Falha ao obter access token')
+      return null
+    }
 
     const url = new URL('https://api.kick.com/public/v1/channels')
     url.searchParams.set('slug', KICK_USERNAME)
 
     const res = await fetchWithTimeout(url.toString(), { headers: { authorization: `Bearer ${accessToken}` } })
-    if (!res.ok) return null
+    if (!res.ok) {
+      logWarn('kick', 'public/v1/channels retornou erro', { status: res.status })
+      return null
+    }
 
     const data = (await res.json()) as { data?: [{ stream?: { is_live?: boolean; viewer_count?: number } }] }
     const stream = data.data?.[0]?.stream
     return { isLive: !!stream?.is_live, viewerCount: stream?.viewer_count ?? null }
-  } catch {
+  } catch (err) {
+    logError('kick', 'fetchKickLiveStatus falhou', { err })
     return null
   }
 }

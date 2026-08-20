@@ -1,5 +1,6 @@
 import { DISCORD_INVITE_CODE } from './socialConstants'
 import { fetchWithTimeout } from './http'
+import { logWarn, logError } from './log'
 
 export type DiscordCounts = { memberCount: number | null; onlineCount: number | null }
 
@@ -10,14 +11,18 @@ export type DiscordCounts = { memberCount: number | null; onlineCount: number | 
 export async function fetchDiscordCounts(): Promise<DiscordCounts | null> {
   try {
     const res = await fetchWithTimeout(`https://discord.com/api/v10/invites/${DISCORD_INVITE_CODE}?with_counts=true`)
-    if (!res.ok) return null
+    if (!res.ok) {
+      logWarn('discord', 'invites endpoint retornou erro', { status: res.status })
+      return null
+    }
 
     const data = (await res.json()) as { approximate_member_count?: number; approximate_presence_count?: number }
     return {
       memberCount: data.approximate_member_count ?? null,
       onlineCount: data.approximate_presence_count ?? null,
     }
-  } catch {
+  } catch (err) {
+    logError('discord', 'fetchDiscordCounts falhou', { err })
     return null
   }
 }

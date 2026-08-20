@@ -16,6 +16,10 @@ export type Env = {
   // parsear a página do vídeo).
   YOUTUBE_CHANNEL_ID: string
   YOUTUBE_API_KEY: string
+  // Assina/valida as notificações do WebSub (PubSubHubbub) do YouTube (ver
+  // functions/api/webhooks/youtube.ts) — mesmo valor configurado como secret
+  // do worker (workers/social-stats-cron), que é quem pede a inscrição.
+  YOUTUBE_PUBSUB_SECRET: string
   // Métricas de comunidade (ver functions/api/community-stats.ts). Seguidores
   // por rede são coletados por um worker separado (workers/social-stats-cron)
   // — algumas via API oficial (YouTube, Instagram, TikTok), outras via

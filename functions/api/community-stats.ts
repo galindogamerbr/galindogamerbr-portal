@@ -4,6 +4,8 @@ import { fetchTodayVisits } from '../lib/cfAnalytics'
 import { fetchTwitchLiveStatus } from '../lib/twitch'
 import { fetchKickLiveStatus } from '../lib/kick'
 import { fetchDiscordCounts } from '../lib/discord'
+import { resolveChannelLiveState } from '../lib/youtube'
+import { logError } from '../lib/log'
 import { withEdgeCache } from '../lib/edgeCache'
 import {
   getDiscordPresenceCache,
@@ -67,6 +69,23 @@ async function resolveKickLive(env: Env): Promise<LiveStatus> {
   return { isLive: false, viewerCount: null }
 }
 
+// Twitch/Kick só têm graça mostrar "ao vivo" quando a live do YouTube (o
+// evento em si) está rolando — fora disso, gasta chamada externa à toa pra
+// mostrar um card que a UI ia esconder de qualquer jeito (ver
+// CommunityStatsGrid, que já cai pro postCount quando isLive é false).
+// resolveChannelLiveState é cache-first (ver functions/lib/youtube.ts,
+// populado tanto pelo polling quanto pelo webhook do WebSub), então checar
+// aqui primeiro é barato mesmo fora do cache-miss.
+async function resolveYoutubeIsLive(env: Env): Promise<boolean> {
+  try {
+    const state = await resolveChannelLiveState(env)
+    return state?.isLive ?? false
+  } catch (err) {
+    logError('community-stats', 'resolveChannelLiveState falhou', { err })
+    return false
+  }
+}
+
 type DiscordCounts = { memberCount: number | null; onlineCount: number | null }
 
 // Discord não passa pelo worker (workers/social-stats-cron) — o endpoint
@@ -114,12 +133,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) =>
   // runtime — é um método nativo que exige o this original, não uma função
   // livre. O wrapper abaixo preserva o binding.
   withEdgeCache(context.request, (promise) => context.waitUntil(promise), async () => {
+    const isYoutubeLive = await resolveYoutubeIsLive(context.env)
+    const noLiveStatus: LiveStatus = { isLive: false, viewerCount: null }
+
     const [socialCache, postCountsCache, visitsToday, twitchLive, kickLive, discordCounts] = await Promise.all([
       getSocialStatsCache(context.env.DB),
       getPostCountsCache(context.env.DB),
       resolveSiteVisits(context.env),
-      resolveTwitchLive(context.env),
-      resolveKickLive(context.env),
+      isYoutubeLive ? resolveTwitchLive(context.env) : Promise.resolve(noLiveStatus),
+      isYoutubeLive ? resolveKickLive(context.env) : Promise.resolve(noLiveStatus),
       resolveDiscordCounts(context.env),
     ])
 

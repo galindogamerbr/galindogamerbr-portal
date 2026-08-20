@@ -14,6 +14,13 @@ YOUTUBE_CHANNEL_ID=UCZGlbfvpoitCSFTsWVWVAow
 # "YouTube Data API v3" → Credentials → Create API key). Usada só pro
 # número de espectadores ao vivo (functions/lib/youtube.ts).
 YOUTUBE_API_KEY=
+# Valida a assinatura HMAC-SHA1 (header X-Hub-Signature) das notificações
+# WebSub/PubSubHubbub do YouTube (functions/api/webhooks/youtube.ts) — string
+# arbitrária escolhida por você, não vem do Google. Mesmo valor precisa estar
+# configurado como secret do worker (workers/social-stats-cron,
+# YOUTUBE_PUBSUB_SECRET), que é quem envia esse valor como hub.secret ao se
+# inscrever (src/youtubePubsub.ts).
+YOUTUBE_PUBSUB_SECRET=
 
 # Métricas de comunidade (functions/api/community-stats.ts). Seguidores por
 # rede são coletados por workers/social-stats-cron (API oficial pra

@@ -7,6 +7,8 @@ import { fetchKickFollowers } from './scrape'
 import { getInstagramStats } from './instagram'
 import { getTiktokStats } from './tiktok'
 import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
+import { renewYoutubeSubscriptionIfNeeded } from './youtubePubsub'
+import { logWarn, logError } from './log'
 
 // Únicas plataformas que o endpoint público lê do KV (ver
 // functions/api/community-stats.ts) — twitch/kick continuam só em D1 (lidos
@@ -27,7 +29,7 @@ async function upsertToAllDatabases(env: Env, write: (db: D1Database) => Promise
       try {
         await write(env[binding])
       } catch (error) {
-        console.error(`[social-stats-cron] escrita em ${binding} falhou:`, error)
+        logError('social-stats-cron', `Escrita em ${binding} falhou`, { binding, error })
       }
     }),
   )
@@ -49,12 +51,14 @@ const FETCHERS: Fetcher[] = [
 // upsert daquela rede nesta rodada. postCount (YouTube/TikTok/Instagram)
 // é independente de count — grava o que vier, mesmo se o outro faltar.
 async function collectAll(env: Env): Promise<void> {
+  await renewYoutubeSubscriptionIfNeeded(env)
+
   const results = await Promise.allSettled(
     FETCHERS.map(async ({ platform, run }) => {
       const stats = await run(env)
       const { count, postCount } = stats
       if (count === null) {
-        console.warn(`[social-stats-cron] ${platform}: sem dado nesta rodada`)
+        logWarn('social-stats-cron', `${platform}: sem dado nesta rodada`, { platform })
       } else {
         await upsertToAllDatabases(env, (db) => upsertSocialStat(db, platform, count))
         if (CACHED_IN_KV_PLATFORMS.includes(platform)) await cacheSocialStats(env, platform, stats)
@@ -67,7 +71,7 @@ async function collectAll(env: Env): Promise<void> {
 
   results.forEach((result, index) => {
     if (result.status === 'rejected') {
-      console.error(`[social-stats-cron] ${FETCHERS[index].platform} falhou:`, result.reason)
+      logError('social-stats-cron', `${FETCHERS[index].platform} falhou`, { platform: FETCHERS[index].platform, reason: result.reason })
     }
   })
 }

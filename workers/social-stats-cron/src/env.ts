@@ -26,4 +26,8 @@ export type Env = {
   // quem sabe esse valor consegue forçar uma rodada de coleta fora do
   // agendamento normal.
   CRON_TRIGGER_SECRET: string
+  // Assina a inscrição WebSub do YouTube (ver src/youtubePubsub.ts) — mesmo
+  // valor configurado como secret nas Pages Functions (YOUTUBE_PUBSUB_SECRET
+  // em functions/lib/env.ts), que é quem valida a assinatura das notificações.
+  YOUTUBE_PUBSUB_SECRET: string
 }
