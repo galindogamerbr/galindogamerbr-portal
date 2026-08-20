@@ -52,7 +52,6 @@ const router = createBrowserRouter([
       { path: '/comunidade', element: <Comunidade /> },
       { path: '/sobre', element: <Sobre /> },
       { path: '/parceiros', element: <Parceiros /> },
-      { path: '/contato', element: <Navigate to="/parceiros" replace /> },
       { path: '/privacidade', element: <Privacidade /> },
       { path: '/termos', element: <Termos /> },
       { path: '/creditos', element: <Creditos /> },
