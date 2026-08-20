@@ -90,7 +90,7 @@ export function Conteudos() {
                       Ver playlist completa
                     </LinkButton>
                     <NavButton variant="blue" to="/mods">
-                      🚜 Sincronize seus mods
+                      Sincronize seus mods
                     </NavButton>
                   </div>
                 </div>
