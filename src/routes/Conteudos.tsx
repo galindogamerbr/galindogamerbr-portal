@@ -5,7 +5,7 @@ import { Reveal } from '../components/ui/Reveal'
 import { GameCard } from '../components/shared/GameCard'
 import { GameHighlightCard } from '../components/shared/GameHighlightCard'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
-import { LinkButton } from '../components/ui/Button'
+import { LinkButton, NavButton } from '../components/ui/Button'
 import { GAMES, FAZENDA_NOVA_ALIANCA, FURIA_REBORN, DICAS, ETS2, SNOWRUNNER } from '../data/games'
 import { useTilt } from '../hooks/useTilt'
 import { useFlagshipVideos } from '../hooks/useFlagshipVideo'
@@ -89,6 +89,9 @@ export function Conteudos() {
                     >
                       Ver playlist completa
                     </LinkButton>
+                    <NavButton variant="blue" to="/mods">
+                      Sincronize seus mods
+                    </NavButton>
                   </div>
                 </div>
               </div>

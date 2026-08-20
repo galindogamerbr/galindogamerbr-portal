@@ -4,6 +4,7 @@ import { Layout } from './components/layout/Layout'
 import { Home } from './routes/Home'
 import { BemVindo } from './routes/BemVindo'
 import { Conteudos } from './routes/Conteudos'
+import { Mods } from './routes/Mods'
 import { Comunidade } from './routes/Comunidade'
 import { Sobre } from './routes/Sobre'
 import { Parceiros } from './routes/Parceiros'
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { path: '/comece-aqui', element: <Navigate to="/boas-vindas" replace /> },
       { path: '/conteudos', element: <Conteudos /> },
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
+      { path: '/mods', element: <Mods /> },
       { path: '/comunidade', element: <Comunidade /> },
       { path: '/sobre', element: <Sobre /> },
       { path: '/parceiros', element: <Parceiros /> },
