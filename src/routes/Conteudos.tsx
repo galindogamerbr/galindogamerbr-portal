@@ -7,7 +7,6 @@ import { GameHighlightCard } from '../components/shared/GameHighlightCard'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
 import { LinkButton, NavButton } from '../components/ui/Button'
 import { GAMES, FAZENDA_NOVA_ALIANCA, FURIA_REBORN, DICAS, ETS2, SNOWRUNNER } from '../data/games'
-import { useTilt } from '../hooks/useTilt'
 import { useFlagshipVideos } from '../hooks/useFlagshipVideo'
 import { useFuriaVideos } from '../hooks/useFuriaVideos'
 import { useDicasVideos } from '../hooks/useDicasVideos'
@@ -21,7 +20,6 @@ const OTHER_GAMES = GAMES.filter(
 )
 
 export function Conteudos() {
-  const tiltRef = useTilt<HTMLDivElement>()
   const [flagship, ...recent] = useFlagshipVideos()
   // Mesmo polling de /api/live que o LiveBanner usa — evita um segundo
   // poller independente rodando em paralelo nesta rota.
@@ -48,10 +46,7 @@ export function Conteudos() {
         <Reveal>
           <Container>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-              <div
-                ref={tiltRef}
-                className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5"
-              >
+              <div className="overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5">
                 <div className="relative aspect-video w-full">
                   {flagship?.videoId ? (
                     <VideoEmbed videoId={flagship.videoId} title={flagship.title} autoplay={isLiveNow} />

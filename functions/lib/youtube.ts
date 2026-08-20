@@ -1,5 +1,4 @@
 import type { Env } from './env'
-import { extractVideoIds } from './atom'
 import { BROWSER_USER_AGENT } from './socialConstants'
 import { fetchWithTimeout } from './http'
 import { logWarn, logError } from './log'
@@ -66,16 +65,18 @@ async function isShort(videoId: string): Promise<boolean> {
   }
 }
 
-// Sem API key: feed Atom público do canal, do mais novo pro mais antigo —
-// pula Shorts e devolve o primeiro vídeo "de verdade" (live ou normal).
+// Data API v3 (playlistItems.list, 1 unidade de cota) — o feed Atom público
+// do canal (`/feeds/videos.xml?channel_id=`) que essa função usava foi
+// descontinuado pelo YouTube (confirmado: passou a devolver 404, mesmo
+// destino do feed por playlist_id, ver getRecentPlaylistVideos). A
+// playlist "uploads" de qualquer canal é implícita — troca só o prefixo
+// "UC" por "UU" no ID do canal — e devolve os mesmos vídeos, do mais novo
+// pro mais antigo, sem precisar de mais nenhuma chamada pra descobrir o ID.
 export async function getLatestUploadedVideoId(env: Env): Promise<string | null> {
-  const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${env.YOUTUBE_CHANNEL_ID}`
-  const res = await fetchWithTimeout(url)
-  if (!res.ok) throw new Error(`Falha ao buscar feed do canal: ${res.status}`)
-
-  const videoIds = extractVideoIds(await res.text())
-  for (const videoId of videoIds) {
-    if (!(await isShort(videoId))) return videoId
+  const uploadsPlaylistId = `UU${env.YOUTUBE_CHANNEL_ID.slice(2)}`
+  const videos = await getRecentPlaylistVideos(env, uploadsPlaylistId, 10)
+  for (const video of videos) {
+    if (!(await isShort(video.videoId))) return video.videoId
   }
   return null
 }
