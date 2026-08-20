@@ -60,10 +60,3 @@ KICK_CLIENT_SECRET=
 # renova o token sozinho depois.
 TIKTOK_CLIENT_KEY=
 TIKTOK_CLIENT_SECRET=
-
-# Status "ao vivo"/espectadores do TikTok — sem API oficial pra isso (ver
-# scripts/tiktok-live-poll/README.md). Protege /api/webhooks/tiktok-live,
-# que só o job do GitHub Actions (scripts/tiktok-live-poll) pode chamar.
-# Mesmo valor precisa estar configurado como secret no GitHub Actions
-# (TIKTOK_LIVE_WEBHOOK_SECRET) e como env var no Cloudflare Pages.
-TIKTOK_LIVE_WEBHOOK_SECRET=

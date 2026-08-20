@@ -10,7 +10,6 @@ export type CommunityStats = {
   siteVisits: { visitsToday: number | null }
   twitchLive: LiveStatus
   kickLive: LiveStatus
-  tiktokLive: LiveStatus
   discordOnline: number | null
 }
 
