@@ -6,7 +6,12 @@ compatibility_date = "2026-05-01"
 # Métricas de API oficial (YouTube/TikTok/Instagram), sem risco de cota
 # relevante nesse volume — reduzido de hora em hora pra manter o cache do
 # KV (PUBLIC_CACHE, TTL 25min em cache.ts) sempre morno.
-crons = ["*/20 * * * *"]
+# "0 3 * * 0" = domingo 03:00 UTC = domingo meia-noite BRT (UTC-3, sem
+# horário de verão desde 2019) — gatilho dedicado do backfill do total de
+# visitas desde sempre (ver src/siteVisitsLifetime.ts), rodando toda semana
+# no mesmo horário fixo em vez de "quando já fez uma semana desde a última
+# rodada" relativo a quando o worker calhou de rodar.
+crons = ["*/20 * * * *", "0 3 * * 0"]
 
 [[d1_databases]]
 binding = "DB"

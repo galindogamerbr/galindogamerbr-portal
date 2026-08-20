@@ -36,16 +36,6 @@ const FETCHERS: Fetcher[] = [
 async function collectAll(env: Env): Promise<void> {
   await renewYoutubeSubscriptionIfNeeded(env)
 
-  // Só faz trabalho de verdade uma vez por semana (ver
-  // siteVisitsLifetime.ts) — chamar a cada rodada (20min) é barato fora
-  // dessa janela, é só uma leitura do D1. Isolado: falhar aqui não derruba
-  // o resto da coleta.
-  try {
-    await updateSiteVisitsLifetime(env)
-  } catch (error) {
-    logError('social-stats-cron', 'updateSiteVisitsLifetime falhou', { error })
-  }
-
   const results = await Promise.allSettled(
     FETCHERS.map(async ({ platform, run }) => {
       const stats = await run(env)
@@ -69,9 +59,22 @@ async function collectAll(env: Env): Promise<void> {
   })
 }
 
+// Precisa bater exatamente com o segundo cron em wrangler.toml — domingo
+// 03:00 UTC = domingo meia-noite BRT (UTC-3, sem horário de verão desde
+// 2019). Gatilho fixo (não "quando já fez uma semana"), pra sempre rodar no
+// mesmo horário da semana.
+const LIFETIME_BACKFILL_CRON = '0 3 * * 0'
+
 export default {
-  async scheduled(_event, env, ctx) {
+  async scheduled(event, env, ctx) {
     ctx.waitUntil(collectAll(env))
+    if (event.cron === LIFETIME_BACKFILL_CRON) {
+      ctx.waitUntil(
+        updateSiteVisitsLifetime(env).catch((error) =>
+          logError('social-stats-cron', 'updateSiteVisitsLifetime falhou', { error }),
+        ),
+      )
+    }
   },
   // Gatilho manual via HTTP — CI chama isso depois de todo deploy (do site
   // ou do próprio worker, ver .github/workflows/*.yml) pra não esperar até
@@ -88,7 +91,7 @@ export default {
     // pensado pra bootstrap único (primeira vez que a tabela é populada),
     // não faz parte do fluxo do dia a dia.
     if (new URL(request.url).searchParams.has('backfillLifetimeVisits')) {
-      await updateSiteVisitsLifetime(env, true)
+      await updateSiteVisitsLifetime(env)
       return new Response('ok')
     }
     await collectAll(env)

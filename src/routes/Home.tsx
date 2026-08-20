@@ -11,6 +11,7 @@ import { VipSteps } from '../components/shared/VipSteps'
 import { ScheduleTabs } from '../components/shared/ScheduleTabs'
 import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
+import { LifetimeVisitsBanner } from '../components/shared/LifetimeVisitsBanner'
 import { useParallax } from '../hooks/useParallax'
 
 const HUB_TEASER = [
@@ -34,6 +35,7 @@ export function Home() {
   return (
     <>
       <Hero />
+      <LifetimeVisitsBanner />
       <BemVindoTeaser />
       <TransmissoesTeaser />
       <JogosBannerCta />
@@ -70,16 +72,16 @@ function Hero() {
         className="pointer-events-none absolute bottom-0 left-[62%] hidden h-[96%] w-auto max-w-[44%] -translate-x-1/2 object-contain object-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,0.65)] lg:block xl:max-w-[34%]"
       />
       <Container className="relative z-10 flex h-full flex-col justify-center gap-4 py-16 xl:py-0">
-        <div className="flex items-center gap-3.5">
-          <Logo alt="" className="h-10 w-10 sm:h-[58px] sm:w-[58px]" />
-          <span className="text-xs font-bold uppercase tracking-widest text-gold">Bem-vindo ao universo</span>
+        <div className="grid w-fit grid-cols-[auto_auto] items-center gap-x-3.5 gap-y-0.5">
+          <span className="col-span-2 text-xs font-bold uppercase tracking-widest text-gold">Bem-vindo ao universo</span>
+          <Logo alt="" className="row-span-2 h-16 w-16 sm:h-20 sm:w-20" />
+          <h1 className="max-w-[600px] text-[clamp(32px,5.4vw,64px)] leading-[0.95]">
+            GALINDO<span className="text-gold">GAMER</span>BR
+          </h1>
+          <p className="col-start-2 text-center text-sm font-extrabold uppercase tracking-[0.1em] text-[#dfe6ec]">
+            Simuladores <span className="text-gold">•</span> Games <span className="text-gold">•</span> Comunidade
+          </p>
         </div>
-        <h1 className="max-w-[600px] text-[clamp(32px,5.4vw,64px)] leading-[0.95]">
-          GALINDO<span className="text-gold">GAMERBR</span>
-        </h1>
-        <p className="text-sm font-extrabold uppercase tracking-[0.1em] text-[#dfe6ec]">
-          Simuladores <span className="text-gold">•</span> Games <span className="text-gold">•</span> Comunidade
-        </p>
         <p className="max-w-[480px] text-sm text-[#c3cdd6]">
           Lives, séries e muita diversão todos os dias. Junte-se à nossa comunidade e faça parte dessa jornada.
         </p>

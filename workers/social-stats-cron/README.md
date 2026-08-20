@@ -13,7 +13,13 @@ Discord **não está aqui** — sai direto em `functions/api/community-stats.ts`
 - **`TIKTOK_CLIENT_KEY`** e **`TIKTOK_CLIENT_SECRET`** (secrets do Worker, mesmos valores do app "Login Kit" em developers.tiktok.com) — mesmo espírito do Instagram: login inicial uma vez em `/admin/tiktok` (`functions/api/admin/tiktok/*.ts`), token salvo no D1 (`tiktok_token`), este worker só lê e renova (`src/tiktok.ts`) a cada rodada (access token do TikTok dura só 24h).
 - **`CRON_TRIGGER_SECRET`** (secret do Worker, valor arbitrário aleatório) — autoriza o gatilho manual via HTTP (`fetch()` em `src/index.ts`, header `x-trigger-secret`). Os workflows de deploy (`deploy.yml`, `deploy-preview.yml`, `deploy-cron-worker.yml`) chamam isso depois de todo deploy, pra não esperar até 20min pela próxima rodada agendada — precisa do mesmo valor configurado como secret do GitHub Actions (`CRON_TRIGGER_SECRET`, Settings → Secrets and variables → Actions).
 - **`YOUTUBE_PUBSUB_SECRET`** (secret do Worker, valor arbitrário aleatório) — a cada rodada (`src/youtubePubsub.ts`), este worker verifica se a inscrição WebSub do canal no hub do YouTube (`pubsubhubbub.appspot.com`) está perto de vencer e, se estiver, renova pedindo um novo lease e passando esse valor como `hub.secret`. Precisa ser o mesmo valor configurado como secret das Pages Functions (`YOUTUBE_PUBSUB_SECRET`), que é quem valida a assinatura das notificações recebidas em `functions/api/webhooks/youtube.ts`. Sem isso, o site cai pro polling normal (até 60s de atraso pra detectar live) em vez do push quase instantâneo do webhook.
-- **`CLOUDFLARE_ANALYTICS_API_TOKEN`** e **`CLOUDFLARE_ACCOUNT_ID`** (secrets do Worker, mesmos valores já usados nas Pages Functions — token com escopo "Account Analytics" → Read) — usados por `src/siteVisitsLifetime.ts` pra somar o total de visitas do site desde o início (Cloudflare Web Analytics não expõe um total corrido, e cada consulta da GraphQL Analytics API só cobre ~90 dias, então esse worker soma isso aos poucos, uma vez por semana, e persiste em D1 + KV). Sem essas duas, essa parte da coleta simplesmente não roda (sem erro).
+- **`CLOUDFLARE_ANALYTICS_API_TOKEN`** e **`CLOUDFLARE_ACCOUNT_ID`** (secrets do Worker, mesmos valores já usados nas Pages Functions — token com escopo "Account Analytics" → Read) — usados por `src/siteVisitsLifetime.ts` pra somar o total de visitas do site desde o início (Cloudflare Web Analytics não expõe um total corrido, e cada consulta da GraphQL Analytics API só cobre ~90 dias, então esse worker soma isso aos poucos, uma vez por semana — domingo meia-noite BRT, cron dedicado em `wrangler.toml` — e persiste em D1 + KV). Sem essas duas, essa parte da coleta simplesmente não roda (sem erro).
+
+## Cron
+
+Dois agendamentos em `[triggers]` (`wrangler.toml`):
+- `*/20 * * * *` — coleta normal de seguidores/posts (`collectAll`).
+- `0 3 * * 0` (domingo 03:00 UTC = domingo meia-noite BRT) — só o backfill do total de visitas desde sempre (`updateSiteVisitsLifetime`, ver `LIFETIME_BACKFILL_CRON` em `src/index.ts`). Horário fixo de propósito, não "quando já fez uma semana desde a última rodada" — se esse gatilho falhar uma semana, só soma o intervalo maior (até ~90 dias) na próxima.
 
 ## Gatilho manual (fora do cron)
 
@@ -21,7 +27,7 @@ Discord **não está aqui** — sai direto em `functions/api/community-stats.ts`
 curl -X POST -H "x-trigger-secret: <CRON_TRIGGER_SECRET>" https://galindogamerbr-social-stats-cron.dignanet.workers.dev/
 ```
 
-Bootstrap único do total de visitas desde o início (roda o cálculo na hora, sem esperar a janela semanal normal — só precisa ser chamado uma vez, depois disso o cron já continua sozinho):
+Bootstrap único do total de visitas desde o início (roda o cálculo na hora, sem esperar o próximo domingo — só precisa ser chamado uma vez, depois disso o cron de domingo já continua sozinho):
 
 ```
 curl -X POST -H "x-trigger-secret: <CRON_TRIGGER_SECRET>" "https://galindogamerbr-social-stats-cron.dignanet.workers.dev/?backfillLifetimeVisits=1"

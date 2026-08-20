@@ -13,9 +13,12 @@ export function Header() {
       <div className="mx-auto flex w-full max-w-container items-center justify-between gap-4 px-5 py-3 sm:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label="GalindoGamerBR — início">
           <Logo className="h-[52px] w-[52px]" />
-          <div className="leading-tight">
-            <strong className="block text-sm tracking-wide">GALINDOGAMERBR</strong>
+          <div className="text-center leading-tight">
+            <strong className="block text-sm tracking-wide">
+              GALINDO<span className="text-gold">GAMER</span>BR
+            </strong>
             <small className="block text-[10px] uppercase tracking-widest text-muted">Streaming Community</small>
+            <span className="mt-1 block h-px w-full bg-gold" />
           </div>
         </Link>
 

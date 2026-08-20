@@ -9,9 +9,10 @@ import { logWarn } from './log'
 // problema: só devolve 0 pros dias sem dado.
 const SITE_LAUNCH_AT = '2026-08-16T00:00:00Z'
 
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 // Bem abaixo do limite real da API (13 semanas e 2 dias) — margem de
-// segurança, não precisa colar no limite exato.
+// segurança, não precisa colar no limite exato. Só importa se essa função
+// ficar muito tempo sem rodar (ex: cron quebrado por semanas) — no dia a
+// dia o intervalo é só ~1 semana, cabe numa chamada só.
 const MAX_CHUNK_MS = 84 * 24 * 60 * 60 * 1000
 
 // Mesma chave lida por functions/api/community-stats.ts (não importado de
@@ -26,16 +27,14 @@ const LIFETIME_KV_KEY = 'site-visits:lifetime'
 // GraphQL Analytics API só cobre uma janela de tempo limitada — então esse
 // total é somado por nós, aos poucos, e persistido em D1
 // (site_visits_lifetime.total_visits, cursor de verdade) e replicado pro KV
-// (leitura rápida do site público). Roda a cada execução do cron (a cada
-// 20min, junto do resto de collectAll), mas só faz trabalho de verdade
-// quando já se passou uma semana desde o último cursor — nas outras vezes é
-// só uma leitura do D1. `force` pula essa checagem (bootstrap manual).
-export async function updateSiteVisitsLifetime(env: Env, force = false): Promise<void> {
+// (leitura rápida do site público). Chamada só pelo cron dedicado (domingo
+// meia-noite BRT, ver LIFETIME_BACKFILL_CRON em index.ts) ou pelo gatilho
+// manual de bootstrap — controle de "quando rodar" é de quem chama, não
+// desta função.
+export async function updateSiteVisitsLifetime(env: Env): Promise<void> {
   const state = await getSiteVisitsLifetime(env.DB)
   const cursorStart = state?.last_counted_at ? new Date(state.last_counted_at) : new Date(SITE_LAUNCH_AT)
   const now = new Date()
-
-  if (!force && now.getTime() - cursorStart.getTime() < WEEK_MS) return
 
   let total = state?.total_visits ?? 0
   let cursor = cursorStart

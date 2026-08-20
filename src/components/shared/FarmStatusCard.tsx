@@ -93,7 +93,7 @@ export function FarmStatusCard() {
           <span className="text-xs uppercase tracking-widest text-muted">No ar há</span>
         </div>
         <div className="flex flex-col items-center gap-1 text-center">
-          <span className="max-w-full truncate text-base font-semibold" title={status.mapName}>
+          <span className="text-base font-semibold" title={status.mapName}>
             {status.mapName || '—'}
           </span>
           <span className="text-xs uppercase tracking-widest text-muted">Mapa</span>
