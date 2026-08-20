@@ -2,7 +2,7 @@ import type { Env } from './env'
 import { extractVideoIds } from './atom'
 import { BROWSER_USER_AGENT } from './socialConstants'
 import { fetchWithTimeout } from './http'
-import { logError } from './log'
+import { logWarn, logError } from './log'
 
 export type VideoState = {
   videoId: string
@@ -217,24 +217,33 @@ export async function recordPubsubLease(env: Env, leaseSeconds: number): Promise
 
 export type PlaylistVideo = { videoId: string; title: string; thumbnailUrl: string }
 
-// Sem API key: feed Atom público da playlist, do mais novo pro mais antigo —
-// resolve título dos primeiros `count` de uma vez (em paralelo).
-export async function getRecentPlaylistVideos(playlistId: string, count: number): Promise<PlaylistVideo[]> {
+// Data API v3 (playlistItems.list, 1 unidade de cota por chamada) — o feed
+// Atom público (`/feeds/videos.xml?playlist_id=`) que essa função usava
+// antes foi descontinuado pelo YouTube (passou a devolver 404 pra qualquer
+// playlist, não só as nossas); esse endpoint oficial é o substituto. Custo
+// de cota baixo o bastante pra não precisar de cache-first no KV (os
+// endpoints públicos que chamam essa função já ficam atrás de
+// withEdgeCache, ver functions/api/flagship.ts e afins).
+export async function getRecentPlaylistVideos(env: Env, playlistId: string, count: number): Promise<PlaylistVideo[]> {
   try {
-    const url = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${count}&key=${env.YOUTUBE_API_KEY}`
     const res = await fetchWithTimeout(url)
-    if (!res.ok) return []
+    if (!res.ok) {
+      logWarn('youtube', 'playlistItems.list retornou erro', { status: res.status, playlistId })
+      return []
+    }
 
-    const videoIds = extractVideoIds(await res.text()).slice(0, count)
-    const videos = await Promise.all(
-      videoIds.map(async (videoId): Promise<PlaylistVideo | null> => {
-        const title = await fetchTitle(videoId)
-        if (!title) return null
+    const data = (await res.json()) as { items?: Array<{ snippet?: { title?: string; resourceId?: { videoId?: string } } }> }
+    return (data.items ?? [])
+      .map((item): PlaylistVideo | null => {
+        const videoId = item.snippet?.resourceId?.videoId
+        const title = item.snippet?.title
+        if (!videoId || !title) return null
         return { videoId, title, thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` }
-      }),
-    )
-    return videos.filter((v): v is PlaylistVideo => v !== null)
-  } catch {
+      })
+      .filter((v): v is PlaylistVideo => v !== null)
+  } catch (err) {
+    logError('youtube', 'getRecentPlaylistVideos falhou', { err, playlistId })
     return []
   }
 }
