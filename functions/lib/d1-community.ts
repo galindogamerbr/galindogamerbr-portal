@@ -70,3 +70,17 @@ export async function upsertSiteVisitsCache(db: D1Database, visitsToday: number)
     .bind(visitsToday)
     .run()
 }
+
+// Total acumulado desde o início — só leitura aqui; quem escreve é o worker
+// (workers/social-stats-cron/src/siteVisitsLifetime.ts), não o site público.
+export type SiteVisitsLifetimeRow = {
+  total_visits: number
+  last_counted_at: string | null
+}
+
+export async function getSiteVisitsLifetime(db: D1Database): Promise<SiteVisitsLifetimeRow | null> {
+  const row = await db
+    .prepare('SELECT total_visits, last_counted_at FROM site_visits_lifetime WHERE id = 1')
+    .first<SiteVisitsLifetimeRow>()
+  return row ?? null
+}

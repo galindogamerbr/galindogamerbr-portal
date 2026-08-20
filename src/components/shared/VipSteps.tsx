@@ -23,7 +23,7 @@ type VipStepsProps = {
 // teaser da Home, pra nunca dessincronizar as regras entre os dois lugares.
 export function VipSteps({ variant = 'full' }: VipStepsProps) {
   return (
-    <div className="rounded-lg border border-line bg-panel p-6 sm:p-8">
+    <div className="rounded-lg border border-line bg-panel bg-[radial-gradient(circle_at_top,rgba(217,177,79,0.08),transparent_60%)] p-6 sm:p-8">
       <Eyebrow>Área VIP</Eyebrow>
       <h2 className="text-3xl sm:text-4xl">GRUPO VIP DO CANAL</h2>
       <p className="mt-3 max-w-2xl text-muted">

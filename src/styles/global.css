@@ -62,6 +62,24 @@ a {
   animation: crossfade-in 400ms ease-out;
 }
 
+/* Entrada do card de status da fazenda (FarmStatusCard) quando o fetch
+   resolve — o card não existe até ter dado de verdade (sem placeholder de
+   loading), então precisa de uma entrada visível em vez de só aparecer seco. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pop-in {
+  animation: pop-in 450ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   *,

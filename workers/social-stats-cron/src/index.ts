@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { upsertSocialStat, upsertPostCount, type SocialPlatform, type Stats } from './d1'
+import { upsertSocialStat, upsertPostCount, upsertToAllDatabases, type SocialPlatform, type Stats } from './d1'
 import { cacheSocialStats } from './cache'
 import { fetchYoutubeStats } from './youtube'
 import { fetchTwitchFollowers } from './twitch'
@@ -8,6 +8,7 @@ import { getInstagramStats } from './instagram'
 import { getTiktokStats } from './tiktok'
 import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 import { renewYoutubeSubscriptionIfNeeded } from './youtubePubsub'
+import { updateSiteVisitsLifetime } from './siteVisitsLifetime'
 import { logWarn, logError } from './log'
 
 // Únicas plataformas que o endpoint público lê do KV (ver
@@ -16,24 +17,6 @@ import { logWarn, logError } from './log'
 const CACHED_IN_KV_PLATFORMS: SocialPlatform[] = ['youtube', 'tiktok', 'instagram']
 
 type Fetcher = { platform: SocialPlatform; run: (env: Env) => Promise<Stats> }
-
-const DATABASE_BINDINGS = ['DB', 'PREVIEW_DB'] as const
-
-// Escreve em produção e preview igualzinho — o worker não tem "deploy de
-// preview" próprio (ver PREVIEW_DB em env.ts), então isso é o único jeito
-// do fallback de leitura do preview bater. Cada banco isolado: um falhar
-// não impede o outro (nem o resto da rodada) de gravar.
-async function upsertToAllDatabases(env: Env, write: (db: D1Database) => Promise<void>): Promise<void> {
-  await Promise.all(
-    DATABASE_BINDINGS.map(async (binding) => {
-      try {
-        await write(env[binding])
-      } catch (error) {
-        logError('social-stats-cron', `Escrita em ${binding} falhou`, { binding, error })
-      }
-    }),
-  )
-}
 
 // Discord não está aqui de propósito — sai ao vivo em
 // functions/api/community-stats.ts (endpoint público, sem risco de cota),
@@ -52,6 +35,16 @@ const FETCHERS: Fetcher[] = [
 // é independente de count — grava o que vier, mesmo se o outro faltar.
 async function collectAll(env: Env): Promise<void> {
   await renewYoutubeSubscriptionIfNeeded(env)
+
+  // Só faz trabalho de verdade uma vez por semana (ver
+  // siteVisitsLifetime.ts) — chamar a cada rodada (20min) é barato fora
+  // dessa janela, é só uma leitura do D1. Isolado: falhar aqui não derruba
+  // o resto da coleta.
+  try {
+    await updateSiteVisitsLifetime(env)
+  } catch (error) {
+    logError('social-stats-cron', 'updateSiteVisitsLifetime falhou', { error })
+  }
 
   const results = await Promise.allSettled(
     FETCHERS.map(async ({ platform, run }) => {
@@ -89,6 +82,14 @@ export default {
     const secret = request.headers.get('x-trigger-secret')
     if (!secret || secret !== env.CRON_TRIGGER_SECRET) {
       return new Response('Not found', { status: 404 })
+    }
+    // Gatilho separado (?backfillLifetimeVisits=1) pra rodar o cálculo de
+    // visitas desde sempre agora, sem esperar a janela semanal normal —
+    // pensado pra bootstrap único (primeira vez que a tabela é populada),
+    // não faz parte do fluxo do dia a dia.
+    if (new URL(request.url).searchParams.has('backfillLifetimeVisits')) {
+      await updateSiteVisitsLifetime(env, true)
+      return new Response('ok')
     }
     await collectAll(env)
     return new Response('ok')
