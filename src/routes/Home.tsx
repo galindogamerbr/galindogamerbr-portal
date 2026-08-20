@@ -35,7 +35,6 @@ export function Home() {
   return (
     <>
       <Hero />
-      <LifetimeVisitsBanner />
       <BemVindoTeaser />
       <TransmissoesTeaser />
       <JogosBannerCta />
@@ -99,6 +98,7 @@ function Hero() {
             <img src="/assets/icons/tiktok.svg" alt="" className="h-4 w-4" /> TikTok
           </LinkButton>
         </div>
+        <LifetimeVisitsBanner />
       </Container>
     </section>
   )
