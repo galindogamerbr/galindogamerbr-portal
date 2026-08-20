@@ -212,28 +212,37 @@ function ComunidadeTeaser() {
   )
 }
 
+// about-galindo.webp já vem com a metade direita escura, de propósito
+// (mesmo espírito do Hero acima) — antes o texto ficava numa coluna
+// separada ao lado da imagem, deixando esse espaço reservado vazio.
+// Sobrepõe o texto ali a partir do lg; abaixo disso (sem espaço pra
+// sobrepor sem cobrir o rosto) a imagem só mostra um recorte focado no
+// Galindo, com o texto embaixo em fluxo normal.
 function SobreTeaser() {
   return (
     <section className="pb-16 sm:pb-24">
       <Reveal>
-        <Container className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
-          <img
-            src="/assets/about-galindo.webp"
-            alt="GalindoGamerBR"
-            loading="lazy"
-            className="w-full rounded-lg border border-line object-cover"
-          />
-          <div>
-            <Eyebrow>Sobre o Galindo</Eyebrow>
-            <h2 className="text-3xl sm:text-4xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h2>
-            <p className="mt-3 text-muted">
-              Sou apaixonado por simuladores e jogos desde sempre. Criei o GalindoGamerBR para compartilhar minha
-              paixão, criar conteúdo de qualidade e construir uma comunidade incrível!
-            </p>
-            <p className="mt-3 text-muted">Aqui você encontra gameplay de verdade, diversão e aprendizado em cada interação!</p>
-            <NavButton to="/sobre" variant="default" className="mt-6">
-              Conheça minha história →
-            </NavButton>
+        <Container>
+          <div className="relative isolate overflow-hidden rounded-lg border border-line lg:min-h-[420px] xl:aspect-[2172/724] xl:min-h-0">
+            <img
+              src="/assets/about-galindo.webp"
+              alt="GalindoGamerBR"
+              loading="lazy"
+              className="aspect-[4/3] w-full object-cover object-left lg:absolute lg:inset-0 lg:aspect-auto lg:h-full lg:w-full"
+            />
+            <div className="absolute inset-0 hidden bg-gradient-to-r from-transparent via-bg/40 to-bg/90 lg:block" />
+            <div className="p-6 sm:p-8 lg:absolute lg:inset-y-0 lg:right-0 lg:z-10 lg:flex lg:w-full lg:max-w-lg lg:flex-col lg:justify-center lg:p-10">
+              <Eyebrow>Sobre o Galindo</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h2>
+              <p className="mt-3 text-muted">
+                Sou apaixonado por simuladores e jogos desde sempre. Criei o GalindoGamerBR para compartilhar minha
+                paixão, criar conteúdo de qualidade e construir uma comunidade incrível!
+              </p>
+              <p className="mt-3 text-muted">Aqui você encontra gameplay de verdade, diversão e aprendizado em cada interação!</p>
+              <NavButton to="/sobre" variant="default" className="mt-6 self-start">
+                Conheça minha história →
+              </NavButton>
+            </div>
           </div>
         </Container>
       </Reveal>
