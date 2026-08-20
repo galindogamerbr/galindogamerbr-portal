@@ -57,7 +57,12 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
         </div>
       ) : (
         <>
-          <h2 id={titleId} className="text-2xl">
+          <img
+            src="/assets/logos/galindogamerbr.webp"
+            alt="Logo GalindoGamerBR"
+            className="h-14 w-14 rounded-full object-cover"
+          />
+          <h2 id={titleId} className="mt-3 text-2xl">
             QUERO SER PARCEIRO
           </h2>
           <p className="mt-2 text-muted">Conta pra gente sobre a marca/projeto e como podemos trabalhar juntos.</p>
