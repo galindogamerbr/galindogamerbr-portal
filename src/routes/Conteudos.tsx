@@ -89,8 +89,8 @@ export function Conteudos() {
                     >
                       Ver playlist completa
                     </LinkButton>
-                    <NavButton variant="default" to="/mods">
-                      🚜 App para baixar mods
+                    <NavButton variant="blue" to="/mods">
+                      🚜 Sincronize seus mods
                     </NavButton>
                   </div>
                 </div>
