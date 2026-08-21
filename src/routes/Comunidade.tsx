@@ -25,7 +25,7 @@ const HUB_LINKS = [
     eyebrow: 'Discord oficial',
     title: 'SERVIDOR DA COMUNIDADE',
     description: 'Regras, avisos e os espaços oficiais do canal.',
-    href: 'https://discord.com/invite/JggtZ7qGY3',
+    href: '/discord',
   },
 ]
 

@@ -24,6 +24,7 @@ const Login = lazy(() => import('./routes/admin/Login').then((m) => ({ default: 
 const AdminIndex = lazy(() => import('./routes/admin/Index').then((m) => ({ default: m.AdminIndex })))
 const Schedule = lazy(() => import('./routes/admin/Schedule').then((m) => ({ default: m.Schedule })))
 const TikTok = lazy(() => import('./routes/admin/TikTok').then((m) => ({ default: m.TikTok })))
+const Discord = lazy(() => import('./routes/admin/Discord').then((m) => ({ default: m.Discord })))
 
 function AdminRouteFallback() {
   return (
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
       { path: '/admin/login', element: withAdminSuspense(<Login />) },
       { path: '/admin/programacao', element: withAdminSuspense(<Schedule />) },
       { path: '/admin/tiktok', element: withAdminSuspense(<TikTok />) },
+      { path: '/admin/discord', element: withAdminSuspense(<Discord />) },
       { path: '*', element: <NotFound /> },
     ],
   },

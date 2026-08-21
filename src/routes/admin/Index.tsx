@@ -19,6 +19,12 @@ const SECTIONS = [
     to: '/admin/tiktok',
     icon: '/assets/icons/tiktok.svg',
   },
+  {
+    label: 'Discord',
+    description: 'Trocar o link do convite usado em /discord.',
+    to: '/admin/discord',
+    icon: '/assets/icons/discord.svg',
+  },
 ]
 
 export function AdminIndex() {
