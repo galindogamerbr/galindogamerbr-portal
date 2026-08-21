@@ -65,20 +65,53 @@ async function isShort(videoId: string): Promise<boolean> {
   }
 }
 
+// A ordem da playlist "uploads" (publishedAt) não é confiável pra lives
+// salvas como vídeo: o VOD "publica" na playlist só depois de processado, e
+// esse atraso varia por vídeo — já visto na prática uma live do meio-dia
+// (actualEndTime 14:23) aparecer DEPOIS de uma live da noite do mesmo dia
+// (actualEndTime 23:03) na ordem de publishedAt, mesmo a segunda tendo ido
+// ao ar bem mais tarde. actualEndTime (quando existe) é a única fonte
+// confiável de "quando isso realmente foi transmitido"; cai pro publishedAt
+// só pra upload comum (sem liveStreamingDetails, nunca foi live).
+async function rankByActualRecency(env: Env, videos: PlaylistVideo[]): Promise<PlaylistVideo[]> {
+  if (videos.length === 0) return videos
+  try {
+    const ids = videos.map((v) => v.videoId).join(',')
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails,snippet&id=${ids}&key=${env.YOUTUBE_API_KEY}`
+    const res = await fetchWithTimeout(url)
+    if (!res.ok) return videos
+
+    const data = (await res.json()) as {
+      items?: Array<{ id?: string; snippet?: { publishedAt?: string }; liveStreamingDetails?: { actualEndTime?: string } }>
+    }
+    const effectiveTime = new Map<string, string>()
+    for (const item of data.items ?? []) {
+      const time = item.liveStreamingDetails?.actualEndTime ?? item.snippet?.publishedAt
+      if (item.id && time) effectiveTime.set(item.id, time)
+    }
+
+    return [...videos].sort((a, b) => (effectiveTime.get(b.videoId) ?? '').localeCompare(effectiveTime.get(a.videoId) ?? ''))
+  } catch (err) {
+    logError('youtube', 'rankByActualRecency falhou, mantendo ordem da playlist', { err })
+    return videos
+  }
+}
+
 // Data API v3 (playlistItems.list, 1 unidade de cota) — o feed Atom público
 // do canal (`/feeds/videos.xml?channel_id=`) que essa função usava foi
 // descontinuado pelo YouTube (confirmado: passou a devolver 404, mesmo
 // destino do feed por playlist_id, ver getRecentPlaylistVideos). A
 // playlist "uploads" de qualquer canal é implícita — troca só o prefixo
-// "UC" por "UU" no ID do canal — e devolve os mesmos vídeos, do mais novo
-// pro mais antigo, sem precisar de mais nenhuma chamada pra descobrir o ID.
+// "UC" por "UU" no ID do canal.
 export async function getLatestUploadedVideoId(env: Env): Promise<string | null> {
   const uploadsPlaylistId = `UU${env.YOUTUBE_CHANNEL_ID.slice(2)}`
   const videos = await getRecentPlaylistVideos(env, uploadsPlaylistId, 10)
-  for (const video of videos) {
-    if (!(await isShort(video.videoId))) return video.videoId
-  }
-  return null
+  const shortFlags = await Promise.all(videos.map((v) => isShort(v.videoId)))
+  const nonShorts = videos.filter((_, i) => !shortFlags[i])
+  if (nonShorts.length === 0) return null
+
+  const ranked = await rankByActualRecency(env, nonShorts)
+  return ranked[0]?.videoId ?? null
 }
 
 // Sem API key: oEmbed público só devolve título — thumbnail vem direto da
