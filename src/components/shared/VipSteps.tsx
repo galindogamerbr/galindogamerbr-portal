@@ -71,7 +71,7 @@ export function VipSteps({ variant = 'full' }: VipStepsProps) {
       )}
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <LinkButton variant="blue" href="https://discord.com/invite/JggtZ7qGY3" target="_blank" rel="noopener noreferrer">
+        <LinkButton variant="blue" href="/discord" target="_blank" rel="noopener noreferrer">
           1. Entrar no Discord
         </LinkButton>
         <LinkButton

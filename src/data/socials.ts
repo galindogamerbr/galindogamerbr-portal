@@ -27,5 +27,7 @@ export const SOCIALS: Social[] = [
   { platform: 'tiktok', name: 'TikTok', href: 'https://www.tiktok.com/@galindogamerbr', icon: 'tiktok', logo: 'tiktok.png', color: '#FE2C55' },
   { platform: 'twitch', name: 'Twitch', href: 'https://www.twitch.tv/galindogamerbr', icon: 'twitch', logo: 'twitch.png', color: '#9146FF' },
   { platform: 'kick', name: 'Kick', href: 'https://kick.com/galindogamerbr', icon: 'kick', logo: 'kick.svg', color: '#53FC18' },
-  { platform: 'discord', name: 'Discord', href: 'https://discord.com/invite/JggtZ7qGY3', icon: 'discord', logo: 'discord.png', color: '#5865F2' },
+  // /discord (não o link cru) — redireciona pro convite guardado em D1,
+  // editável em /admin/discord sem precisar de deploy (ver functions/discord.ts).
+  { platform: 'discord', name: 'Discord', href: '/discord', icon: 'discord', logo: 'discord.png', color: '#5865F2' },
 ]
