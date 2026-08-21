@@ -1,5 +1,6 @@
 import type { Env } from '../lib/env'
 import { json } from '../lib/http'
+import { putIfChanged } from '../lib/kv'
 import { fetchTodayVisits, fetchVisitsSince } from '../lib/cfAnalytics'
 import { fetchTwitchLiveStatus } from '../lib/twitch'
 import { fetchKickLiveStatus } from '../lib/kick'
@@ -87,48 +88,41 @@ async function resolveLifetimeVisits(env: Env): Promise<number | null> {
 const TWITCH_LIVE_CACHE_KEY = 'twitch:live-status'
 const KICK_LIVE_CACHE_KEY = 'kick:live-status'
 const TIKTOK_LIVE_CACHE_KEY = 'tiktok:live-status'
-const LIVE_STATUS_CACHE_TTL_SECONDS = 90
 
+// Sem TTL nessas 3 chaves: quem limita quantas vezes isso roda é o cache de
+// borda por PoP (withEdgeCache, Cache API, grátis) que envolve esse
+// endpoint — cada execução busca fresco e só grava no KV se o resultado for
+// diferente do que já tinha (putIfChanged, ver functions/lib/kv.ts). TTL
+// curto + reescrita a cada ciclo é o que consumiu 90% da cota diária de
+// write do KV (1.000/dia no free tier); a chamada às APIs externas não tem
+// esse limite apertado.
 async function resolveTwitchLive(env: Env): Promise<LiveStatus> {
-  const cached = await env.PUBLIC_CACHE.get<LiveStatus>(TWITCH_LIVE_CACHE_KEY, 'json')
-  if (cached) return cached
-
   const fresh = await fetchTwitchLiveStatus(env)
-  if (fresh) {
-    await env.PUBLIC_CACHE.put(TWITCH_LIVE_CACHE_KEY, JSON.stringify(fresh), { expirationTtl: LIVE_STATUS_CACHE_TTL_SECONDS })
-    return fresh
-  }
-  return { isLive: false, viewerCount: null }
+  if (!fresh) return (await env.PUBLIC_CACHE.get<LiveStatus>(TWITCH_LIVE_CACHE_KEY, 'json')) ?? { isLive: false, viewerCount: null }
+
+  await putIfChanged(env.PUBLIC_CACHE, TWITCH_LIVE_CACHE_KEY, fresh)
+  return fresh
 }
 
 async function resolveKickLive(env: Env): Promise<LiveStatus> {
-  const cached = await env.PUBLIC_CACHE.get<LiveStatus>(KICK_LIVE_CACHE_KEY, 'json')
-  if (cached) return cached
-
   const fresh = await fetchKickLiveStatus(env)
-  if (fresh) {
-    await env.PUBLIC_CACHE.put(KICK_LIVE_CACHE_KEY, JSON.stringify(fresh), { expirationTtl: LIVE_STATUS_CACHE_TTL_SECONDS })
-    return fresh
-  }
-  return { isLive: false, viewerCount: null }
+  if (!fresh) return (await env.PUBLIC_CACHE.get<LiveStatus>(KICK_LIVE_CACHE_KEY, 'json')) ?? { isLive: false, viewerCount: null }
+
+  await putIfChanged(env.PUBLIC_CACHE, KICK_LIVE_CACHE_KEY, fresh)
+  return fresh
 }
 
 // TikTok, diferente de Twitch/Kick, não é gated pela live do YouTube — o
 // Galindo transmite no TikTok de forma independente (não é sempre simulcast
-// do evento do YouTube), então checa sempre, com cache de 90s (mesmo TTL do
-// Twitch/Kick) só pra não bater no endpoint a cada request de cada
-// visitante. fetchTiktokLiveStatus é uma chamada HTTP só, sem OAuth, sem
-// cron externo nem worker rodando sem parar (ver functions/lib/tiktokLive.ts).
+// do evento do YouTube), então checa sempre. fetchTiktokLiveStatus é uma
+// chamada HTTP só, sem OAuth, sem cron externo nem worker rodando sem parar
+// (ver functions/lib/tiktokLive.ts).
 async function resolveTiktokLive(env: Env): Promise<LiveStatus> {
-  const cached = await env.PUBLIC_CACHE.get<LiveStatus>(TIKTOK_LIVE_CACHE_KEY, 'json')
-  if (cached) return cached
-
   const fresh = await fetchTiktokLiveStatus()
-  if (fresh) {
-    await env.PUBLIC_CACHE.put(TIKTOK_LIVE_CACHE_KEY, JSON.stringify(fresh), { expirationTtl: LIVE_STATUS_CACHE_TTL_SECONDS })
-    return fresh
-  }
-  return { isLive: false, viewerCount: null }
+  if (!fresh) return (await env.PUBLIC_CACHE.get<LiveStatus>(TIKTOK_LIVE_CACHE_KEY, 'json')) ?? { isLive: false, viewerCount: null }
+
+  await putIfChanged(env.PUBLIC_CACHE, TIKTOK_LIVE_CACHE_KEY, fresh)
+  return fresh
 }
 
 // Twitch/Kick só têm graça mostrar "ao vivo" quando a live do YouTube (o

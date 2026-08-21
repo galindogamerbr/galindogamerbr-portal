@@ -2,6 +2,7 @@ import type { Env } from './env'
 import { BROWSER_USER_AGENT } from './socialConstants'
 import { fetchWithTimeout } from './http'
 import { logWarn, logError } from './log'
+import { putIfChanged } from './kv'
 
 export type VideoState = {
   videoId: string
@@ -129,9 +130,6 @@ async function fetchTitle(videoId: string): Promise<string | null> {
 }
 
 const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
-// 60 é o mínimo que o Workers KV aceita pra expirationTtl (PUT falha com
-// 400 abaixo disso) — não dá pra ir mais curto que isso.
-const LIVE_STATE_CACHE_TTL_SECONDS = 60
 
 type LiveStreamingState = { isLive: boolean; viewerCount: number | null }
 
@@ -181,13 +179,17 @@ async function buildVideoState(env: Env, videoId: string): Promise<VideoState | 
 }
 
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
-// publicado se não houver live) — cache-first no KV (PUBLIC_CACHE), TTL
-// curto: cada miss custa até 4 fetches sequenciais pro YouTube (scrape +
-// feed Atom + shorts-check + oEmbed + Data API), então vale a pena servir
-// do cache pra qualquer visitante que caia dentro da janela do TTL. Na
-// prática o cache é populado bem mais cedo pelo webhook do WebSub (ver
-// updateLiveStateFromWebhook) sempre que a inscrição está ativa — isso aqui
-// é o fallback de quando o KV expira sem notificação ter chegado.
+// publicado se não houver live) — puramente cache-first, sem TTL. Quem
+// atualiza esse cache no dia a dia é só o webhook do WebSub
+// (updateLiveStateFromWebhook), não isso aqui: com a inscrição ativa, o hub
+// avisa em near-real-time toda vez que algo muda, então não tem por que
+// ficar rechecando o YouTube (scrape + Data API) a cada request só pra
+// confirmar que continua igual. Isso aqui só faz esse trabalho pesado se
+// ainda não tiver NADA em cache — primeiro deploy, ou o KV perdeu o dado —
+// pra não deixar o site sem "último vídeo" nenhum até a próxima
+// notificação chegar. (TTL curto aqui antes causava 90% da cota diária de
+// write do KV — 1.000/dia no free tier — sendo consumida reescrevendo o
+// mesmo valor a cada ciclo, mesmo sem nada ter mudado de verdade.)
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
   if (cached) return cached
@@ -206,7 +208,7 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   const state = await buildVideoState(env, candidateVideoId)
   if (!state) return null
 
-  await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
+  await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, state)
   return state
 }
 
@@ -242,7 +244,7 @@ export async function updateLiveStateFromWebhook(env: Env, notifiedVideoId: stri
   const state = await buildVideoState(env, targetVideoId)
   if (!state) return
 
-  await env.PUBLIC_CACHE.put(LIVE_STATE_CACHE_KEY, JSON.stringify(state), { expirationTtl: LIVE_STATE_CACHE_TTL_SECONDS })
+  await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, state)
 }
 
 const PUBSUB_LEASE_CACHE_KEY = 'youtube:pubsub-lease'
