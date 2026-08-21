@@ -20,11 +20,6 @@ export type Env = {
   // functions/api/webhooks/youtube.ts) — mesmo valor configurado como secret
   // do worker (workers/social-stats-cron), que é quem pede a inscrição.
   YOUTUBE_PUBSUB_SECRET: string
-  // Métricas de comunidade (ver functions/api/community-stats.ts). Seguidores
-  // por rede são coletados por um worker separado (workers/social-stats-cron)
-  // — algumas via API oficial (YouTube, Instagram, TikTok), outras via
-  // scraping/endpoints públicos (Discord, Kick).
-  DISCORD_INVITE_CODE: string
   // Visitas do site: Cloudflare Web Analytics (RUM) via GraphQL Analytics
   // API, dataset rumPageloadEventsAdaptiveGroups — é account-scoped, não
   // zone-scoped (ver functions/lib/cfAnalytics.ts). Nome distinto de
