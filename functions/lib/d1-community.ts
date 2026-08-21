@@ -86,10 +86,9 @@ export async function getSiteVisitsLifetime(db: D1Database): Promise<SiteVisitsL
 }
 
 // Convite do Discord editável pelo admin (ver /admin/discord e
-// functions/discord.ts) — independente de DISCORD_INVITE_CODE em
-// functions/lib/socialConstants.ts, que é só o código usado pra buscar
-// contagem de membros no widget público do Discord (functions/lib/discord.ts).
-// Trocar o convite aqui não atualiza aquele código automaticamente.
+// functions/discord.ts) — mesma URL usada pra extrair o código do convite
+// na contagem de membros do widget público do Discord (fetchDiscordCounts
+// em functions/lib/discord.ts), então trocar aqui já atualiza os dois.
 export async function getDiscordInviteUrl(db: D1Database): Promise<string | null> {
   const row = await db.prepare('SELECT url FROM discord_invite WHERE id = 1').first<{ url: string }>()
   return row?.url ?? null

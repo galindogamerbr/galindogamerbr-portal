@@ -9,6 +9,7 @@ import { resolveChannelLiveState } from '../lib/youtube'
 import { logError } from '../lib/log'
 import { withEdgeCache } from '../lib/edgeCache'
 import {
+  getDiscordInviteUrl,
   getDiscordPresenceCache,
   getPostCountsCache,
   getSiteVisitsCache,
@@ -151,12 +152,20 @@ type DiscordCounts = { memberCount: number | null; onlineCount: number | null }
 
 // Discord não passa pelo worker (workers/social-stats-cron) — o endpoint
 // público de convite devolve membros totais e online numa chamada só, sem
-// risco de cota, então busca sempre fresco aqui; cache só como fallback.
+// risco de cota, então busca sempre fresco aqui; cache só como fallback. O
+// código do convite vem da mesma URL editável em /admin/discord (ver
+// getDiscordInviteUrl), não de uma constante separada — troca o convite lá
+// e essa contagem já acompanha na consulta seguinte.
 async function resolveDiscordCounts(env: Env): Promise<DiscordCounts> {
-  const fresh = await fetchDiscordCounts()
-  if (fresh) {
-    await upsertDiscordPresenceCache(env.DB, { onlineCount: fresh.onlineCount ?? 0, memberCount: fresh.memberCount })
-    return fresh
+  try {
+    const inviteUrl = await getDiscordInviteUrl(env.DB)
+    const fresh = inviteUrl ? await fetchDiscordCounts(inviteUrl) : null
+    if (fresh) {
+      await upsertDiscordPresenceCache(env.DB, { onlineCount: fresh.onlineCount ?? 0, memberCount: fresh.memberCount })
+      return fresh
+    }
+  } catch (err) {
+    logError('community-stats', 'resolveDiscordCounts falhou', { err })
   }
   const cached = await getDiscordPresenceCache(env.DB)
   return { memberCount: cached?.member_count ?? null, onlineCount: cached?.online_count ?? null }
