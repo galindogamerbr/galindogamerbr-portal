@@ -146,16 +146,20 @@ async function buildVideoState(env: Env, videoId: string): Promise<VideoState | 
 }
 
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
-// publicado se não houver live). Sem TTL no KV: quem já limita quantas
-// vezes isso roda é o cache de borda por PoP (withEdgeCache, Cache API,
-// grátis) que envolve os endpoints que chamam essa função — cada execução
-// busca fresco no YouTube e só grava no KV se o resultado for diferente do
-// que já tinha (ver putIfChanged em ./kv). TTL curto aqui já causou 90% da
-// cota diária de write do KV (1.000/dia no free tier) sendo consumida só
-// reescrevendo o mesmo valor a cada ciclo — o YouTube não tem esse limite
-// tão apertado (scrape é de graça, Data API é 10k unidades/dia).
+// publicado se não houver live) — puramente cache-first, sem TTL. Quem
+// atualiza esse cache no dia a dia é só o webhook do WebSub
+// (updateLiveStateFromWebhook), não isso aqui: com a inscrição ativa, o hub
+// avisa em near-real-time toda vez que algo muda, então não tem por que
+// ficar rechecando o YouTube (scrape + Data API) a cada request só pra
+// confirmar que continua igual. Isso aqui só faz esse trabalho pesado se
+// ainda não tiver NADA em cache — primeiro deploy, ou o KV perdeu o dado —
+// pra não deixar o site sem "último vídeo" nenhum até a próxima
+// notificação chegar. (TTL curto aqui antes causava 90% da cota diária de
+// write do KV — 1.000/dia no free tier — sendo consumida reescrevendo o
+// mesmo valor a cada ciclo, mesmo sem nada ter mudado de verdade.)
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
+  if (cached) return cached
 
   let liveVideoId: string | null
   try {
@@ -166,10 +170,10 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
   }
 
   const candidateVideoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
-  if (!candidateVideoId) return cached
+  if (!candidateVideoId) return null
 
   const state = await buildVideoState(env, candidateVideoId)
-  if (!state) return cached
+  if (!state) return null
 
   await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, state)
   return state
