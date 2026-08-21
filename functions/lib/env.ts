@@ -34,6 +34,15 @@ export type Env = {
   // processamos nenhum evento), só implementa o handshake pra passar na
   // validação do painel da Meta.
   INSTAGRAM_WEBHOOK_VERIFY_TOKEN: string
+  // App Secret do app da Meta (Configurações do app > Básico) — assina o
+  // corpo de cada notificação de evento (header x-hub-signature-256).
+  // Opcional por enquanto: ainda não processamos evento nenhum (ver
+  // functions/api/webhooks/instagram.ts), então sem esse secret configurado
+  // o endpoint mantém o comportamento atual (só confirma recebimento).
+  // Assim que alguma lógica real for plugada ali, configurar via
+  // `wrangler secret put INSTAGRAM_APP_SECRET` deixa a verificação
+  // obrigatória.
+  INSTAGRAM_APP_SECRET?: string
   // Espectadores ao vivo da Twitch (ver functions/lib/twitch.ts) — só
   // credencial de app (client_credentials), dado público, sem OAuth de
   // usuário/moderador (isso só seria necessário pra follower count, que

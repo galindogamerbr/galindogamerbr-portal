@@ -10,6 +10,7 @@ import { KICK_USERNAME, TWITCH_LOGIN, YOUTUBE_CHANNEL_ID } from './constants'
 import { renewYoutubeSubscriptionIfNeeded } from './youtubePubsub'
 import { updateSiteVisitsLifetime } from './siteVisitsLifetime'
 import { logWarn, logError } from './log'
+import { timingSafeEqual } from './crypto'
 
 // Únicas plataformas que o endpoint público lê do KV (ver
 // functions/api/community-stats.ts) — twitch/kick continuam só em D1 (lidos
@@ -84,7 +85,7 @@ export default {
   // extra à toa.
   async fetch(request, env) {
     const secret = request.headers.get('x-trigger-secret')
-    if (!secret || secret !== env.CRON_TRIGGER_SECRET) {
+    if (!secret || !timingSafeEqual(secret, env.CRON_TRIGGER_SECRET)) {
       return new Response('Not found', { status: 404 })
     }
     // Gatilho separado (?backfillLifetimeVisits=1) pra rodar o cálculo de

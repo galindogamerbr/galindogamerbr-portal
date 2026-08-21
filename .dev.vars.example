@@ -42,6 +42,13 @@ CLOUDFLARE_ACCOUNT_ID=
 # functions/api/webhooks/instagram.ts; não processamos eventos de verdade.
 INSTAGRAM_WEBHOOK_VERIFY_TOKEN=
 
+# Opcional — App Secret do app na Meta (Configurações do app > Básico).
+# Sem isso, o webhook de Instagram aceita qualquer POST (ok hoje, já que
+# não processamos evento nenhum). Assim que alguma lógica real for
+# plugada em functions/api/webhooks/instagram.ts, configura esse secret
+# pra passar a exigir a assinatura x-hub-signature-256.
+INSTAGRAM_APP_SECRET=
+
 # Espectadores ao vivo da Twitch (functions/lib/twitch.ts) — Client ID/
 # Secret do app criado em dev.twitch.tv/console/apps. Só credencial de
 # aplicativo (client_credentials), dado público, sem login de ninguém.

@@ -27,9 +27,8 @@ const FEATURES = [
   { icon: '🖥️', title: 'Código aberto', text: 'Projeto open-source, qualquer um pode conferir como funciona.' },
 ] as const
 
-// TODO: confirmar com o Pedro o formato real da resposta de /latest quando
-// o endpoint estiver no ar — assumindo { version: string } por convenção.
-type LatestVersionResponse = { version?: string }
+// Formato confirmado direto na API real: {"version":"v1.1.0","url":"..."}
+type LatestVersionResponse = { version: string }
 
 // Versão atual mostrada ao lado do botão de download — busca direto do
 // modsync.phmoreira.dev (fora do nosso backend, sem proxy), então falha em

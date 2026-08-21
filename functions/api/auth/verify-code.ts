@@ -1,6 +1,7 @@
 import type { Env } from '../../lib/env'
 import { consumeOtpCode, createSession, getLatestValidOtp, incrementOtpAttempt } from '../../lib/d1'
-import { hashCode, timingSafeEqual } from '../../lib/otp'
+import { hashCode } from '../../lib/otp'
+import { timingSafeEqual } from '../../lib/crypto'
 import { checkRateLimit } from '../../lib/rateLimit'
 import { createSessionId, signSessionId, buildSetCookie } from '../../lib/session'
 import { sqliteDatetimePlus } from '../../lib/time'
