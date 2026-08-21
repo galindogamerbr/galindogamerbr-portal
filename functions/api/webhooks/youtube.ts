@@ -2,6 +2,7 @@ import type { Env } from '../../lib/env'
 import { extractVideoIds } from '../../lib/atom'
 import { updateLiveStateFromWebhook, recordPubsubLease } from '../../lib/youtube'
 import { logWarn } from '../../lib/log'
+import { timingSafeEqual } from '../../lib/crypto'
 
 const TOPIC_URL_PREFIX = 'https://www.youtube.com/xml/feeds/videos.xml?channel_id='
 
@@ -52,12 +53,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   return new Response(null, { status: 200 })
 }
 
-async function verifyHmacSha1(secret: string, body: string, signatureHeader: string | null): Promise<boolean> {
+export async function verifyHmacSha1(secret: string, body: string, signatureHeader: string | null): Promise<boolean> {
   if (!signatureHeader?.startsWith('sha1=')) return false
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-1' }, false, ['sign'])
   const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body))
   const expectedHex = Array.from(new Uint8Array(signature))
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('')
-  return expectedHex === signatureHeader.slice(5)
+  return timingSafeEqual(expectedHex, signatureHeader.slice(5))
 }

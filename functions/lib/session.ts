@@ -1,3 +1,5 @@
+import { timingSafeEqual } from './crypto'
+
 // Cookie de sessão: token opaco assinado `${sessionId}.${hmac}`. O HMAC é
 // verificado primeiro (barato, rejeita cookies forjados sem tocar o D1);
 // o sessionId só é consultado no banco depois, o que permite revogação
@@ -34,7 +36,7 @@ export async function verifyCookieValue(cookieValue: string, secret: string): Pr
   const [sessionId, signature] = cookieValue.split('.')
   if (!sessionId || !signature) return null
   const expected = await signSessionId(sessionId, secret)
-  return expected === cookieValue ? sessionId : null
+  return timingSafeEqual(expected, cookieValue) ? sessionId : null
 }
 
 export function parseCookie(cookieHeader: string | null, name: string): string | null {
