@@ -131,7 +131,7 @@ async function fetchTitle(videoId: string): Promise<string | null> {
 
 const LIVE_STATE_CACHE_KEY = 'youtube:live-state'
 
-type LiveStreamingState = { isLive: boolean; viewerCount: number | null }
+type LiveStreamingState = { isLive: boolean; viewerCount: number | null; resolved: boolean }
 
 // YouTube Data API v3 — liveStreamingDetails só aparece (e actualStartTime
 // só vem preenchido sem actualEndTime) enquanto o vídeo está ao vivo de
@@ -145,17 +145,17 @@ async function fetchLiveStreamingDetails(env: Env, videoId: string): Promise<Liv
   try {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${env.YOUTUBE_API_KEY}`
     const res = await fetchWithTimeout(url)
-    if (!res.ok) return { isLive: false, viewerCount: null }
+    if (!res.ok) return { isLive: false, viewerCount: null, resolved: false }
 
     const data = (await res.json()) as {
       items?: [{ liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string; concurrentViewers?: string } }]
     }
     const details = data.items?.[0]?.liveStreamingDetails
-    if (!details?.actualStartTime || details.actualEndTime) return { isLive: false, viewerCount: null }
+    if (!details?.actualStartTime || details.actualEndTime) return { isLive: false, viewerCount: null, resolved: true }
 
-    return { isLive: true, viewerCount: details.concurrentViewers ? Number(details.concurrentViewers) : null }
+    return { isLive: true, viewerCount: details.concurrentViewers ? Number(details.concurrentViewers) : null, resolved: true }
   } catch {
-    return { isLive: false, viewerCount: null }
+    return { isLive: false, viewerCount: null, resolved: false }
   }
 }
 
@@ -179,20 +179,38 @@ async function buildVideoState(env: Env, videoId: string): Promise<VideoState | 
 }
 
 // Resolve o estado atual do canal (ao vivo agora, ou o último vídeo
-// publicado se não houver live) — puramente cache-first, sem TTL. Quem
-// atualiza esse cache no dia a dia é só o webhook do WebSub
-// (updateLiveStateFromWebhook), não isso aqui: com a inscrição ativa, o hub
-// avisa em near-real-time toda vez que algo muda, então não tem por que
-// ficar rechecando o YouTube (scrape + Data API) a cada request só pra
-// confirmar que continua igual. Isso aqui só faz esse trabalho pesado se
-// ainda não tiver NADA em cache — primeiro deploy, ou o KV perdeu o dado —
-// pra não deixar o site sem "último vídeo" nenhum até a próxima
-// notificação chegar. (TTL curto aqui antes causava 90% da cota diária de
-// write do KV — 1.000/dia no free tier — sendo consumida reescrevendo o
-// mesmo valor a cada ciclo, mesmo sem nada ter mudado de verdade.)
+// publicado se não houver live) — cache-first pra decidir QUAL vídeo (isso
+// sim só muda via webhook do WebSub, updateLiveStateFromWebhook, ou no
+// cache-miss abaixo: primeiro deploy, ou o KV perdeu o dado). viewerCount é
+// diferente: muda a cada poucos segundos enquanto a live rola, e o webhook
+// só dispara em mudança de metadado/estado (começou/terminou), não a cada
+// espectador entrando — sem refetch aqui, concurrentViewers ficava
+// congelado no valor (às vezes nem populado ainda, ver fetchLiveStreamingDetails)
+// do momento em que a live começou. Por isso, com o vídeo cacheado ao vivo,
+// sempre rebusca só o liveStreamingDetails (1 unidade de cota) pra manter o
+// contador atualizado — mesmo espírito de resolveTwitchLive/resolveKickLive
+// em community-stats.ts: busca fresco, putIfChanged só escreve no KV se
+// mudou de verdade (evita reestourar a cota de write, ver af8b05a).
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
-  if (cached) return cached
+  if (cached && !cached.isLive) return cached
+
+  if (cached) {
+    const { isLive, viewerCount, resolved } = await fetchLiveStreamingDetails(env, cached.videoId)
+    if (!resolved) return cached
+    if (isLive) {
+      const state = { ...cached, viewerCount }
+      await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, state)
+      return state
+    }
+    // Live terminou entre um poll e outro sem o webhook avisar a tempo —
+    // recalcula pro último upload, mesma lógica do LIVE_ENDED no webhook.
+    const fallbackId = await getLatestUploadedVideoId(env)
+    const fallbackState = fallbackId ? await buildVideoState(env, fallbackId) : null
+    if (!fallbackState) return cached
+    await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, fallbackState)
+    return fallbackState
+  }
 
   let liveVideoId: string | null
   try {
