@@ -3,7 +3,7 @@ import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { Logo } from '../ui/Logo'
 import { sendPartnershipMessage } from '../../lib/api/partnership'
-import { PARTNERSHIP_TYPES } from '../../data/partnerships'
+import { PARTNERSHIP_TYPES, type PartnershipType } from '../../data/partnerships'
 
 type PartnershipModalProps = {
   open: boolean
@@ -20,7 +20,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
-  const [partnershipType, setPartnershipType] = useState('')
+  const [partnershipType, setPartnershipType] = useState<PartnershipType | ''>('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<Status>('idle')
 
@@ -42,6 +42,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+    if (!partnershipType) return
     setStatus('submitting')
     const res = await sendPartnershipMessage({ company, name, email, phone, partnershipType, message })
     setStatus(res.ok ? 'success' : 'error')
@@ -120,15 +121,15 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
               <select
                 required
                 value={partnershipType}
-                onChange={(e) => setPartnershipType(e.target.value)}
+                onChange={(e) => setPartnershipType(e.target.value as PartnershipType | '')}
                 className={inputClasses}
               >
                 <option value="" disabled>
                   Selecione uma opção
                 </option>
                 {PARTNERSHIP_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </select>

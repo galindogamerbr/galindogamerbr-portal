@@ -16,7 +16,7 @@ export type PartnershipSubmission = {
   name: string
   email: string
   phone: string
-  partnershipType: string
+  partnershipType: PartnershipType
   message: string
 }
 
@@ -28,9 +28,10 @@ export function partnershipEmailHtml({ company, name, email, phone, partnershipT
     <tr><td style="color:#9eacb9;padding:4px 0;width:80px">Nome</td><td>${escapeHtml(name)}</td></tr>
     <tr><td style="color:#9eacb9;padding:4px 0">E-mail</td><td>${escapeHtml(email)}</td></tr>
     <tr><td style="color:#9eacb9;padding:4px 0">WhatsApp</td><td>${phone ? escapeHtml(phone) : '—'}</td></tr>
-    <tr><td style="color:#9eacb9;padding:4px 0">Tipo de parceria</td><td>${escapeHtml(partnershipType)}</td></tr>
+    <tr><td style="color:#9eacb9;padding:4px 0">Tipo de parceria</td><td>${escapeHtml(getPartnershipTypeLabel(partnershipType))}</td></tr>
   </table>
   <div style="background:#08111a;border:1px solid #243443;border-radius:8px;padding:16px 20px;white-space:pre-wrap">${escapeHtml(message)}</div>
   <p style="margin:24px 0 0;color:#9eacb9;font-size:12px">Enviado pelo formulário de parceria em galindogamerbr.com.br — responda direto este e-mail para falar com ${escapeHtml(name)}.</p>
 </div>`
 }
+import { getPartnershipTypeLabel, type PartnershipType } from '../../src/data/partnerships'

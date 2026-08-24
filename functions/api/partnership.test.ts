@@ -7,7 +7,7 @@ const validSubmission = {
   name: 'Ana Responsável',
   email: 'contato@marcaexemplo.com.br',
   phone: '(11) 99999-9999',
-  partnershipType: 'Campanha',
+  partnershipType: 'campaignSpecialAction',
   message: 'Gostaríamos de apresentar uma campanha para a comunidade.',
 }
 
@@ -24,7 +24,7 @@ describe('parsePartnershipSubmission', () => {
   )
 
   it('rejeita tipo de parceria fora das opções comerciais', () => {
-    expect(parsePartnershipSubmission({ ...validSubmission, partnershipType: 'Permuta aleatória' })).toBeNull()
+    expect(parsePartnershipSubmission({ ...validSubmission, partnershipType: 'randomTrade' })).toBeNull()
   })
 
   it('mantém o WhatsApp opcional', () => {
@@ -43,6 +43,7 @@ describe('partnershipEmailHtml', () => {
 
     expect(html).toContain('Empresa / marca')
     expect(html).toContain('Tipo de parceria')
+    expect(html).toContain('Campanha / ação especial')
     expect(html).toContain('&lt;Marca &amp; Cia&gt;')
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
     expect(html).not.toContain('<script>')

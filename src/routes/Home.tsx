@@ -1,4 +1,3 @@
-// TODO: reativar `useState`/`FormEvent` (usados só pela Newsletter comentada abaixo) quando a seção voltar
 import { Link } from 'react-router-dom'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
@@ -35,14 +34,12 @@ export function Home() {
   return (
     <>
       <Hero />
-      <BemVindoTeaser />
+      <FazendaTeaser />
       <TransmissoesTeaser />
       <JogosBannerCta />
       <ComunidadeTeaser />
       <SobreTeaser />
-      {/* TODO: reativar quando a página/fluxo de parceiros estiver pronta — ver ParceirosTeaser() comentada abaixo */}
-      {/* <ParceirosTeaser /> */}
-      {/* TODO: reativar quando o cadastro de e-mail tiver backend de verdade — ver Newsletter() comentada abaixo */}
+      <ParceirosTeaser />
       {/* <Newsletter /> */}
     </>
   )
@@ -104,25 +101,25 @@ function Hero() {
   )
 }
 
-function BemVindoTeaser() {
+function FazendaTeaser() {
   return (
     <section className="py-16 sm:py-24">
       <Reveal>
         <Container>
           <div className="flex flex-col items-start gap-6 rounded-lg border-2 border-gold bg-gradient-to-br from-panel to-panel2 p-8 shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] sm:flex-row sm:items-center sm:justify-between sm:p-10">
             <div className="flex items-start gap-4">
-              <span className="text-4xl">👋</span>
+              <span className="text-4xl">🚜</span>
               <div>
-                <Eyebrow>Novo por aqui?</Eyebrow>
-                <h2 className="text-3xl sm:text-4xl">BOAS-VINDAS</h2>
+                <Eyebrow>Fazenda Nova Aliança</Eyebrow>
+                <h2 className="text-3xl sm:text-4xl">VEIO PELA FAZENDA E QUER PARTICIPAR?</h2>
                 <p className="mt-2 max-w-xl text-muted">
-                  Antes de entrar de cabeça: vídeo de boas-vindas, regras da fazenda e boas práticas da comunidade,
-                  tudo em um só lugar.
+                  Veja como funciona o servidor, o que você precisa para entrar e como fazer parte da lida com a
+                  comunidade.
                 </p>
               </div>
             </div>
-            <NavButton to="/boas-vindas" variant="gold" className="shrink-0 text-base">
-              Ver guia de boas-vindas →
+            <NavButton to="/fazenda" variant="gold" className="shrink-0 text-base">
+              Ver como participar →
             </NavButton>
           </div>
         </Container>
@@ -253,34 +250,39 @@ function SobreTeaser() {
   )
 }
 
-// TODO: reativar a seção de parceiros quando a página/fluxo de parceiros estiver pronta.
-/*
 function ParceirosTeaser() {
   return (
     <section className="pb-16 sm:pb-24">
       <Reveal>
         <Container>
-          <div className="rounded-lg border border-gold/40 bg-panel p-6 sm:p-8">
-            <Eyebrow>Parceiros e marcas</Eyebrow>
-            <h2 className="text-2xl sm:text-3xl">UMA COMUNIDADE REAL TAMBÉM PODE GERAR VALOR PARA QUEM CAMINHA JUNTO.</h2>
-            <p className="mt-3 max-w-2xl text-muted">
-              Não quero apenas colocar uma logo no site. Quero criar presença, relacionamento e uma história que a
-              comunidade reconheça.
-            </p>
-            <NavButton to="/parceiros" variant="gold" className="mt-6">
-              Quero ser parceiro →
-            </NavButton>
+          <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:p-8">
+            <div>
+              <Eyebrow>Parceiros e marcas</Eyebrow>
+              <h2 className="text-2xl sm:text-3xl">UMA MARCA PRESENTE. UMA COMUNIDADE QUE RECONHECE.</h2>
+              <p className="mt-3 max-w-2xl text-muted">
+                Sua marca pode ganhar espaço onde o público já está: nas lives, nos vídeos e nas conversas que movem
+                o universo GalindoGamerBR.
+              </p>
+              <p className="mt-3 max-w-2xl text-muted">
+                Criamos ações com contexto, proximidade e propósito — muito mais do que apenas colocar uma logo na
+                tela.
+              </p>
+              <NavButton to="/parceiros" variant="gold" className="mt-6">
+                Conheça as possibilidades →
+              </NavButton>
+            </div>
+            <div className="sm:flex sm:flex-1 sm:justify-center">
+              <Logo alt="" className="h-28 w-28 shrink-0 sm:h-36 sm:w-36" />
+            </div>
           </div>
         </Container>
       </Reveal>
     </section>
   )
 }
-*/
 
-// TODO: reativar a seção de newsletter (cadastro por e-mail) quando houver
-// backend de verdade conectado. Precisa também descomentar o import de
-// `useState`/`FormEvent` no topo do arquivo e a chamada <Newsletter /> em Home().
+// TODO: definir e implementar a newsletter; depois reativar os imports de
+// `useState`/`FormEvent`, o componente abaixo e sua chamada em Home().
 /*
 function Newsletter() {
   const [status, setStatus] = useState<'idle' | 'soon'>('idle')

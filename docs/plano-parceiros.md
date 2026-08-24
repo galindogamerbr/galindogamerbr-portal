@@ -109,7 +109,7 @@ Substituir os campos atuais por:
 | Seu nome | Sim | Nome do responsável pela proposta |
 | E-mail | Sim | contato@empresa.com.br |
 | WhatsApp | Recomendado como opcional | (00) 00000-0000 |
-| Tipo de parceria | Sim | Produto para divulgação; Afiliado / cupom; Divulgação de marca; Patrocínio; Campanha; Outra proposta |
+| Tipo de parceria | Sim | Produto para divulgação; Afiliado / cupom; Divulgação de marca; Patrocínio; Campanha / ação especial; Outra proposta |
 | Mensagem | Sim | Conte um pouco sobre sua marca, produto ou proposta de parceria. |
 
 Trocar o texto do botão de **“Enviar”** para **“Enviar proposta”**.

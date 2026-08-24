@@ -1,9 +1,11 @@
+import type { PartnershipType } from '../../data/partnerships'
+
 export type PartnershipSubmission = {
   company: string
   name: string
   email: string
   phone: string
-  partnershipType: string
+  partnershipType: PartnershipType
   message: string
 }
 type PartnershipResponse = { ok: true } | { ok: false; error: string }

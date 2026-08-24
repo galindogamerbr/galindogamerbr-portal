@@ -4,9 +4,7 @@ import { sendPartnershipEmail } from '../lib/resend'
 import { logError } from '../lib/log'
 import { json } from '../lib/http'
 import type { PartnershipSubmission } from '../lib/emailTemplates'
-import { PARTNERSHIP_TYPES } from '../../src/data/partnerships'
-
-const partnershipTypes = new Set<string>(PARTNERSHIP_TYPES)
+import { isPartnershipType } from '../../src/data/partnerships'
 
 function clean(value: unknown, maxLength: number): string {
   return typeof value === 'string' ? value.trim().slice(0, maxLength) : ''
@@ -16,12 +14,15 @@ export function parsePartnershipSubmission(body: unknown): PartnershipSubmission
   if (!body || typeof body !== 'object') return null
 
   const payload = body as Record<string, unknown>
+  const partnershipType = clean(payload.partnershipType, 100)
+  if (!isPartnershipType(partnershipType)) return null
+
   const submission = {
     company: clean(payload.company, 200),
     name: clean(payload.name, 200),
     email: clean(payload.email, 200),
     phone: clean(payload.phone, 40),
-    partnershipType: clean(payload.partnershipType, 100),
+    partnershipType,
     message: clean(payload.message, 5000),
   }
 
@@ -29,7 +30,6 @@ export function parsePartnershipSubmission(body: unknown): PartnershipSubmission
     !submission.company ||
     !submission.name ||
     !submission.email.includes('@') ||
-    !partnershipTypes.has(submission.partnershipType) ||
     !submission.message
   ) {
     return null

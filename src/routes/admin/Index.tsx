@@ -11,7 +11,7 @@ const SECTIONS = [
     label: 'Programação',
     description: 'Editor da grade de horários da semana.',
     to: '/admin/programacao',
-    icon: '/assets/icons/schedule-icon-calendar.png',
+    icon: '/assets/icons/schedule.svg',
   },
   {
     label: 'TikTok',
@@ -24,6 +24,12 @@ const SECTIONS = [
     description: 'Trocar o link do convite usado em /discord.',
     to: '/admin/discord',
     icon: '/assets/icons/discord.svg',
+  },
+  {
+    label: 'Vídeo da Fazenda',
+    description: 'Trocar o vídeo de boas-vindas exibido na Fazenda.',
+    to: '/admin/fazenda/video',
+    icon: '/assets/icons/youtube.svg',
   },
 ]
 

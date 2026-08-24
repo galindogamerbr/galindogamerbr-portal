@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && concurrently -k -n vite,wrangler \"npm run dev:client\" \"wrangler pages dev dist --port=8788\"",
+    "dev": "npm run build && concurrently -k -n vite,dist,wrangler \"npm run dev:client\" \"npm run dev:dist\" \"wrangler pages dev dist --port=8788\"",
     "dev:client": "vite",
+    "dev:dist": "vite build --watch",
     "dev:worker": "npm run build && wrangler pages dev dist --port=8788",
     "dev:full": "npm run dev",
     "build": "tsc -b && vite build",

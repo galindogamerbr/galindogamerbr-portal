@@ -29,7 +29,7 @@ npm install
 npm run dev
 ```
 
-Abre em `http://127.0.0.1:5173` — o Vite serve o front-end com hot reload e encaminha `/api/*` para as Pages Functions locais, executadas pelo Wrangler em `http://127.0.0.1:8788`.
+Abre em `http://127.0.0.1:5173` — o Vite serve o front-end com hot reload e encaminha `/api/*` para as Pages Functions locais, executadas pelo Wrangler em `http://127.0.0.1:8788`. Um watcher mantém `dist/` reconstruído a cada mudança, então a porta `8788` também reflete o build atual.
 
 `npm run dev:full` continua disponível como alias de `npm run dev`. Para subir apenas o front-end com hot reload, use `npm run dev:client`.
 

@@ -5,12 +5,13 @@ type ModalProps = PropsWithChildren<{
   open: boolean
   onClose: () => void
   titleId?: string
+  className?: string
 }>
 
 // Portal pro <body> — evita herdar stacking context de qualquer ancestral
 // com transform/overflow (ex: o .hero-fade da Home), que quebraria um
 // `fixed` posicionado dentro dele.
-export function Modal({ open, onClose, titleId, children }: ModalProps) {
+export function Modal({ open, onClose, titleId, className = '', children }: ModalProps) {
   useEffect(() => {
     if (!open) return
 
@@ -30,6 +31,8 @@ export function Modal({ open, onClose, titleId, children }: ModalProps) {
 
   if (!open) return null
 
+  const contentClassName = className || 'max-w-lg p-6 sm:p-8'
+
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-bg/80 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
@@ -37,7 +40,7 @@ export function Modal({ open, onClose, titleId, children }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-line bg-panel p-6 shadow-2xl sm:p-8"
+        className={`relative max-h-[90vh] w-full overflow-y-auto rounded-lg border border-line bg-panel shadow-2xl ${contentClassName}`}
       >
         {children}
       </div>
