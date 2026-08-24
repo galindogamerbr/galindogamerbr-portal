@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
 import { AdminHeader } from '../../components/admin/AdminHeader'
@@ -16,6 +16,8 @@ import {
   type ScheduleBlock,
 } from '../../lib/api/schedule'
 import { ScheduleExportButton } from '../../components/shared/ScheduleExportButton'
+import { ScheduleExportTemplate } from '../../components/shared/ScheduleExportTemplate'
+import { renderScheduleImage } from '../../lib/exportScheduleImage'
 
 // Editor no-code da programação — puramente semanal (sem Semana A/B), pra
 // ajustar toda semana com facilidade. v1 edita direto a versão publicada
@@ -28,6 +30,7 @@ export function Schedule() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  const discordPortraitRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!email) return
@@ -84,8 +87,15 @@ export function Schedule() {
     setSaving(true)
     setMessage(null)
     try {
-      await saveBlocks(versionId, blocks)
-      setMessage('Programação salva — já está no ar na home.')
+      const portraitImageDataUrl = discordPortraitRef.current
+        ? await renderScheduleImage(discordPortraitRef.current)
+        : undefined
+      const result = await saveBlocks(versionId, blocks, portraitImageDataUrl)
+      setMessage(
+        result.discordPublished
+          ? 'Programação salva na home e publicada no Discord.'
+          : 'Programação salva — não houve alteração para publicar no Discord.',
+      )
     } finally {
       setSaving(false)
     }
@@ -180,6 +190,9 @@ export function Schedule() {
           </Button>
           <ScheduleExportButton blocks={blocks} />
           {message && <span className="text-sm text-muted">{message}</span>}
+        </div>
+        <div style={{ position: 'fixed', top: 0, left: -9999, pointerEvents: 'none' }} aria-hidden="true">
+          <ScheduleExportTemplate ref={discordPortraitRef} blocks={blocks} variant="portrait" />
         </div>
       </Container>
     </section>
