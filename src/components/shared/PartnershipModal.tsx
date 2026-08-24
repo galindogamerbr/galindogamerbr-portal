@@ -3,6 +3,7 @@ import { Modal } from '../ui/Modal'
 import { Button } from '../ui/Button'
 import { Logo } from '../ui/Logo'
 import { sendPartnershipMessage } from '../../lib/api/partnership'
+import { PARTNERSHIP_TYPES } from '../../data/partnerships'
 
 type PartnershipModalProps = {
   open: boolean
@@ -15,16 +16,20 @@ const inputClasses = 'rounded-md border border-line bg-panel2 px-4 py-3 text-whi
 
 export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
   const titleId = useId()
+  const [company, setCompany] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [partnershipType, setPartnershipType] = useState('')
   const [message, setMessage] = useState('')
   const [status, setStatus] = useState<Status>('idle')
 
   function reset() {
+    setCompany('')
     setName('')
     setEmail('')
     setPhone('')
+    setPartnershipType('')
     setMessage('')
     setStatus('idle')
   }
@@ -38,7 +43,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setStatus('submitting')
-    const res = await sendPartnershipMessage({ name, email, phone, message })
+    const res = await sendPartnershipMessage({ company, name, email, phone, partnershipType, message })
     setStatus(res.ok ? 'success' : 'error')
   }
 
@@ -62,18 +67,29 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
           <h2 id={titleId} className="mt-3 text-2xl">
             QUERO SER PARCEIRO
           </h2>
-          <p className="mt-2 text-muted">Conta pra gente sobre a marca/projeto e como podemos trabalhar juntos.</p>
+          <p className="mt-2 text-muted">Conte um pouco sobre sua marca, produto ou proposta de parceria.</p>
 
           <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
             <label className="flex flex-col gap-2 text-sm">
-              Nome
+              Empresa / marca
+              <input
+                type="text"
+                required
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                className={inputClasses}
+                placeholder="Nome da empresa ou marca"
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm">
+              Seu nome
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={inputClasses}
-                placeholder="Seu nome"
+                placeholder="Nome do responsável pela proposta"
               />
             </label>
             <label className="flex flex-col gap-2 text-sm">
@@ -88,7 +104,9 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
               />
             </label>
             <label className="flex flex-col gap-2 text-sm">
-              Celular <span className="text-muted normal-case">(opcional)</span>
+              <span>
+                WhatsApp <span className="text-muted normal-case">(opcional)</span>
+              </span>
               <input
                 type="tel"
                 value={phone}
@@ -98,6 +116,24 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
               />
             </label>
             <label className="flex flex-col gap-2 text-sm">
+              Tipo de parceria
+              <select
+                required
+                value={partnershipType}
+                onChange={(e) => setPartnershipType(e.target.value)}
+                className={inputClasses}
+              >
+                <option value="" disabled>
+                  Selecione uma opção
+                </option>
+                {PARTNERSHIP_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-2 text-sm">
               Mensagem
               <textarea
                 required
@@ -105,7 +141,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className={`${inputClasses} resize-none`}
-                placeholder="Conta um pouco sobre a proposta de parceria"
+                placeholder="Conte um pouco sobre sua marca, produto ou proposta de parceria."
               />
             </label>
 
@@ -115,7 +151,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
 
             <div className="mt-2 flex gap-3">
               <Button type="submit" variant="gold" disabled={status === 'submitting'} className="flex-1">
-                {status === 'submitting' ? 'Enviando...' : 'Enviar'}
+                {status === 'submitting' ? 'Enviando...' : 'Enviar proposta'}
               </Button>
               <Button type="button" variant="default" onClick={handleClose}>
                 Cancelar

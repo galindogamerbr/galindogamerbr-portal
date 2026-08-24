@@ -1,10 +1,8 @@
-import { useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
-import { PartnershipModal } from '../components/shared/PartnershipModal'
 import { PartnershipTeaser } from '../components/shared/PartnershipTeaser'
 
 // Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
@@ -38,8 +36,6 @@ const STORY = [
 ]
 
 export function Sobre() {
-  const [modalOpen, setModalOpen] = useState(false)
-
   return (
     <>
       <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
@@ -121,7 +117,7 @@ export function Sobre() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
-            <PartnershipTeaser onOpenModal={() => setModalOpen(true)} />
+            <PartnershipTeaser />
           </Container>
         </Reveal>
       </section>
@@ -133,7 +129,7 @@ export function Sobre() {
               <Eyebrow>Se você chegou até aqui...</Eyebrow>
               <h2 className="text-3xl sm:text-4xl">ENTÃO TALVEZ VOCÊ JÁ FAÇA PARTE DESSA HISTÓRIA.</h2>
               <p className="mt-4 text-muted">
-                Esse é o GalindoGamerBR: um projeto feito por uma pessoa comum, apaixonada por games, tentando
+                Esse é o GalindoGamerBR: um projeto independente, apaixonado por games, tentando
                 transformar algumas horas de diversão em encontros que tenham significado.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -148,8 +144,6 @@ export function Sobre() {
           </Container>
         </Reveal>
       </section>
-
-      <PartnershipModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   )
 }

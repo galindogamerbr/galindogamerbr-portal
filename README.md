@@ -26,18 +26,20 @@ Portal da comunidade GalindoGamerBR. React + TypeScript + Vite no front, Cloudfl
 
 ```
 npm install
-npm run dev:full
+npm run dev
 ```
 
-Abre em `http://127.0.0.1:8788` — builda uma vez e sobe o Vite com hot reload por trás, com as Pages Functions (`/api/*`) juntas na mesma origem.
+Abre em `http://127.0.0.1:5173` — o Vite serve o front-end com hot reload e encaminha `/api/*` para as Pages Functions locais, executadas pelo Wrangler em `http://127.0.0.1:8788`.
 
-Se `dev:full` der problema (o modo proxy do wrangler é instável nessa versão), o fallback confiável é:
+`npm run dev:full` continua disponível como alias de `npm run dev`. Para subir apenas o front-end com hot reload, use `npm run dev:client`.
+
+O `dev:full` exige que as duas portas estejam livres. Se precisar testar só as Pages Functions, use:
 
 ```
 npm run dev:worker
 ```
 
-Sem hot reload — precisa rodar de novo a cada mudança, mas sempre funciona.
+Sem hot reload — precisa rodar de novo a cada mudança, mas sempre funciona. Abra `http://127.0.0.1:8788` nesse modo.
 
 Só front-end, sem `/api/*` (mais rápido pra mexer em CSS/layout que não depende de dados):
 

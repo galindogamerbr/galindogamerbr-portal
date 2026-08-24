@@ -1,4 +1,11 @@
-export type PartnershipSubmission = { name: string; email: string; phone: string; message: string }
+export type PartnershipSubmission = {
+  company: string
+  name: string
+  email: string
+  phone: string
+  partnershipType: string
+  message: string
+}
 type PartnershipResponse = { ok: true } | { ok: false; error: string }
 
 export async function sendPartnershipMessage(submission: PartnershipSubmission): Promise<PartnershipResponse> {
