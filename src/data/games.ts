@@ -56,6 +56,15 @@ export const GAMES: Game[] = [
     image: '/assets/banners/dicas-banner.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUmOBGsW2WBorqwszTEJihie',
   },
+  {
+    slug: 'contraband-police',
+    title: 'Contraband Police',
+    tag: 'Fiscalização de fronteira',
+    icon: null,
+    description: 'Inspeções, perseguições e decisões difíceis na fronteira de Acaristão, onde cada veículo pode esconder uma surpresa.',
+    image: '/assets/banners/contraband-police.webp',
+    href: 'https://www.youtube.com/watch?v=0OrMwgvz0mw&list=PLSLPCJiW7RZM',
+  },
 ]
 
 export const FAZENDA_NOVA_ALIANCA = {
@@ -101,4 +110,11 @@ export const SNOWRUNNER = {
     'Neve, lama e muita adrenalina! Expedições off-road brutais em terrenos que parecem impossíveis de atravessar, resgates de veículos presos e um inverno hostil que não perdoa. Cada transmissão é um novo duelo contra a natureza.',
   image: '/assets/banners/snowrunner-banner.webp',
   href: 'https://www.youtube.com/playlist?list=PLDv3gOgRACDY',
+}
+
+export const CONTRABAND_POLICE = {
+  description:
+    'Inspeções, perseguições e decisões difíceis na fronteira de Acaristão, onde cada veículo pode esconder uma surpresa.',
+  image: '/assets/banners/contraband-police.webp',
+  href: 'https://www.youtube.com/watch?v=0OrMwgvz0mw&list=PLSLPCJiW7RZM',
 }

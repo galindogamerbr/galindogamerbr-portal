@@ -6,17 +6,23 @@ import { GameCard } from '../components/shared/GameCard'
 import { GameHighlightCard } from '../components/shared/GameHighlightCard'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
 import { LinkButton, NavButton } from '../components/ui/Button'
-import { GAMES, FAZENDA_NOVA_ALIANCA, FURIA_REBORN, DICAS, ETS2, SNOWRUNNER } from '../data/games'
+import { GAMES, FAZENDA_NOVA_ALIANCA, FURIA_REBORN, DICAS, ETS2, SNOWRUNNER, CONTRABAND_POLICE } from '../data/games'
 import { useFlagshipVideos } from '../hooks/useFlagshipVideo'
 import { useFuriaVideos } from '../hooks/useFuriaVideos'
 import { useDicasVideos } from '../hooks/useDicasVideos'
 import { useEts2Videos } from '../hooks/useEts2Videos'
 import { useSnowrunnerVideos } from '../hooks/useSnowrunnerVideos'
+import { useContrabandPoliceVideos } from '../hooks/useContrabandPoliceVideos'
 import { useLiveStatus } from '../hooks/useLiveStatus'
 
 const OTHER_GAMES = GAMES.filter(
   (game) =>
-    !game.flagship && game.slug !== 'furia-reborn-rp' && game.slug !== 'dicas' && game.slug !== 'ets2' && game.slug !== 'snowrunner',
+    !game.flagship &&
+    game.slug !== 'furia-reborn-rp' &&
+    game.slug !== 'dicas' &&
+    game.slug !== 'ets2' &&
+    game.slug !== 'snowrunner' &&
+    game.slug !== 'contraband-police',
 )
 
 export function Conteudos() {
@@ -29,6 +35,7 @@ export function Conteudos() {
   const dicasVideos = useDicasVideos()
   const ets2Videos = useEts2Videos()
   const snowrunnerVideos = useSnowrunnerVideos()
+  const contrabandPoliceVideos = useContrabandPoliceVideos()
 
   const isLiveNow = live?.isLive && live.videoId === flagship?.videoId
 
@@ -71,6 +78,17 @@ export function Conteudos() {
       href: SNOWRUNNER.href,
       variant: 'blue' as const,
       videos: snowrunnerVideos,
+    },
+    {
+      slug: 'contraband-police',
+      image: CONTRABAND_POLICE.image,
+      title: 'CONTRABAND POLICE',
+      badgeEmoji: '🛂',
+      badgeLabel: 'Fiscalização de fronteira',
+      description: CONTRABAND_POLICE.description,
+      href: CONTRABAND_POLICE.href,
+      variant: 'red' as const,
+      videos: contrabandPoliceVideos,
     },
   ].map((game) => ({
     ...game,
