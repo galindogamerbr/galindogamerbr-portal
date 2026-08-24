@@ -1,15 +1,11 @@
 import { Eyebrow } from '../ui/Eyebrow'
-import { Button } from '../ui/Button'
+import { NavButton } from '../ui/Button'
 import { Logo } from '../ui/Logo'
-
-type PartnershipTeaserProps = {
-  onOpenModal: () => void
-}
 
 // Card "Um projeto feito para crescer" (usado em Sobre.tsx) — extraído pra
 // componente próprio pra ficar fácil de achar e mexer (ex: tamanho da
 // logo) sem precisar procurar dentro do arquivo inteiro da página.
-export function PartnershipTeaser({ onOpenModal }: PartnershipTeaserProps) {
+export function PartnershipTeaser() {
   return (
     <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:p-8">
       <div>
@@ -20,9 +16,9 @@ export function PartnershipTeaser({ onOpenModal }: PartnershipTeaserProps) {
           uma logo em uma página: é <strong className="text-white">criar uma parceria que faça sentido para os dois
           lados</strong> e colocar marcas junto de uma comunidade real, ativa e construída com proximidade.
         </p>
-        <Button variant="gold" className="mt-6" onClick={onOpenModal}>
-          Quero conhecer o projeto →
-        </Button>
+        <NavButton variant="gold" className="mt-6" to="/comunidade">
+          Quero conhecer a comunidade →
+        </NavButton>
       </div>
       {/* sm:flex-1 + sm:justify-center centraliza a logo no espaço que sobra
           depois do texto (não gruda nele, nem vai até a ponta direita). */}

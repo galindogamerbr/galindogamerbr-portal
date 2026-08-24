@@ -51,14 +51,33 @@ function PlayerChip({ player }: { player: FarmPlayer }) {
 // Nunca mostra o nome do servidor aqui (server_name nem chega do backend,
 // ver functions/api/farm-status.ts) — só o status público do jogo.
 export function FarmStatusCard() {
-  const data = useFarmStatus()
+  const { data, loading } = useFarmStatus()
 
-  // Sem placeholder de loading de propósito — o card simplesmente não
-  // existe até ter dado de verdade (nem enquanto carrega, nem se o fetch
-  // falhar: ok:false vem do backend em functions/api/farm-status.ts pra
-  // timeout/function key inválida/etc.). Quando o fetch resolve com
-  // sucesso, o card monta direto com a animação .pop-in (ver global.css).
-  if (!data?.ok || !data.status) return null
+  if (!data?.ok || !data.status) {
+    return (
+      <div className="flex min-h-64 h-full flex-col justify-center rounded-lg border border-line bg-panel bg-[radial-gradient(circle_at_top,rgba(217,177,79,0.08),transparent_60%)] p-6 sm:p-8">
+        <div className="flex items-center gap-2">
+          <span className={`h-2 w-2 rounded-full bg-muted ${loading ? 'animate-pulse' : ''}`} />
+          <span className="text-xs font-bold uppercase tracking-widest text-muted">
+            {loading ? 'Consultando status' : 'Status indisponível'}
+          </span>
+        </div>
+        <span className="mt-2 text-lg font-semibold uppercase tracking-widest text-gold sm:text-xl">
+          Servidor da fazenda
+        </span>
+        <p className="mt-3 text-sm text-muted">
+          {loading ? 'Buscando as informações mais recentes do servidor…' : 'Não foi possível consultar o servidor agora. Tente novamente em instantes.'}
+        </p>
+        {loading && (
+          <div className="mt-5 grid grid-cols-3 gap-3" aria-hidden="true">
+            <span className="h-10 animate-pulse rounded bg-panel2" />
+            <span className="h-10 animate-pulse rounded bg-panel2" />
+            <span className="h-10 animate-pulse rounded bg-panel2" />
+          </div>
+        )}
+      </div>
+    )
+  }
 
   const status = data.status
   const isOnline = status.gameStatus === 'online' && status.healthy

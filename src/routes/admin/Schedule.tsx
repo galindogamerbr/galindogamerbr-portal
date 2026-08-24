@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
-import { Eyebrow } from '../../components/ui/Eyebrow'
+import { AdminHeader } from '../../components/admin/AdminHeader'
 import { Button } from '../../components/ui/Button'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
@@ -98,14 +98,7 @@ export function Schedule() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <Eyebrow>Admin</Eyebrow>
-        <h1 className="text-4xl">EDITOR DE PROGRAMAÇÃO</h1>
-        <div className="mt-2 flex items-center justify-between">
-          <p className="text-sm text-muted">Logado como {email}.</p>
-          <button type="button" onClick={handleLogout} className="text-xs font-semibold uppercase text-white/50 hover:text-red">
-            Sair
-          </button>
-        </div>
+        <AdminHeader title="EDITOR DE PROGRAMAÇÃO" email={email} onLogout={handleLogout} backTo="/admin" />
 
         <div className="mt-4 space-y-3">
           {DAYS.map((day) => {

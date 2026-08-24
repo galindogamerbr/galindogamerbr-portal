@@ -37,7 +37,21 @@ export async function sendOtpEmail(env: Env, to: string, code: string): Promise<
 export async function sendPartnershipEmail(env: Env, submission: PartnershipSubmission): Promise<void> {
   if (env.ENVIRONMENT === 'development') {
     // eslint-disable-next-line no-console
-    console.log('[dev] Contato de parceria:', submission)
+    console.log(`
+[dev] Prévia do e-mail de parceria
+Para: ${PARTNERSHIP_TO}
+Responder para: ${submission.email}
+Assunto: Parceria — ${submission.company}
+
+Empresa / marca: ${submission.company}
+Responsável: ${submission.name}
+E-mail: ${submission.email}
+WhatsApp: ${submission.phone || '—'}
+Tipo de parceria: ${submission.partnershipType}
+
+Mensagem:
+${submission.message}
+`)
     return
   }
 

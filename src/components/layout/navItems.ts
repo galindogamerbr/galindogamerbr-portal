@@ -1,6 +1,5 @@
 export const NAV_ITEMS = [
   { label: 'Início', to: '/' },
-  { label: 'Boas-vindas', to: '/boas-vindas' },
   { label: 'Conteúdos', to: '/conteudos' },
   { label: 'Participe da Fazenda', to: '/fazenda' },
   { label: 'Comunidade', to: '/comunidade' },

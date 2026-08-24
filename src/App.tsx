@@ -2,7 +2,6 @@ import { lazy, Suspense, type ComponentType, type ReactElement } from 'react'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { Home } from './routes/Home'
-import { BemVindo } from './routes/BemVindo'
 import { Conteudos } from './routes/Conteudos'
 import { Fazenda } from './routes/Fazenda'
 import { Mods } from './routes/Mods'
@@ -47,6 +46,7 @@ const AdminIndex = lazyWithReload(() => import('./routes/admin/Index').then((m) 
 const Schedule = lazyWithReload(() => import('./routes/admin/Schedule').then((m) => ({ default: m.Schedule })))
 const TikTok = lazyWithReload(() => import('./routes/admin/TikTok').then((m) => ({ default: m.TikTok })))
 const Discord = lazyWithReload(() => import('./routes/admin/Discord').then((m) => ({ default: m.Discord })))
+const FarmWelcomeVideo = lazyWithReload(() => import('./routes/admin/FarmWelcomeVideo').then((m) => ({ default: m.FarmWelcomeVideo })))
 
 function AdminRouteFallback() {
   return (
@@ -66,8 +66,8 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/boas-vindas', element: <BemVindo /> },
-      { path: '/comece-aqui', element: <Navigate to="/boas-vindas" replace /> },
+      { path: '/boas-vindas', element: <Navigate to="/fazenda" replace /> },
+      { path: '/comece-aqui', element: <Navigate to="/fazenda" replace /> },
       { path: '/conteudos', element: <Conteudos /> },
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
       { path: '/fazenda', element: <Fazenda /> },
@@ -84,6 +84,7 @@ const router = createBrowserRouter([
       { path: '/admin/programacao', element: withAdminSuspense(<Schedule />) },
       { path: '/admin/tiktok', element: withAdminSuspense(<TikTok />) },
       { path: '/admin/discord', element: withAdminSuspense(<Discord />) },
+      { path: '/admin/fazenda/video', element: withAdminSuspense(<FarmWelcomeVideo />) },
       { path: '*', element: <NotFound /> },
     ],
   },

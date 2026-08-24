@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
-import { Eyebrow } from '../../components/ui/Eyebrow'
+import { AdminHeader } from '../../components/admin/AdminHeader'
 import { Button, LinkButton } from '../../components/ui/Button'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
@@ -39,14 +39,7 @@ export function TikTok() {
   return (
     <section className="py-16 sm:py-24">
       <Container className="max-w-xl">
-        <Eyebrow>Admin</Eyebrow>
-        <h1 className="text-4xl">CONECTAR TIKTOK</h1>
-        <div className="mt-2 flex items-center justify-between">
-          <p className="text-sm text-muted">Logado como {email}.</p>
-          <button type="button" onClick={handleLogout} className="text-xs font-semibold uppercase text-white/50 hover:text-red">
-            Sair
-          </button>
-        </div>
+        <AdminHeader title="CONECTAR TIKTOK" email={email} onLogout={handleLogout} backTo="/admin" />
 
         <div className="mt-6 rounded-lg border border-line bg-panel p-6">
           {status === null ? (

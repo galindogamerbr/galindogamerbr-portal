@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { useEffect, useId, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { SectionHead } from '../components/ui/SectionHead'
@@ -6,6 +6,11 @@ import { Reveal } from '../components/ui/Reveal'
 import { LinkButton, NavButton } from '../components/ui/Button'
 import { FarmStatusCard } from '../components/shared/FarmStatusCard'
 import { VipSteps } from '../components/shared/VipSteps'
+import { Modal } from '../components/ui/Modal'
+import { VideoEmbed } from '../components/shared/VideoEmbed'
+import { getFarmWelcomeVideo } from '../lib/api/farm'
+
+const FALLBACK_WELCOME_VIDEO_ID = 'TcBrAo_A1Lc'
 
 // Lista de mods do servidor dedicado, a mesma exibida no card de status que
 // o bot Guaxinim Comunista posta no Discord — pública, sem auth.
@@ -30,9 +35,11 @@ const INTERACT_ITEMS = [
 // Card genérico dos grids de "Faça parte" e "Comunidade" — hover sutil
 // (zoom no ícone + borda dourada), mesma linguagem usada no resto do site
 // (CommunityStatsGrid, HubLink) pra não destoar visualmente.
+const INFO_CARD_CLASSNAME = 'group rounded-md border border-line bg-panel2 p-4 transition-colors hover:border-gold/60'
+
 function InfoCard({ icon, title, text }: { icon: string; title: string; text: string }) {
   return (
-    <div className="group rounded-md border border-line bg-panel2 p-4 transition-colors hover:border-gold/60">
+    <div className={INFO_CARD_CLASSNAME}>
       <span className="inline-block w-fit text-2xl transition duration-300 group-hover:scale-110">{icon}</span>
       <h4 className="mt-2 text-sm font-semibold uppercase tracking-wide">{title}</h4>
       <p className="mt-1 text-justify text-xs text-muted">{text}</p>
@@ -50,6 +57,14 @@ const PLAIN_REQUIREMENTS = [
 // VipSteps (mesma fonte de /comunidade) pra não duplicar/dessincronizar o
 // fluxo de virar VIP.
 export function Fazenda() {
+  const welcomeVideoTitleId = useId()
+  const [welcomeVideoOpen, setWelcomeVideoOpen] = useState(false)
+  const [welcomeVideoId, setWelcomeVideoId] = useState(FALLBACK_WELCOME_VIDEO_ID)
+
+  useEffect(() => {
+    getFarmWelcomeVideo().then(setWelcomeVideoId).catch(() => {})
+  }, [])
+
   return (
     <>
       <section className="pt-16 pb-4 sm:pt-24 sm:pb-6">
@@ -103,17 +118,18 @@ export function Fazenda() {
 
               <h4 className="mt-6 text-sm font-semibold uppercase tracking-wide text-gold">Requisitos</h4>
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Link
-                  to="/boas-vindas"
-                  className="group flex flex-col justify-between rounded-md border-2 border-gold bg-panel p-4 shadow-[0_0_30px_-12px_rgba(217,177,79,0.4)] transition-colors hover:border-gold"
+                <button
+                  type="button"
+                  onClick={() => setWelcomeVideoOpen(true)}
+                  className="group flex flex-col justify-between rounded-md border-2 border-gold bg-panel p-4 text-left shadow-[0_0_30px_-12px_rgba(217,177,79,0.4)] transition-colors hover:border-gold"
                 >
                   <div>
                     <span className="inline-block w-fit text-2xl transition duration-300 group-hover:scale-110">🎬</span>
-                    <h4 className="mt-2 text-sm font-semibold uppercase tracking-wide">Assista ao vídeo de boas-vindas</h4>
-                    <p className="mt-1 text-justify text-xs text-muted">Resumo rápido de como tudo funciona por aqui.</p>
+                    <h4 className="mt-2 text-sm font-semibold uppercase tracking-wide">ASSISTA AO VÍDEO DE BOAS-VINDAS</h4>
+                    <p className="mt-1 text-justify text-xs text-muted">Um resumo rápido de como a fazenda e a comunidade funcionam.</p>
                   </div>
                   <span className="mt-3 text-xs font-semibold text-gold group-hover:underline">Assistir agora →</span>
-                </Link>
+                </button>
 
                 <a
                   href="#vip"
@@ -165,6 +181,27 @@ export function Fazenda() {
           </Container>
         </Reveal>
       </section>
+
+      <Modal
+        open={welcomeVideoOpen}
+        onClose={() => setWelcomeVideoOpen(false)}
+        titleId={welcomeVideoTitleId}
+        className="max-w-4xl overflow-hidden p-0"
+      >
+        <div className="flex items-center justify-between gap-4 p-4 sm:px-6">
+          <h2 id={welcomeVideoTitleId} className="text-lg sm:text-xl">
+            VÍDEO DE BOAS-VINDAS
+          </h2>
+          <button
+            type="button"
+            onClick={() => setWelcomeVideoOpen(false)}
+            className="text-sm font-semibold uppercase text-muted transition hover:text-white"
+          >
+            Fechar
+          </button>
+        </div>
+        <VideoEmbed videoId={welcomeVideoId} title="Vídeo de boas-vindas — GalindoGamerBR" />
+      </Modal>
     </>
   )
 }

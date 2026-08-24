@@ -1,6 +1,6 @@
 import { Link, Navigate } from 'react-router-dom'
 import { Container } from '../../components/ui/Container'
-import { Eyebrow } from '../../components/ui/Eyebrow'
+import { AdminHeader } from '../../components/admin/AdminHeader'
 import { useSession } from '../../hooks/useSession'
 import { logout } from '../../lib/api/auth'
 
@@ -11,7 +11,7 @@ const SECTIONS = [
     label: 'Programação',
     description: 'Editor da grade de horários da semana.',
     to: '/admin/programacao',
-    icon: '/assets/icons/schedule-icon-calendar.png',
+    icon: '/assets/icons/schedule.svg',
   },
   {
     label: 'TikTok',
@@ -24,6 +24,12 @@ const SECTIONS = [
     description: 'Trocar o link do convite usado em /discord.',
     to: '/admin/discord',
     icon: '/assets/icons/discord.svg',
+  },
+  {
+    label: 'Vídeo da Fazenda',
+    description: 'Trocar o vídeo de boas-vindas exibido na Fazenda.',
+    to: '/admin/fazenda/video',
+    icon: '/assets/icons/youtube.svg',
   },
 ]
 
@@ -41,14 +47,7 @@ export function AdminIndex() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <Eyebrow>Admin</Eyebrow>
-        <h1 className="text-4xl">PAINEL</h1>
-        <div className="mt-2 flex items-center justify-between">
-          <p className="text-sm text-muted">Logado como {email}.</p>
-          <button type="button" onClick={handleLogout} className="text-xs font-semibold uppercase text-white/50 hover:text-red">
-            Sair
-          </button>
-        </div>
+        <AdminHeader title="PAINEL" email={email} onLogout={handleLogout} />
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {SECTIONS.map((section) => (
