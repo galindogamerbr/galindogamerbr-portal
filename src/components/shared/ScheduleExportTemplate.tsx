@@ -3,9 +3,7 @@ import { fontStack } from '../../styles/theme'
 import type { ScheduleBlock } from '../../lib/api/schedule'
 import { blockIconKind, type BlockIconKind } from '../../lib/blockIcon'
 
-// Resolução nativa do template de fundo (public/assets/programacao/schedule-export-template.png).
-const IMG_W = 1024
-const IMG_H = 1536
+export type ScheduleExportVariant = 'portrait' | 'wide'
 
 const FULL_DAY_NAMES: Record<number, string> = {
   1: 'SEGUNDA',
@@ -24,46 +22,76 @@ const FULL_DAY_NAMES: Record<number, string> = {
 // (108/104px vs ~85-92px das demais) porque são os dois dias com dois
 // blocos de horário. Ver conversa/memória do projeto pra reproduzir se o
 // template.png for atualizado de novo.
-const DAY_ROWS: Array<{ day: number; top: number; height: number; nudge?: number }> = [
-  { day: 1, top: 615, height: 92 },
-  { day: 2, top: 720, height: 108 },
-  { day: 3, top: 844, height: 91 },
-  { day: 4, top: 945, height: 104 },
-  { day: 5, top: 1068, height: 85 },
-  { day: 6, top: 1175, height: 86, nudge: 1 },
-  { day: 7, top: 1275, height: 88, nudge: 2 },
+const PORTRAIT_DAY_ROWS: Array<{ day: number; top: number; height: number }> = [
+  { day: 1, top: 449, height: 103 },
+  { day: 2, top: 559, height: 104 },
+  { day: 3, top: 670, height: 103 },
+  { day: 4, top: 780, height: 103 },
+  { day: 5, top: 891, height: 102 },
+  { day: 6, top: 1001, height: 103 },
+  { day: 7, top: 1112, height: 103 },
 ]
 
-const BOX_LEFT = 506
-const BOX_RIGHT = 955
-
-const OFFLINE_GREEN = '#8FBF1F'
-const ICON_SIZE = 32
+const OFFLINE_RED = '#E53935'
 const ICON_GAP = 10
 
-// Selo maior à esquerda do nome do dia (na faixa em branco que sobrou depois
-// que o selo quadrado saiu da arte de fundo) — calendário quando o dia tem
-// programação, X quando é OFF-LINE.
-const DAY_ICON_LEFT = 46
-const DAY_ICON_SIZE = 128
+const TEMPLATES = {
+  portrait: {
+    width: 1080,
+    height: 1350,
+    background: '/assets/programacao/schedule-export-template-v2.png',
+    rows: PORTRAIT_DAY_ROWS,
+    boxLeft: 318,
+    boxRight: 1057,
+    dayIconLeft: 0,
+    dayIconSize: 0,
+    timeIconSize: 38,
+    timeFontSize: 32,
+    offlineTitleSize: 31,
+    offlineTextSize: 25,
+  },
+  wide: {
+    width: 1920,
+    height: 1080,
+    background: '/assets/programacao/schedule-export-template-wide.png',
+    rows: [
+      { day: 1, top: 372, height: 71 },
+      { day: 2, top: 451, height: 71 },
+      { day: 3, top: 530, height: 71 },
+      { day: 4, top: 609, height: 67 },
+      { day: 5, top: 684, height: 68 },
+      { day: 6, top: 761, height: 67 },
+      { day: 7, top: 834, height: 68 },
+    ],
+    boxLeft: 1015,
+    boxRight: 1823,
+    dayIconLeft: 712,
+    dayIconSize: 39,
+    timeIconSize: 30,
+    timeFontSize: 28,
+    offlineTitleSize: 25,
+    offlineTextSize: 20,
+  },
+} as const
 
 // Ícones dos ícones do Flaticon (Magnific — "sun"/"sunset" packs, indicados
 // pelo Pedro) recoloridos pra dourado da marca e salvos como PNG comuns em
 // public/assets — <img> é o único tipo de elemento confirmado confiável com
 // html-to-image nesse projeto (emoji e <svg>/<div> decorativo sumiam no PNG
 // exportado; os selos de dia antigos usavam <img> e sempre apareceram certo).
-function TimeIcon({ kind }: { kind: BlockIconKind }) {
+function TimeIcon({ kind, size }: { kind: BlockIconKind; size: number }) {
   return (
     <img
       src={kind === 'sun' ? '/assets/icons/schedule-icon-sun.png' : '/assets/icons/schedule-icon-sunset.png'}
       alt=""
-      style={{ width: ICON_SIZE, height: ICON_SIZE, flexShrink: 0 }}
+      style={{ width: size, height: size, flexShrink: 0 }}
     />
   )
 }
 
 type ScheduleExportTemplateProps = {
   blocks: ScheduleBlock[]
+  variant?: ScheduleExportVariant
 }
 
 // Template offscreen renderizado pra exportação de imagem (ScheduleExportButton
@@ -71,22 +99,25 @@ type ScheduleExportTemplateProps = {
 // sobrepõe o texto de cada dia nas posições medidas acima — mais simples e mais
 // fiel ao design de referência do que recriar o layout inteiro em CSS.
 export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportTemplateProps>(function ScheduleExportTemplate(
-  { blocks },
+  { blocks, variant = 'portrait' },
   ref,
 ) {
+  const template = TEMPLATES[variant]
+
   return (
     <div
       ref={ref}
       style={{
         position: 'relative',
-        width: IMG_W,
-        height: IMG_H,
-        backgroundImage: 'url(/assets/programacao/schedule-export-template.png)',
-        backgroundSize: `${IMG_W}px ${IMG_H}px`,
+        width: template.width,
+        height: template.height,
+        backgroundImage: `url(${template.background})`,
+        backgroundSize: `${template.width}px ${template.height}px`,
         fontFamily: fontStack('body'),
       }}
     >
-      {DAY_ROWS.map(({ day, top, height, nudge }) => {
+      {template.rows.map(({ day, top, height, ...row }) => {
+        const nudge = 'nudge' in row ? row.nudge : undefined
         const dayBlocks = blocks
           .filter((b) => b.dayOfWeek === day)
           .slice()
@@ -95,24 +126,26 @@ export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportT
 
         return (
           <div key={day} style={{ transform: nudge ? `translateY(${nudge}px)` : undefined }}>
-            <img
-              src={isOffline ? '/assets/icons/schedule-icon-offline.png' : '/assets/icons/schedule-icon-calendar.png'}
-              alt=""
-              style={{
-                position: 'absolute',
-                left: DAY_ICON_LEFT,
-                top: top + (height - DAY_ICON_SIZE) / 2,
-                width: DAY_ICON_SIZE,
-                height: DAY_ICON_SIZE,
-              }}
-            />
+            {template.dayIconSize > 0 && (
+              <img
+                src={isOffline ? '/assets/icons/schedule-icon-offline.png' : '/assets/icons/schedule-icon-calendar.png'}
+                alt=""
+                style={{
+                  position: 'absolute',
+                  left: template.dayIconLeft,
+                  top: top + (height - template.dayIconSize) / 2,
+                  width: template.dayIconSize,
+                  height: template.dayIconSize,
+                }}
+              />
+            )}
             <div
               aria-label={FULL_DAY_NAMES[day]}
               style={{
                 position: 'absolute',
-                left: BOX_LEFT,
+                left: template.boxLeft,
                 top,
-                width: BOX_RIGHT - BOX_LEFT,
+                width: template.boxRight - template.boxLeft,
                 height,
                 display: 'flex',
                 alignItems: 'center',
@@ -122,27 +155,34 @@ export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportT
               }}
             >
               {isOffline ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 30 }}>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: OFFLINE_GREEN, letterSpacing: 1, flexShrink: 0 }}>OFF-LINE</div>
-                  <div style={{ fontSize: 20, fontWeight: 600, color: '#f3f5f7', lineHeight: 1.3 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', alignItems: 'center', width: '100%' }}>
+                  <div style={{ justifySelf: 'center', fontSize: template.offlineTitleSize, fontWeight: 800, color: OFFLINE_RED, letterSpacing: 1 }}>OFF-LINE</div>
+                  <div style={{ justifySelf: 'center', textAlign: 'center', fontSize: template.offlineTextSize, fontWeight: 600, color: '#f3f5f7', lineHeight: 1.3 }}>
                     Descanso e preparação
                     <br />
                     para novas lives!
                   </div>
                 </div>
               ) : dayBlocks.length === 1 ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: ICON_GAP }}>
-                  <TimeIcon kind={blockIconKind(dayBlocks[0].startTime)} />
-                  <span style={{ fontSize: 22, fontWeight: 1000, letterSpacing: 0.1, color: '#f3f5f7', whiteSpace: 'nowrap' }}>
+                <div style={{ display: 'flex', width: '50%', alignItems: 'center', justifyContent: 'center', gap: ICON_GAP }}>
+                  <TimeIcon kind={blockIconKind(dayBlocks[0].startTime)} size={template.timeIconSize} />
+                  <span style={{ fontSize: template.timeFontSize, fontWeight: 1000, letterSpacing: 0.1, color: '#f3f5f7', whiteSpace: 'nowrap' }}>
                     {dayBlocks[0].startTime} às {dayBlocks[0].endTime}
                   </span>
                 </div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                    width: '100%',
+                    alignItems: 'center',
+                  }}
+                >
                   {dayBlocks.map((block, index) => (
-                    <div key={index} style={{ display: 'flex', alignItems: 'center', gap: ICON_GAP }}>
-                      <TimeIcon kind={blockIconKind(block.startTime)} />
-                      <span style={{ fontSize: 22, fontWeight: 1000, letterSpacing: 0.1, color: '#f3f5f7', whiteSpace: 'nowrap' }}>
+                    <div key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: ICON_GAP }}>
+                      <TimeIcon kind={blockIconKind(block.startTime)} size={template.timeIconSize} />
+                      <span style={{ fontSize: template.timeFontSize, fontWeight: 1000, letterSpacing: 0.1, color: '#f3f5f7', whiteSpace: 'nowrap' }}>
                         {block.startTime} às {block.endTime}
                       </span>
                     </div>

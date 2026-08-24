@@ -58,10 +58,10 @@ export function updateVersion(versionId: number, params: { label?: string; cycle
   })
 }
 
-export function saveBlocks(versionId: number, blocks: ScheduleBlock[]) {
-  return adminJson<{ ok: true; count: number }>(`/api/admin/schedule/versions/${versionId}/blocks`, {
+export function saveBlocks(versionId: number, blocks: ScheduleBlock[], portraitImageDataUrl?: string) {
+  return adminJson<{ ok: true; count: number; discordPublished: boolean }>(`/api/admin/schedule/versions/${versionId}/blocks`, {
     method: 'PUT',
-    body: JSON.stringify({ blocks }),
+    body: JSON.stringify({ blocks, portraitImageDataUrl }),
   })
 }
 

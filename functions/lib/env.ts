@@ -64,4 +64,7 @@ export type Env = {
   // (functions/lib/farmStatus.ts) — monitora o servidor dedicado da Fazenda
   // Nova Aliança. Sem essa key o endpoint responde 401.
   FS25_MONITOR_FUNCTION_CODE: string
+  // Webhook exclusivo do canal de programações. Mantido como secret no
+  // Cloudflare; permite publicar e remover apenas mensagens desse webhook.
+  DISCORD_SCHEDULE_WEBHOOK_URL?: string
 }
