@@ -8,6 +8,7 @@ const DEFAULT_DESCRIPTION =
 
 const ROUTES: Record<string, SeoData> = {
   '/': { description: DEFAULT_DESCRIPTION },
+  '/boas-vindas': { title: 'Boas-vindas', description: 'Conheça o GalindoGamerBR e descubra como participar dos conteúdos, da fazenda e da comunidade.' },
   '/conteudos': { title: 'Conteúdos', description: 'Assista às séries, lives e vídeos de simuladores e games do canal GalindoGamerBR.' },
   '/fazenda': { title: 'Fazenda Nova Aliança', description: 'Conheça a Fazenda Nova Aliança no Farming Simulator 25 e saiba como participar do servidor e da comunidade.' },
   '/mods': { title: 'Mods da Fazenda', description: 'Baixe e sincronize os mods oficiais usados no servidor da Fazenda Nova Aliança no Farming Simulator 25.' },
@@ -21,8 +22,7 @@ const ROUTES: Record<string, SeoData> = {
 }
 
 const ALIASES: Record<string, string> = {
-  '/boas-vindas': '/fazenda',
-  '/comece-aqui': '/fazenda',
+  '/comece-aqui': '/boas-vindas',
   '/jogos': '/conteudos',
 }
 

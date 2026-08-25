@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { SectionHead } from '../components/ui/SectionHead'
@@ -8,9 +8,8 @@ import { FarmStatusCard } from '../components/shared/FarmStatusCard'
 import { VipSteps } from '../components/shared/VipSteps'
 import { Modal } from '../components/ui/Modal'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
-import { getFarmWelcomeVideo } from '../lib/api/farm'
 
-const FALLBACK_WELCOME_VIDEO_ID = 'TcBrAo_A1Lc'
+const FARM_RULES_VIDEO_ID = 'TcBrAo_A1Lc'
 
 // Lista de mods do servidor dedicado, a mesma exibida no card de status que
 // o bot Guaxinim Comunista posta no Discord — pública, sem auth.
@@ -57,13 +56,8 @@ const PLAIN_REQUIREMENTS = [
 // VipSteps (mesma fonte de /comunidade) pra não duplicar/dessincronizar o
 // fluxo de virar VIP.
 export function Fazenda() {
-  const welcomeVideoTitleId = useId()
-  const [welcomeVideoOpen, setWelcomeVideoOpen] = useState(false)
-  const [welcomeVideoId, setWelcomeVideoId] = useState(FALLBACK_WELCOME_VIDEO_ID)
-
-  useEffect(() => {
-    getFarmWelcomeVideo().then(setWelcomeVideoId).catch(() => {})
-  }, [])
+  const rulesVideoTitleId = useId()
+  const [rulesVideoOpen, setRulesVideoOpen] = useState(false)
 
   return (
     <>
@@ -120,13 +114,13 @@ export function Fazenda() {
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <button
                   type="button"
-                  onClick={() => setWelcomeVideoOpen(true)}
+                  onClick={() => setRulesVideoOpen(true)}
                   className="group flex flex-col justify-between rounded-md border-2 border-gold bg-panel p-4 text-left shadow-[0_0_30px_-12px_rgba(217,177,79,0.4)] transition-colors hover:border-gold"
                 >
                   <div>
                     <span className="inline-block w-fit text-2xl transition duration-300 group-hover:scale-110">🎬</span>
-                    <h4 className="mt-2 text-sm font-semibold uppercase tracking-wide">ASSISTA AO VÍDEO DE BOAS-VINDAS</h4>
-                    <p className="mt-1 text-justify text-xs text-muted">Um resumo rápido de como a fazenda e a comunidade funcionam.</p>
+                    <h4 className="mt-2 text-sm font-semibold uppercase tracking-wide">ASSISTA ÀS REGRAS DA FAZENDA</h4>
+                    <p className="mt-1 text-justify text-xs text-muted">Veja as regras e orientações para jogar no servidor.</p>
                   </div>
                   <span className="mt-3 text-xs font-semibold text-gold group-hover:underline">Assistir agora →</span>
                 </button>
@@ -183,24 +177,24 @@ export function Fazenda() {
       </section>
 
       <Modal
-        open={welcomeVideoOpen}
-        onClose={() => setWelcomeVideoOpen(false)}
-        titleId={welcomeVideoTitleId}
+        open={rulesVideoOpen}
+        onClose={() => setRulesVideoOpen(false)}
+        titleId={rulesVideoTitleId}
         className="max-w-4xl overflow-hidden p-0"
       >
         <div className="flex items-center justify-between gap-4 p-4 sm:px-6">
-          <h2 id={welcomeVideoTitleId} className="text-lg sm:text-xl">
-            VÍDEO DE BOAS-VINDAS
+          <h2 id={rulesVideoTitleId} className="text-lg sm:text-xl">
+            REGRAS DA FAZENDA
           </h2>
           <button
             type="button"
-            onClick={() => setWelcomeVideoOpen(false)}
+            onClick={() => setRulesVideoOpen(false)}
             className="text-sm font-semibold uppercase text-muted transition hover:text-white"
           >
             Fechar
           </button>
         </div>
-        <VideoEmbed videoId={welcomeVideoId} title="Vídeo de boas-vindas — GalindoGamerBR" />
+        <VideoEmbed videoId={FARM_RULES_VIDEO_ID} title="Regras da Fazenda Nova Aliança — GalindoGamerBR" />
       </Modal>
     </>
   )

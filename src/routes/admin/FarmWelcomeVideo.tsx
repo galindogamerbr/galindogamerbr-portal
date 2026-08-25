@@ -67,7 +67,7 @@ export function FarmWelcomeVideo() {
           />
           <p className="mt-3 text-xs text-muted">Aceita link normal, youtu.be, embed, Shorts ou o ID de 11 caracteres do vídeo.</p>
           {error && <p className="mt-3 text-xs text-red">{error}</p>}
-          {saved && <p className="mt-3 text-xs text-gold">Vídeo atualizado. A página Fazenda já usará a nova configuração.</p>}
+          {saved && <p className="mt-3 text-xs text-gold">Vídeo atualizado. A página Boas-vindas já usará a nova configuração.</p>}
           <Button variant="gold" size="sm" className="mt-5" onClick={handleSave} disabled={loading || saving || !input.trim()}>
             {saving ? 'Salvando…' : 'Salvar vídeo'}
           </Button>

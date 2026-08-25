@@ -14,6 +14,10 @@ type SeoData = {
 
 const ROUTE_SEO: Record<string, SeoData> = {
   '/': { description: DEFAULT_DESCRIPTION },
+  '/boas-vindas': {
+    title: 'Boas-vindas',
+    description: 'Conheça o GalindoGamerBR e descubra como participar dos conteúdos, da fazenda e da comunidade.',
+  },
   '/conteudos': {
     title: 'Conteúdos',
     description: 'Assista às séries, lives e vídeos de simuladores e games do canal GalindoGamerBR.',
@@ -57,8 +61,7 @@ const ROUTE_SEO: Record<string, SeoData> = {
 }
 
 const CANONICAL_ALIASES: Record<string, string> = {
-  '/boas-vindas': '/fazenda',
-  '/comece-aqui': '/fazenda',
+  '/comece-aqui': '/boas-vindas',
   '/jogos': '/conteudos',
 }
 
