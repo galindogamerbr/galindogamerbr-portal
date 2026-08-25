@@ -33,7 +33,6 @@ export function Schedule() {
   const discordPortraitRef = useRef<HTMLDivElement>(null)
 
   async function bootstrap() {
-    setLoading(true)
     try {
       const { versions } = await listVersions()
       let published = versions.find((v) => v.isPublished)
