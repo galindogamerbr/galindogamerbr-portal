@@ -5,108 +5,107 @@ import { NavButton } from '../components/ui/Button'
 import { PageBackground } from '../components/layout/PageBackground'
 import { PartnershipTeaser } from '../components/shared/PartnershipTeaser'
 
-// Igual ao escurecimento padrão (#03070b40) até a metade, depois some — o
-// Galindo fica no lado direito da imagem (about-bg.webp) e não pode ficar
-// escurecido junto do resto do fundo.
-const ABOUT_OVERLAY = 'linear-gradient(90deg, #03070b40 0%, #03070b40 50%, transparent 80%)'
+const ABOUT_OVERLAY = 'linear-gradient(90deg, rgba(3,7,11,0.2) 0%, rgba(3,7,11,0.72) 42%, rgba(3,7,11,0.12) 82%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
 const STORY = [
   {
-    n: '01 • COMEÇO',
+    n: '01',
+    eyebrow: 'O começo',
     title: 'ANTES DAS LIVES',
-    text: 'Antes de existir canal, corte, plataforma ou comunidade, existia simplesmente a vontade de jogar. Os videogames e o Windows 95 fizeram parte dessa descoberta e ajudaram a construir uma paixão que atravessou diferentes fases da vida.',
+    text: 'Os videogames e o Windows 95 abriram as primeiras portas para uma paixão que atravessou diferentes fases da vida.',
   },
   {
-    n: '02 • HOJE',
-    title: 'TRANSFORMAR PAIXÃO EM HISTÓRIA',
-    text: 'Hoje essa paixão é compartilhada em Farming Simulator 25, Fúria Reborn GTA RP, SnowRunner, Euro Truck Simulator 2 e outros jogos. Cada transmissão vira uma nova história, e cada pessoa que chega pode fazer parte dela.',
+    n: '02',
+    eyebrow: 'O canal',
+    title: 'PAIXÃO QUE VIROU HISTÓRIA',
+    text: 'Farming Simulator, GTA RP, SnowRunner, Euro Truck Simulator e muitos outros jogos passaram a render histórias compartilhadas ao vivo.',
   },
   {
-    n: '03 • PESSOAS',
-    title: 'O MELHOR DO CANAL ESTÁ DO OUTRO LADO',
-    text: 'O jogo pode ser o motivo da entrada, mas são as pessoas que fazem alguém permanecer. A comunidade nasceu da resenha, da amizade, da ajuda e da vontade de jogar junto.',
+    n: '03',
+    eyebrow: 'As pessoas',
+    title: 'O MELHOR ESTÁ DO OUTRO LADO',
+    text: 'O jogo pode ser o motivo da chegada, mas são a resenha, a amizade e a vontade de participar que fazem alguém permanecer.',
   },
   {
-    n: '04 • PROPÓSITO',
+    n: '04',
+    eyebrow: 'O propósito',
     title: 'DEIXAR UMA BOA LEMBRANÇA',
-    text: 'A ideia é que quem passe por aqui leve alguma coisa: uma risada, uma história, uma amizade, uma dica, uma inspiração ou simplesmente um momento em que se sentiu acolhido.',
+    text: 'Uma risada, uma história, uma amizade ou um momento de acolhimento. Tudo isso dá significado a cada transmissão.',
   },
-]
+] as const
 
 export function Sobre() {
   return (
     <>
       <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
-      <section className="py-16 sm:py-24">
-        <Reveal>
-          <Container className="max-w-3xl">
-            <Eyebrow>A história por trás do canal</Eyebrow>
-            <h1 className="text-4xl sm:text-5xl">MAIS QUE UMA LIVE.</h1>
-            <p className="mt-3 text-lg text-muted">
-              Por trás de cada transmissão existe uma pessoa, uma família, uma história e uma paixão que começou
-              muito antes das lives.
-            </p>
-          </Container>
-        </Reveal>
+
+      <section className="relative isolate flex min-h-[680px] items-center overflow-hidden py-16 sm:py-24">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_40%,rgba(217,177,79,0.14),transparent_38%)]" />
+        <Container>
+          <Reveal>
+            <div className="max-w-2xl">
+              <div className="flex flex-wrap items-center gap-3">
+                <Eyebrow>A história por trás do canal</Eyebrow>
+                <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-gold">Desde os primeiros jogos</span>
+              </div>
+              <h1 className="mt-5 text-5xl leading-[0.92] sm:text-7xl">MAIS QUE UMA LIVE. UMA HISTÓRIA COMPARTILHADA.</h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+                Por trás de cada transmissão existe uma pessoa, uma família e uma paixão que começou muito antes de existir o GalindoGamerBR.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href="#historia" className="inline-flex items-center justify-center rounded-md bg-gold px-5 py-3 text-sm font-bold uppercase text-bg transition hover:brightness-110">Conhecer a história</a>
+                <NavButton variant="blue" to="/comunidade">Conhecer a comunidade</NavButton>
+              </div>
+            </div>
+          </Reveal>
+        </Container>
       </section>
 
-      <section className="pb-16 sm:pb-24">
+      <section id="historia" className="border-y border-line bg-panel/45 py-16 sm:py-24">
         <Reveal>
           <Container>
-            <div className="max-w-xl rounded-lg border border-line bg-panel/90 p-6 backdrop-blur-sm sm:p-8">
-              <Eyebrow>Quem é o Galindo?</Eyebrow>
-              <h2 className="text-2xl sm:text-3xl">
-                EU NÃO CRIEI APENAS UM CANAL. CRIEI UM LUGAR PARA COMPARTILHAR UMA PAIXÃO.
-              </h2>
-              <div className="mt-4 space-y-4 text-justify text-muted">
-                <p>
-                  <strong className="text-white">
-                    Tenho 41 anos, sou casado, trabalho na cidade e tenho uma vida como qualquer pessoa que corre
-                    atrás dos seus objetivos.
-                  </strong>{' '}
-                  Mas existe uma parte que nunca ficou para trás: aquele garoto que descobriu, nos videogames e na
-                  época do Windows 95, que uma tela podia abrir portas para mundos inteiros.
-                </p>
-                <p>
-                  Os anos passaram. Vieram responsabilidades, trabalho, família e uma vida cada vez mais corrida. Só
-                  que a paixão pelos jogos continuou ali. E foi justamente dessa paixão que nasceu o GalindoGamerBR.
-                </p>
-                <p>
-                  As lives são a maneira de colocar essa paixão para fora e mostrar um pedaço da vida para o mundo.
-                  Não é apenas ligar o jogo e transmitir: é entrar em contato com pessoas, conhecer histórias, rir,
-                  trocar ideia e construir lembranças que não existiriam jogando sozinho.
-                </p>
-                <p>
-                  <strong className="text-white">Uma boa live precisa fazer alguém querer voltar.</strong> Pode ser
-                  pela resenha, pelo gameplay, pela história de uma fazenda, por um momento inesperado no roleplay ou
-                  simplesmente porque existe alguém do outro lado disposto a conversar.
-                </p>
-              </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {CHIPS.map((chip) => (
-                  <span key={chip} className="rounded-full border border-gold bg-panel2 px-3 py-1 text-xs text-gold">
-                    {chip}
-                  </span>
-                ))}
+            <div className="relative min-h-[520px] overflow-hidden rounded-xl border border-gold/40 bg-panel bg-[url('/assets/about-galindo.webp')] bg-cover bg-[position:35%_center] shadow-[0_24px_70px_-38px_rgba(217,177,79,0.65)] lg:bg-center">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bg/35 to-bg/95" />
+              <div className="relative ml-auto flex min-h-[520px] max-w-2xl flex-col justify-center p-7 sm:p-10 lg:w-[58%] lg:p-12">
+                <Eyebrow>Quem é o Galindo?</Eyebrow>
+                <h2 className="mt-1 text-3xl sm:text-4xl">UM CARA COMUM. UMA PAIXÃO QUE NUNCA FICOU PARA TRÁS.</h2>
+                <div className="mt-5 space-y-4 leading-relaxed text-muted">
+                  <p>
+                    Tenho 41 anos, sou casado, trabalho na cidade e corro atrás dos meus objetivos como qualquer pessoa. Mas aquele garoto que descobriu novos mundos nos videogames e no Windows 95 continua aqui.
+                  </p>
+                  <p>
+                    O GalindoGamerBR nasceu da vontade de compartilhar essa paixão. As lives transformaram horas de jogo em encontros, histórias, risadas e lembranças que não existiriam jogando sozinho.
+                  </p>
+                  <p className="font-semibold text-white">Uma boa live precisa fazer alguém querer voltar.</p>
+                </div>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {CHIPS.map((chip) => <span key={chip} className="rounded-full border border-gold/45 bg-bg/65 px-3 py-1.5 text-xs font-semibold text-gold">{chip}</span>)}
+                </div>
               </div>
             </div>
           </Container>
         </Reveal>
       </section>
 
-      <section className="pb-16 sm:pb-24">
+      <section className="py-16 sm:py-24">
         <Reveal>
           <Container>
-            <Eyebrow>De onde veio tudo isso</Eyebrow>
-            <h2 className="text-3xl sm:text-4xl">UMA PAIXÃO QUE FOI CRESCENDO.</h2>
-            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="mx-auto max-w-3xl text-center">
+              <Eyebrow>De onde veio tudo isso</Eyebrow>
+              <h2 className="mt-2 text-4xl sm:text-5xl">UMA PAIXÃO QUE GANHOU NOVOS CAPÍTULOS</h2>
+              <p className="mt-4 text-lg text-muted">Do primeiro contato com os jogos até uma comunidade inteira reunida em torno das transmissões.</p>
+            </div>
+
+            <div className="relative mt-12 grid gap-5 md:grid-cols-4">
+              <div className="absolute left-[12.5%] right-[12.5%] top-7 hidden h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent md:block" />
               {STORY.map((item) => (
-                <div key={item.n} className="rounded-lg border border-line bg-panel p-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-gold">{item.n}</span>
+                <div key={item.n} className="group relative rounded-lg border border-line bg-gradient-to-br from-panel to-panel2 p-6 transition duration-300 hover:-translate-y-1 hover:border-gold/60">
+                  <span className="relative inline-flex h-14 w-14 items-center justify-center rounded-full border border-gold/50 bg-bg text-sm font-bold text-gold shadow-[0_0_24px_-8px_rgba(217,177,79,0.7)]">{item.n}</span>
+                  <span className="mt-6 block text-xs font-semibold uppercase tracking-widest text-gold">{item.eyebrow}</span>
                   <h3 className="mt-2 text-lg">{item.title}</h3>
-                  <p className="mt-2 text-sm text-muted">{item.text}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{item.text}</p>
                 </div>
               ))}
             </div>
@@ -115,30 +114,22 @@ export function Sobre() {
       </section>
 
       <section className="pb-16 sm:pb-24">
-        <Reveal>
-          <Container>
-            <PartnershipTeaser />
-          </Container>
-        </Reveal>
+        <Reveal><Container><PartnershipTeaser /></Container></Reveal>
       </section>
 
       <section className="pb-16 sm:pb-24">
         <Reveal>
-          <Container className="max-w-2xl">
-            <div className="rounded-lg border border-gold/40 bg-panel p-6 text-center sm:p-8">
-              <Eyebrow>Se você chegou até aqui...</Eyebrow>
-              <h2 className="text-3xl sm:text-4xl">ENTÃO TALVEZ VOCÊ JÁ FAÇA PARTE DESSA HISTÓRIA.</h2>
-              <p className="mt-4 text-muted">
-                Esse é o GalindoGamerBR: um projeto independente, apaixonado por games, tentando
-                transformar algumas horas de diversão em encontros que tenham significado.
-              </p>
-              <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <NavButton variant="red" to="/">
-                  Conhecer o canal →
-                </NavButton>
-                <NavButton variant="blue" to="/comunidade">
-                  Fazer parte da comunidade →
-                </NavButton>
+          <Container>
+            <div className="relative overflow-hidden rounded-xl border border-gold/40 bg-gradient-to-r from-gold/10 via-panel to-panel p-7 text-center shadow-[0_20px_65px_-42px_rgba(217,177,79,0.7)] sm:p-10">
+              <div className="absolute left-1/2 top-0 h-36 w-72 -translate-x-1/2 rounded-full bg-gold/10 blur-3xl" />
+              <div className="relative mx-auto max-w-3xl">
+                <Eyebrow>Essa história continua</Eyebrow>
+                <h2 className="mt-2 text-3xl sm:text-5xl">TALVEZ O PRÓXIMO CAPÍTULO TAMBÉM TENHA VOCÊ.</h2>
+                <p className="mx-auto mt-4 max-w-2xl text-muted">O GalindoGamerBR é um projeto independente que transforma diversão em encontros com significado.</p>
+                <div className="mt-7 flex flex-wrap justify-center gap-3">
+                  <NavButton variant="red" to="/">Conhecer o canal</NavButton>
+                  <NavButton variant="blue" to="/comunidade">Fazer parte da comunidade</NavButton>
+                </div>
               </div>
             </div>
           </Container>
