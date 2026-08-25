@@ -6,7 +6,6 @@ import { SectionHead } from '../components/ui/SectionHead'
 import { Reveal } from '../components/ui/Reveal'
 import { LinkButton, NavButton } from '../components/ui/Button'
 import { HubLink } from '../components/shared/HubLink'
-import { VipSteps } from '../components/shared/VipSteps'
 import { ScheduleTabs } from '../components/shared/ScheduleTabs'
 import { PublicScheduleExportButton } from '../components/shared/PublicScheduleExportButton'
 import { LiveBanner } from '../components/shared/LiveBanner'
@@ -97,6 +96,10 @@ function Hero() {
         </div>
         <LifetimeVisitsBanner />
       </Container>
+      <div className="relative z-10 mx-auto h-72 w-full lg:hidden">
+        <img src="/assets/galindo.webp" alt="Galindo, criador do GalindoGamerBR" className="absolute bottom-0 left-1/2 h-full max-w-none -translate-x-1/2 object-contain object-bottom" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-bg to-transparent" />
+      </div>
     </section>
   )
 }
@@ -106,39 +109,28 @@ function FazendaTeaser() {
     <section className="py-16 sm:py-24">
       <Reveal>
         <Container>
-          <div className="rounded-lg border-2 border-gold bg-gradient-to-br from-panel to-panel2 p-8 shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] sm:p-10">
-            <div className="flex flex-col items-start gap-5 rounded-lg border border-gold bg-gold/10 p-5 shadow-[0_0_35px_-15px_rgba(217,177,79,0.65)] sm:flex-row sm:items-center sm:justify-between sm:p-6">
-              <div className="flex items-start gap-4">
-                <span className="text-4xl">👋</span>
-                <div>
-                  <Eyebrow>Comece por aqui</Eyebrow>
-                  <h2 className="text-2xl text-gold sm:text-3xl">NOVO POR AQUI?</h2>
-                  <p className="mt-1 max-w-xl text-sm text-white/80 sm:text-base">
-                    Veja a mensagem de boas vindas do nosso streamer e conheça a comunidade.
-                  </p>
-                </div>
+          <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+            <Link to="/boasvindas" className="group relative flex min-h-72 flex-col justify-between overflow-hidden rounded-xl border-2 border-gold bg-gradient-to-br from-gold/15 via-panel to-panel2 p-7 shadow-[0_20px_55px_-35px_rgba(217,177,79,0.7)] transition duration-300 hover:-translate-y-1 sm:p-8">
+              <span className="absolute -right-5 -top-6 text-9xl opacity-[0.06] transition group-hover:scale-110">👋</span>
+              <div className="relative">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-gold/40 bg-gold/10 text-2xl">👋</span>
+                <Eyebrow className="mt-6">Comece por aqui</Eyebrow>
+                <h2 className="mt-1 text-3xl text-gold">NOVO POR AQUI?</h2>
+                <p className="mt-3 text-sm leading-relaxed text-white/75">O Galindo preparou uma mensagem para apresentar o canal e receber você na comunidade.</p>
               </div>
-              <NavButton to="/boasvindas" variant="gold" className="shrink-0">
-                Assistir à mensagem →
-              </NavButton>
-            </div>
+              <span className="relative mt-7 text-sm font-semibold uppercase text-gold transition group-hover:translate-x-1">Assistir à mensagem →</span>
+            </Link>
 
-            <div className="mt-8 flex flex-col items-start gap-6 border-t border-gold/30 pt-8 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-4">
-                <span className="text-4xl">🚜</span>
-                <div>
-                  <Eyebrow>Fazenda Nova Aliança</Eyebrow>
-                  <h2 className="text-3xl sm:text-4xl">VEIO PELA FAZENDA E QUER PARTICIPAR?</h2>
-                  <p className="mt-2 max-w-xl text-muted">
-                    Veja como funciona o servidor, o que você precisa para entrar e como fazer parte da lida com a
-                    comunidade.
-                  </p>
-                </div>
+            <Link to="/fazenda" className="group relative flex min-h-72 flex-col justify-between overflow-hidden rounded-xl border border-line bg-gradient-to-br from-panel to-panel2 p-7 transition duration-300 hover:-translate-y-1 hover:border-green/60 sm:p-8">
+              <span className="absolute -right-5 -top-6 text-9xl opacity-[0.06] transition group-hover:scale-110">🚜</span>
+              <div className="relative">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-green/40 bg-green/10 text-2xl">🚜</span>
+                <Eyebrow className="mt-6">Fazenda Nova Aliança</Eyebrow>
+                <h2 className="mt-1 text-3xl sm:text-4xl">VENHA PARA A LIDA COM A COMUNIDADE</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">Conheça o servidor, confira os requisitos e prepare tudo para participar da fazenda.</p>
               </div>
-              <NavButton to="/fazenda" variant="default" className="shrink-0 text-base">
-                Ver como participar →
-              </NavButton>
-            </div>
+              <span className="relative mt-7 text-sm font-semibold uppercase text-green transition group-hover:translate-x-1">Ver como participar →</span>
+            </Link>
           </div>
         </Container>
       </Reveal>
@@ -204,25 +196,22 @@ function JogosBannerCta() {
 
 function ComunidadeTeaser() {
   return (
-    <section className="pb-16 sm:pb-24">
+    <section className="border-y border-line bg-panel/35 py-16 sm:py-20">
       <Reveal>
         <Container>
-          <SectionHead
-            eyebrow="Central da comunidade"
-            title="TODOS OS CAMINHOS"
-            action={
-              <NavButton to="/comunidade" variant="default">
-                Ver comunidade
-              </NavButton>
-            }
-          />
+          <SectionHead eyebrow="Central da comunidade" title="TODOS OS CAMINHOS PARA CHEGAR JUNTO" />
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
             {HUB_TEASER.map((link) => (
               <HubLink key={link.title} {...link} />
             ))}
           </div>
-          <div className="mt-6">
-            <VipSteps variant="compact" />
+          <div className="mt-6 flex flex-col justify-between gap-5 rounded-xl border border-gold/35 bg-gradient-to-r from-gold/10 via-panel to-panel p-6 sm:flex-row sm:items-center sm:p-8">
+            <div>
+              <Eyebrow>Mais perto do canal</Eyebrow>
+              <h3 className="mt-1 text-2xl sm:text-3xl">CONVERSE, PARTICIPE E ACOMPANHE CADA NOVIDADE.</h3>
+              <p className="mt-2 max-w-2xl text-sm text-muted">Todos os grupos, redes e caminhos oficiais estão reunidos em uma única página.</p>
+            </div>
+            <NavButton to="/comunidade" variant="gold" className="shrink-0">Explorar a comunidade</NavButton>
           </div>
         </Container>
       </Reveal>
