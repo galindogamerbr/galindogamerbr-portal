@@ -23,16 +23,60 @@ type VipStepsProps = {
 // teaser da Home, pra nunca dessincronizar as regras entre os dois lugares.
 export function VipSteps({ variant = 'full' }: VipStepsProps) {
   return (
-    <div className="rounded-lg border border-line bg-panel bg-[radial-gradient(circle_at_top,rgba(217,177,79,0.08),transparent_60%)] p-6 sm:p-8">
-      <Eyebrow>Área VIP</Eyebrow>
-      <h2 className="text-3xl sm:text-4xl">GRUPO VIP DO CANAL</h2>
-      <p className="mt-3 max-w-2xl text-muted">
-        Um espaço exclusivo e propositalmente seleto que reconhece quem fortalece o canal e ajuda a manter vivo o
-        servidor, os projetos e toda a resenha que construímos juntos.
-      </p>
-      <p className="mt-2 max-w-2xl text-muted">
-        Já se qualifica? Bora fazer parte dessa comunidade. Chega junto e ajuda a manter a resenha viva!
-      </p>
+    <div className="relative isolate overflow-hidden rounded-xl border border-gold/40 bg-panel p-6 shadow-[0_20px_65px_-40px_rgba(217,177,79,0.65)] sm:p-8">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_0%,rgba(217,177,79,0.14),transparent_35%),radial-gradient(circle_at_92%_100%,rgba(74,103,255,0.12),transparent_32%)]" />
+
+      <div className={variant === 'compact' ? 'grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]' : ''}>
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-gold/40 bg-gold/10 text-2xl">🌟</span>
+            <div>
+              <Eyebrow>Área VIP</Eyebrow>
+              <span className="text-xs font-semibold uppercase tracking-widest text-white/40">Apoie e participe</span>
+            </div>
+          </div>
+
+          <h2 className="mt-5 text-3xl sm:text-4xl">MAIS PERTO DO CANAL. MAIS PERTO DA COMUNIDADE.</h2>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">
+            O grupo VIP reúne quem fortalece o canal e ajuda a manter vivos o servidor, os projetos e toda a resenha
+            que construímos juntos.
+          </p>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {['Grupo exclusivo', 'Acesso à Fazenda', 'Contato com a comunidade'].map((benefit) => (
+              <span key={benefit} className="rounded-full border border-line bg-bg/40 px-3 py-1.5 text-xs font-semibold text-white/75">
+                {benefit}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {variant === 'compact' && (
+          <div className="rounded-lg border border-gold/40 bg-bg/45 p-5 sm:p-6">
+            <span className="text-xs font-semibold uppercase tracking-widest text-gold">Como entrar</span>
+            <h3 className="mt-1 text-2xl">JÁ APOIA O CANAL?</h3>
+            <p className="mt-2 text-sm leading-relaxed text-muted">
+              Membros Ouro do YouTube e Super Fans do TikTok podem solicitar acesso ao grupo VIP.
+            </p>
+
+            <div className="mt-5 grid gap-3">
+              <LinkButton variant="blue" href="/discord" target="_blank" rel="noopener noreferrer" className="w-full">
+                Entrar no Discord
+              </LinkButton>
+              <LinkButton
+                variant="gold"
+                href="https://chat.whatsapp.com/JpsiqErWdAx3pHqvVSbp7R"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                Solicitar entrada VIP
+              </LinkButton>
+            </div>
+            <p className="mt-4 text-xs text-white/45">A equipe confere os requisitos antes de liberar o acesso.</p>
+          </div>
+        )}
+      </div>
 
       {variant === 'full' && (
         <>
@@ -67,23 +111,23 @@ export function VipSteps({ variant = 'full' }: VipStepsProps) {
               </div>
             ))}
           </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <LinkButton variant="blue" href="/discord" target="_blank" rel="noopener noreferrer">
+              Entrar no Discord
+            </LinkButton>
+            <LinkButton
+              variant="gold"
+              href="https://chat.whatsapp.com/JpsiqErWdAx3pHqvVSbp7R"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Solicitar entrada VIP
+            </LinkButton>
+          </div>
+          <p className="mt-4 text-xs text-muted">A equipe confere os requisitos antes de liberar o acesso.</p>
         </>
       )}
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <LinkButton variant="blue" href="/discord" target="_blank" rel="noopener noreferrer">
-          1. Entrar no Discord
-        </LinkButton>
-        <LinkButton
-          variant="gold"
-          href="https://chat.whatsapp.com/JpsiqErWdAx3pHqvVSbp7R"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          2. Solicitar entrada VIP
-        </LinkButton>
-      </div>
-      <p className="mt-4 text-xs text-muted">A liberação é feita por um administrador após conferência dos requisitos.</p>
     </div>
   )
 }
