@@ -36,7 +36,7 @@ const STORY = [
 export function Sobre() {
   return (
     <>
-      <section className="relative isolate flex min-h-[620px] items-center overflow-hidden py-16 sm:min-h-[680px] sm:py-24">
+      <section className="relative isolate overflow-hidden pb-0 pt-16 sm:flex sm:min-h-[680px] sm:items-center sm:py-24">
         <div className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-left-top sm:bg-[position:64%_top] lg:bg-center" style={{ backgroundImage: 'url(/assets/about-bg.webp)' }} />
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,7,11,0.22)_0%,rgba(3,7,11,0.88)_38%,rgba(3,7,11,0.16)_78%),radial-gradient(circle_at_20%_40%,rgba(217,177,79,0.14),transparent_38%)]" />
         <Container>
@@ -53,6 +53,10 @@ export function Sobre() {
             </div>
           </Reveal>
         </Container>
+        <div className="relative mt-6 h-[360px] w-full sm:hidden">
+          <img src="/assets/galindo.webp" alt="Galindo" className="absolute bottom-0 left-1/2 h-full max-w-none -translate-x-1/2 object-contain object-bottom" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-bg to-transparent" />
+        </div>
       </section>
 
       <section id="historia" className="border-y border-line bg-panel/45 py-16 sm:py-24">
