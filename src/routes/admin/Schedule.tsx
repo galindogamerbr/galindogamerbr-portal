@@ -32,11 +32,6 @@ export function Schedule() {
   const [message, setMessage] = useState<string | null>(null)
   const discordPortraitRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!email) return
-    void bootstrap()
-  }, [email])
-
   async function bootstrap() {
     setLoading(true)
     try {
@@ -64,6 +59,11 @@ export function Schedule() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!email) return
+    void bootstrap()
+  }, [email])
 
   function addBlock(dayOfWeek: number, startTime: string, endTime: string) {
     setBlocks((prev) => [...prev, { cycleIndex: 0, dayOfWeek, startTime, endTime, note: null }])
