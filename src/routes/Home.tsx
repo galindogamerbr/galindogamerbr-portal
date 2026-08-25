@@ -118,9 +118,14 @@ function FazendaTeaser() {
                 </p>
               </div>
             </div>
-            <NavButton to="/fazenda" variant="gold" className="shrink-0 text-base">
-              Ver como participar →
-            </NavButton>
+            <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
+              <NavButton to="/fazenda" variant="gold" className="text-base">
+                Ver como participar →
+              </NavButton>
+              <NavButton to="/boasvindas" variant="default" size="sm">
+                Novo por aqui? Veja a mensagem do nosso streamer →
+              </NavButton>
+            </div>
           </div>
         </Container>
       </Reveal>
