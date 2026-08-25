@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Footer } from './Footer'
 import { PageBackground } from './PageBackground'
+import { Seo } from './Seo'
 
 export function Layout() {
   const { pathname } = useLocation()
@@ -17,6 +18,7 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Seo />
       {/* Fundo padrão de todas as páginas — uma página específica pode
           sobrepor renderizando seu próprio <PageBackground> (ex.: Sobre.tsx),
           que vence por vir depois no DOM, mesmo z-index. */}
