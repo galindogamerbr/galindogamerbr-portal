@@ -65,7 +65,7 @@ export function Creditos() {
                 <div className="relative mx-auto w-full max-w-sm overflow-hidden rounded-xl border border-line bg-bg">
                   <img
                     src="/assets/pedro-profile.webp"
-                    alt="Pedro Henrique Moreira"
+                    alt="Pedro Henrique"
                     width="900"
                     height="900"
                     className="aspect-square w-full object-cover"
@@ -74,7 +74,7 @@ export function Creditos() {
                 </div>
                 <div>
                   <Eyebrow>Desenvolvimento do portal</Eyebrow>
-                  <h2 className="mt-2 text-4xl leading-none sm:text-5xl">PEDRO HENRIQUE MOREIRA</h2>
+                  <h2 className="mt-2 text-4xl leading-none sm:text-5xl">PEDRO HENRIQUE</h2>
                   <p className="mt-5 text-lg leading-relaxed text-white/85">
                     Software Engineer com mais de sete anos construindo backends e sistemas cloud native seguros e escaláveis.
                   </p>

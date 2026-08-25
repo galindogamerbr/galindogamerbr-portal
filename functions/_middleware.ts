@@ -17,7 +17,7 @@ const ROUTES: Record<string, SeoData> = {
   '/parceiros': { title: 'Parceiros', description: 'Conheça os parceiros do GalindoGamerBR e as possibilidades de parceria com o canal.' },
   '/privacidade': { title: 'Política de Privacidade', description: 'Saiba como o site GalindoGamerBR trata dados e protege a privacidade dos visitantes.' },
   '/termos': { title: 'Termos de Uso', description: 'Consulte os termos e condições de uso do site GalindoGamerBR.' },
-  '/creditos': { title: 'Créditos', description: 'Conheça os créditos do portal GalindoGamerBR, desenvolvido por Pedro Henrique Moreira, e as atribuições dos recursos visuais utilizados.' },
+  '/creditos': { title: 'Créditos', description: 'Conheça os créditos do portal GalindoGamerBR, desenvolvido por Pedro Henrique, e as atribuições dos recursos visuais utilizados.' },
   '/mapa-do-site': { title: 'Mapa do Site', description: 'Encontre todas as páginas e seções do site oficial GalindoGamerBR.' },
 }
 
