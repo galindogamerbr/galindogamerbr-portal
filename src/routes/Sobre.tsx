@@ -4,7 +4,7 @@ import { Reveal } from '../components/ui/Reveal'
 import { NavButton } from '../components/ui/Button'
 import { PartnershipTeaser } from '../components/shared/PartnershipTeaser'
 
-const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
+const CHIPS = ['Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
 const STORY = [
   {
@@ -50,10 +50,6 @@ export function Sobre() {
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
                 Por trás de cada transmissão existe uma pessoa, uma família e uma paixão que começou muito antes de existir o GalindoGamerBR.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#historia" className="inline-flex items-center justify-center rounded-md bg-gold px-5 py-3 text-sm font-bold uppercase text-bg transition hover:brightness-110">Conhecer a história</a>
-                <NavButton variant="blue" to="/comunidade">Conhecer a comunidade</NavButton>
-              </div>
             </div>
           </Reveal>
         </Container>
@@ -66,8 +62,8 @@ export function Sobre() {
               <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
               <div className="relative grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
                 <div>
-                  <span className="block text-8xl font-black leading-none text-gold/15 sm:text-9xl">41</span>
-                  <p className="-mt-3 max-w-sm text-2xl leading-tight text-white sm:text-3xl">anos de histórias antes mesmo da primeira live.</p>
+                  <Eyebrow>Antes do canal</Eyebrow>
+                  <p className="mt-3 max-w-sm text-4xl leading-none text-white sm:text-5xl">A PAIXÃO VEIO PRIMEIRO.</p>
                   <div className="mt-7 h-px w-24 bg-gold" />
                   <p className="mt-5 text-sm font-semibold uppercase tracking-[0.18em] text-gold">Games • Família • Comunidade</p>
                 </div>
