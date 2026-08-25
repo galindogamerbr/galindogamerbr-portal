@@ -106,24 +106,34 @@ function FazendaTeaser() {
     <section className="py-16 sm:py-24">
       <Reveal>
         <Container>
-          <div className="flex flex-col items-start gap-6 rounded-lg border-2 border-gold bg-gradient-to-br from-panel to-panel2 p-8 shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] sm:flex-row sm:items-center sm:justify-between sm:p-10">
-            <div className="flex items-start gap-4">
-              <span className="text-4xl">🚜</span>
-              <div>
-                <Eyebrow>Fazenda Nova Aliança</Eyebrow>
-                <h2 className="text-3xl sm:text-4xl">VEIO PELA FAZENDA E QUER PARTICIPAR?</h2>
-                <p className="mt-2 max-w-xl text-muted">
-                  Veja como funciona o servidor, o que você precisa para entrar e como fazer parte da lida com a
-                  comunidade.
-                </p>
+          <div className="rounded-lg border-2 border-gold bg-gradient-to-br from-panel to-panel2 p-8 shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] sm:p-10">
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="text-4xl">🚜</span>
+                <div>
+                  <Eyebrow>Fazenda Nova Aliança</Eyebrow>
+                  <h2 className="text-3xl sm:text-4xl">VEIO PELA FAZENDA E QUER PARTICIPAR?</h2>
+                  <p className="mt-2 max-w-xl text-muted">
+                    Veja como funciona o servidor, o que você precisa para entrar e como fazer parte da lida com a
+                    comunidade.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
-              <NavButton to="/fazenda" variant="gold" className="text-base">
+              <NavButton to="/fazenda" variant="gold" className="shrink-0 text-base">
                 Ver como participar →
               </NavButton>
+            </div>
+
+            <div className="mt-8 flex flex-col items-start gap-4 border-t border-gold/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">👋</span>
+                <div>
+                  <h3 className="text-lg">NOVO POR AQUI?</h3>
+                  <p className="mt-1 text-sm text-muted">Dê uma olhada na mensagem de boas-vindas do nosso streamer.</p>
+                </div>
+              </div>
               <NavButton to="/boasvindas" variant="default" size="sm">
-                Novo por aqui? Veja a mensagem do nosso streamer →
+                Assistir à mensagem →
               </NavButton>
             </div>
           </div>
