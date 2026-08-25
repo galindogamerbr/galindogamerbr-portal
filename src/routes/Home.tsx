@@ -175,15 +175,17 @@ function JogosBannerCta() {
       <Reveal>
         <Container>
           <Link to="/conteudos" className="group relative block overflow-hidden rounded-lg border border-line">
-            <picture>
-              <source media="(max-width: 639px)" srcSet="/assets/banners/jogos-banner-mobile.webp" />
-              <img
-                src="/assets/banners/jogos-banner.webp"
-                alt=""
-                loading="lazy"
-                className="aspect-[1/2] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
-              />
-            </picture>
+            <div className="grid aspect-[4/5] grid-cols-2 overflow-hidden sm:hidden" aria-hidden="true">
+              {['object-left', 'object-[35%_center]', 'object-[68%_center]', 'object-right'].map((position) => (
+                <img key={position} src="/assets/banners/jogos-banner.webp" alt="" loading="lazy" className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${position}`} />
+              ))}
+            </div>
+            <img
+              src="/assets/banners/jogos-banner.webp"
+              alt=""
+              loading="lazy"
+              className="hidden aspect-[21/9] w-full object-cover transition duration-500 group-hover:scale-105 sm:block"
+            />
             <div className="absolute inset-0 hidden bg-gradient-to-t from-bg via-bg/40 to-transparent sm:block" />
             <div className="relative flex flex-col items-start gap-2 bg-panel p-6 sm:absolute sm:inset-0 sm:justify-end sm:bg-transparent sm:p-10">
               <Eyebrow className="text-sm sm:text-lg">Todos os conteúdos do canal</Eyebrow>
