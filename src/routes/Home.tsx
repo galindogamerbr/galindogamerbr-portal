@@ -175,11 +175,7 @@ function JogosBannerCta() {
       <Reveal>
         <Container>
           <Link to="/conteudos" className="group relative block overflow-hidden rounded-lg border border-line">
-            <div className="grid aspect-[4/5] grid-cols-2 overflow-hidden sm:hidden" aria-hidden="true">
-              {['object-left', 'object-[35%_center]', 'object-[68%_center]', 'object-right'].map((position) => (
-                <img key={position} src="/assets/banners/jogos-banner.webp" alt="" loading="lazy" className={`h-full w-full object-cover transition duration-500 group-hover:scale-105 ${position}`} />
-              ))}
-            </div>
+            <img src="/assets/banners/jogos-banner-mobile.webp" alt="" loading="lazy" className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105 sm:hidden" />
             <img
               src="/assets/banners/jogos-banner.webp"
               alt=""
