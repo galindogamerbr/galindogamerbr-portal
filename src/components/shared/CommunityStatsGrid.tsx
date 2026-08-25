@@ -54,15 +54,16 @@ export function CommunityStatsGrid() {
             href={social.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-2 rounded-lg border border-line bg-panel p-4 text-center transition-colors hover:border-gold/60"
+            className="group relative flex min-h-44 flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-t-2 border-line bg-gradient-to-b from-panel2 to-panel p-5 text-center transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_-28px_rgba(217,177,79,0.7)]"
+            style={{ borderTopColor: social.color }}
           >
             <img
               src={`/assets/logos/${social.logo}`}
               alt=""
-              className="h-8 w-8 rounded object-contain transition duration-300 group-hover:scale-110"
+              className="h-10 w-10 rounded object-contain transition duration-300 group-hover:scale-110"
             />
-            <span className="text-lg font-semibold">{count !== undefined ? formatCompactNumber(count) : '—'}</span>
-            <span className="text-xs uppercase tracking-widest text-muted">{social.name}</span>
+            <span className="mt-2 text-2xl font-bold sm:text-3xl">{count !== undefined ? formatCompactNumber(count) : 'Indisponível'}</span>
+            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted">{social.name}</span>
             {showLive && (
               <span className="inline-flex items-center gap-1 text-[11px] font-semibold" style={{ color: social.color }}>
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ backgroundColor: social.color }} />

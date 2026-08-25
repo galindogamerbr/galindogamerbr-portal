@@ -108,12 +108,12 @@ export function FarmStatusCard() {
           <span className="text-xs uppercase tracking-widest text-muted">Jogadores</span>
         </div>
         <div className="flex flex-col items-center gap-1 text-center">
-          <span className="text-lg font-semibold text-gold">{status.uptime ? formatUptimeText(status.uptime) : '—'}</span>
+          <span className="text-lg font-semibold text-gold">{status.uptime ? formatUptimeText(status.uptime) : 'Indisponível'}</span>
           <span className="text-xs uppercase tracking-widest text-muted">No ar há</span>
         </div>
         <div className="flex flex-col items-center gap-1 text-center">
           <span className="text-base font-semibold" title={status.mapName}>
-            {status.mapName || '—'}
+            {status.mapName || 'Não informado'}
           </span>
           <span className="text-xs uppercase tracking-widest text-muted">Mapa</span>
         </div>

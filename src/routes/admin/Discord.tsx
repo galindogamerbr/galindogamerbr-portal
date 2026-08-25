@@ -16,7 +16,7 @@ export function Discord() {
   const [input, setInput] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [savedAt, setSavedAt] = useState<number | null>(null)
+  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     if (!email) return
@@ -34,14 +34,15 @@ export function Discord() {
   async function handleSave() {
     setSaving(true)
     setError(null)
+    setSaved(false)
     const result = await setDiscordInvite(input.trim())
     setSaving(false)
     if (!result.ok) {
-      setError(result.error === 'invalid_url' ? 'Link inválido — precisa ser um link discord.com ou discord.gg.' : 'Falha ao salvar.')
+      setError(result.error === 'invalid_url' ? 'Link inválido. Use um endereço discord.com ou discord.gg.' : 'Falha ao salvar.')
       return
     }
     setUrl(result.url)
-    setSavedAt(Date.now())
+    setSaved(true)
   }
 
   if (sessionLoading) return null
@@ -64,7 +65,10 @@ export function Discord() {
                 id="discord-url"
                 type="url"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => {
+                  setInput(e.target.value)
+                  setSaved(false)
+                }}
                 placeholder="https://discord.com/invite/..."
                 className="mt-2 w-full rounded-lg border border-line bg-panel2 px-4 py-2 text-sm text-white outline-none focus:border-gold"
               />
@@ -73,7 +77,7 @@ export function Discord() {
                 <Button variant="gold" size="sm" onClick={handleSave} disabled={saving || !input.trim()}>
                   {saving ? 'Salvando…' : 'Salvar'}
                 </Button>
-                {savedAt && Date.now() - savedAt < 4000 && <span className="text-xs text-muted">Salvo ✓</span>}
+                {saved && <span className="text-xs text-muted">Salvo ✓</span>}
               </div>
               <p className="mt-4 text-xs text-muted">
                 Todo link "Entrar no Discord" do site aponta pra{' '}

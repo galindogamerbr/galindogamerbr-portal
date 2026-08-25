@@ -25,7 +25,7 @@ export function Login() {
       await requestCode(email)
       // Mesma mensagem independente do e-mail estar ou não na allowlist —
       // não revela se o e-mail é autorizado.
-      setMessage('Se este e-mail estiver autorizado, enviamos um código de acesso.')
+      setMessage('Se este email estiver autorizado, enviamos um código de acesso.')
       setStep('code')
     } finally {
       setSubmitting(false)
@@ -58,7 +58,7 @@ export function Login() {
         {step === 'email' ? (
           <form onSubmit={handleRequestCode} className="mt-8 flex flex-col gap-4">
             <label className="flex flex-col gap-2 text-sm">
-              E-mail
+              Email
               <input
                 type="email"
                 required

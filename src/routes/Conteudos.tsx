@@ -49,7 +49,7 @@ export function Conteudos() {
     {
       slug: 'furia-reborn-rp',
       image: FURIA_REBORN.image,
-      title: 'FÚRIA REBORN — GTA RP',
+      title: 'FÚRIA REBORN | GTA RP',
       badgeEmoji: '🎮',
       badgeLabel: 'Roleplay do canal',
       description: FURIA_REBORN.description,
@@ -73,7 +73,7 @@ export function Conteudos() {
       image: SNOWRUNNER.image,
       title: 'SNOWRUNNER',
       badgeEmoji: '🚛',
-      badgeLabel: 'Simulação off-road',
+      badgeLabel: 'Simulação fora de estrada',
       description: SNOWRUNNER.description,
       href: SNOWRUNNER.href,
       variant: 'blue' as const,
@@ -100,10 +100,27 @@ export function Conteudos() {
 
   return (
     <>
-      <section className="pt-16 pb-8 sm:pt-24 sm:pb-12">
-        <Container>
-          <Eyebrow>Explore o canal</Eyebrow>
-          <h1 className="text-4xl sm:text-5xl">NOSSOS CONTEÚDOS</h1>
+      <section className="relative isolate overflow-hidden border-b border-line py-16 sm:py-24">
+        <img src="/assets/background.webp" alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_35%,rgba(217,177,79,0.15),transparent_30%),linear-gradient(90deg,#050b11_8%,rgba(5,11,17,0.9)_52%,rgba(5,11,17,0.62))]" />
+        <Container className="relative">
+          <div className="max-w-4xl">
+            <Eyebrow>O universo GalindoGamerBR</Eyebrow>
+            <h1 className="mt-2 max-w-3xl text-4xl leading-none sm:text-6xl lg:text-7xl">
+              CADA JOGO ABRE UMA NOVA HISTÓRIA
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#c3cdd6] sm:text-lg">
+              Acompanhe a Fazenda Nova Aliança, descubra novas séries e encontre dicas para aproveitar cada jornada. Todo o canal reunido em um só lugar.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.16em]">
+              <a href="#fazenda-nova-alianca" className="rounded-full border border-gold/50 bg-gold/10 px-4 py-2.5 text-gold transition hover:bg-gold hover:text-bg">
+                Fazenda Nova Aliança
+              </a>
+              <a href="#series-do-canal" className="rounded-full border border-white/20 bg-white/5 px-4 py-2.5 text-white transition hover:border-white/40 hover:bg-white/10">
+                Explorar todas as séries
+              </a>
+            </div>
+          </div>
         </Container>
       </section>
 
@@ -122,11 +139,20 @@ export function Conteudos() {
       )}
 
       {/* Carro-chefe do canal — destaque acima de tudo o resto. */}
-      <section id="fazenda-nova-alianca" className="pb-8 sm:pb-12">
+      <section id="fazenda-nova-alianca" className="scroll-mt-24 py-12 sm:py-16">
         <Reveal>
           <Container>
+            <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div>
+                <Eyebrow>A série principal do canal</Eyebrow>
+                <h2 className="mt-1 text-3xl sm:text-4xl">A FAZENDA QUE CRESCE COM A COMUNIDADE</h2>
+              </div>
+              <p className="max-w-sm text-sm leading-relaxed text-muted sm:text-right">
+                Novos capítulos, decisões ao vivo e uma história construída junto de quem acompanha.
+              </p>
+            </div>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-              <div className="group overflow-hidden rounded-lg border-2 border-gold bg-panel shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] lg:col-span-5">
+              <div className="group overflow-hidden rounded-xl border-2 border-gold bg-panel shadow-[0_20px_70px_-32px_rgba(217,177,79,0.55)] lg:col-span-5">
                 <div className="relative aspect-video w-full overflow-hidden">
                   <div className="h-full w-full transition duration-500 group-hover:scale-105">
                     {flagship?.videoId ? (
@@ -138,7 +164,8 @@ export function Conteudos() {
                     )}
                   </div>
                 </div>
-                <div className="p-5 sm:p-6">
+                <div className="relative p-5 sm:p-7">
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
                   <span className="inline-flex items-center gap-2 rounded-full bg-gold px-3 py-1 text-xs font-bold uppercase tracking-widest text-bg">
                     🚜 Carro-chefe do canal
                   </span>
@@ -147,18 +174,19 @@ export function Conteudos() {
                       <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
                     </span>
                   )}
-                  <h2 className="mt-3 text-2xl sm:text-3xl">Farming Simulator 25 — Fazenda Nova Aliança</h2>
+                  <h2 className="mt-3 text-2xl sm:text-3xl">Farming Simulator 25 | Fazenda Nova Aliança</h2>
                   {flagship?.title && (
                     <span className="mt-1 block text-xs font-semibold uppercase tracking-widest text-gold">
                       {flagship.title}
                     </span>
                   )}
-                  <p className="mt-3 text-justify text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <LinkButton variant="green" href={flagshipHref} target="_blank" rel="noopener noreferrer">
+                  <p className="mt-3 max-w-3xl leading-relaxed text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
+                  <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <LinkButton className="w-full" variant="red" href={flagshipHref} target="_blank" rel="noopener noreferrer">
                       Assistir no YouTube
                     </LinkButton>
                     <LinkButton
+                      className="w-full"
                       variant="gold"
                       href="https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN"
                       target="_blank"
@@ -166,30 +194,36 @@ export function Conteudos() {
                     >
                       Ver playlist completa
                     </LinkButton>
-                    <NavButton variant="blue" to="/mods">
+                    <NavButton className="w-full" variant="blue" to="/mods">
                       Sincronize seus mods
                     </NavButton>
-                    <NavButton variant="purple" to="/fazenda">
+                    <NavButton className="w-full" variant="purple" to="/fazenda">
                       Participe da Fazenda
                     </NavButton>
                   </div>
                 </div>
               </div>
 
-              <div className="hidden flex-col gap-3 lg:col-span-2 lg:flex">
+              <aside className="hidden overflow-hidden rounded-xl border border-line bg-panel/80 lg:col-span-2 lg:flex lg:flex-col">
+                <div className="border-b border-line px-4 py-4">
+                  <span className="text-xs font-bold uppercase tracking-[0.16em] text-gold">Continue acompanhando</span>
+                  <h3 className="mt-1 text-xl">CAPÍTULOS RECENTES</h3>
+                </div>
+                <div className="flex flex-1 flex-col gap-2 p-3">
                 {recent.map((video) => (
                   <a
                     key={video.videoId}
                     href={`https://www.youtube.com/watch?v=${video.videoId}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex flex-1 items-center gap-3 overflow-hidden rounded-md border border-line bg-panel p-3 transition hover:border-gold"
+                    className="group/video flex flex-1 items-center gap-3 overflow-hidden rounded-md border border-transparent bg-panel2 p-2.5 transition hover:border-gold/60 hover:bg-gold/5"
                   >
-                    <img src={video.thumbnailUrl} alt="" className="aspect-video w-32 shrink-0 rounded object-cover sm:w-40" />
-                    <p className="line-clamp-2 min-w-0 flex-1 text-sm font-semibold">{video.title}</p>
+                    <img src={video.thumbnailUrl} alt="" className="aspect-video w-28 shrink-0 rounded object-cover" />
+                    <p className="line-clamp-2 min-w-0 flex-1 text-xs font-semibold leading-relaxed transition group-hover/video:text-gold">{video.title}</p>
                   </a>
                 ))}
-              </div>
+                </div>
+              </aside>
             </div>
           </Container>
         </Reveal>
@@ -199,6 +233,10 @@ export function Conteudos() {
       <section className="pb-16 sm:pb-24">
         <Reveal>
           <Container>
+            <div className="mb-6">
+              <Eyebrow>Aprenda com o Galindo</Eyebrow>
+              <h2 className="mt-1 text-3xl sm:text-4xl">SOLUÇÕES PARA JOGAR MELHOR</h2>
+            </div>
             <GameHighlightCard
               image={DICAS.image}
               title="DICAS DO GALINDO"
@@ -214,10 +252,13 @@ export function Conteudos() {
         </Reveal>
       </section>
 
-      <section className="pb-16 sm:pb-24">
+      <section id="series-do-canal" className="scroll-mt-24 border-t border-line/70 py-16 sm:py-24">
         <Reveal>
           <Container>
-            <SectionHead eyebrow="Descubra mais" title="OUTROS JOGOS DO CANAL" />
+            <SectionHead eyebrow="Escolha sua próxima jornada" title="SÉRIES PARA TODOS OS ESTILOS" />
+            <p className="mt-3 max-w-2xl leading-relaxed text-muted">
+              Roleplay, estradas, terrenos extremos e novos desafios. Encontre a série que combina com você e comece pelo capítulo mais recente.
+            </p>
 
             {/* Fúria Reborn, ETS2 e SnowRunner — destaques secundários, mesmo
                 formato do teaser da Home (imagem+conteúdo 50/50, full width).

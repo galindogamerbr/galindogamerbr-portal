@@ -15,7 +15,7 @@ export const GAMES: Game[] = [
     title: 'Farming Simulator 25',
     tag: 'Carro-chefe',
     icon: '/assets/logos/trator.webp',
-    description: 'Fazendas, máquinas, produção, mods e histórias da comunidade — inclui a série Fazenda Nova Aliança.',
+    description: 'Fazendas, máquinas, produção, mods e histórias da comunidade, incluindo a série Fazenda Nova Aliança.',
     image: '/assets/banners/fs25.webp',
     href: 'https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN',
     flagship: true,
@@ -81,7 +81,7 @@ export const FAZENDA_NOVA_ALIANCA = {
 export const FURIA_REBORN = {
   // Vídeos recentes reais vêm de /api/furia (src/hooks/useFuriaVideos.ts).
   description:
-    'Bem-vindo ao universo Fúria Reborn! Perseguições de tirar o fôlego, missões insanas, guerra de facções e histórias que só existem porque a comunidade tá junto ao vivo. Cada transmissão escreve um capítulo novo dessa cidade sem lei.',
+    'Boas vindas ao universo Fúria Reborn! Perseguições de tirar o fôlego, missões insanas, guerra de facções e histórias que só existem porque a comunidade tá junto ao vivo. Cada transmissão escreve um capítulo novo dessa cidade sem lei.',
   image: '/assets/banners/furia-reborn.webp',
   href: 'https://www.youtube.com/playlist?list=PLJtoEQhBWmWI',
 }
@@ -107,7 +107,7 @@ export const SNOWRUNNER = {
   // image separado do usado no card pequeno (snowrunner.webp é retrato,
   // pensado pro grid de "outros jogos" — este é o banner largo dedicado.
   description:
-    'Neve, lama e muita adrenalina! Expedições off-road brutais em terrenos que parecem impossíveis de atravessar, resgates de veículos presos e um inverno hostil que não perdoa. Cada transmissão é um novo duelo contra a natureza.',
+    'Neve, lama e muita adrenalina! Expedições brutais fora de estrada em terrenos que parecem impossíveis de atravessar, resgates de veículos presos e um inverno hostil que não perdoa. Cada transmissão é um novo duelo contra a natureza.',
   image: '/assets/banners/snowrunner-banner.webp',
   href: 'https://www.youtube.com/playlist?list=PLDv3gOgRACDY',
 }

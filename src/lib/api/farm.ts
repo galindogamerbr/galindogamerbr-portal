@@ -1,26 +1,30 @@
-type WelcomeVideoResponse = { videoId: string }
-type AdminWelcomeVideoResponse = { videoId?: string; error?: string }
+export type FarmVideos = { welcomeVideoId: string; rulesVideoId: string }
+type FarmVideosResponse = Partial<FarmVideos> & { error?: string }
 
-export async function getFarmWelcomeVideo(): Promise<string> {
+export async function getFarmVideos(): Promise<FarmVideos> {
   const res = await fetch('/api/farm/welcome-video')
-  const data = (await res.json()) as WelcomeVideoResponse
-  return data.videoId
+  const data = (await res.json()) as FarmVideosResponse
+  if (!res.ok || !data.welcomeVideoId || !data.rulesVideoId) throw new Error(data.error ?? 'fetch_failed')
+  return { welcomeVideoId: data.welcomeVideoId, rulesVideoId: data.rulesVideoId }
 }
 
-export async function getAdminFarmWelcomeVideo(): Promise<string> {
+export async function getAdminFarmVideos(): Promise<FarmVideos> {
   const res = await fetch('/api/admin/farm/welcome-video')
-  const data = (await res.json()) as AdminWelcomeVideoResponse
-  if (!res.ok || !data.videoId) throw new Error(data.error ?? 'fetch_failed')
-  return data.videoId
+  const data = (await res.json()) as FarmVideosResponse
+  if (!res.ok || !data.welcomeVideoId || !data.rulesVideoId) throw new Error(data.error ?? 'fetch_failed')
+  return { welcomeVideoId: data.welcomeVideoId, rulesVideoId: data.rulesVideoId }
 }
 
-export async function setFarmWelcomeVideo(video: string): Promise<{ ok: true; videoId: string } | { ok: false; error: string }> {
+export async function setFarmVideos(
+  welcomeVideo: string,
+  rulesVideo: string,
+): Promise<{ ok: true; videos: FarmVideos } | { ok: false; error: string }> {
   const res = await fetch('/api/admin/farm/welcome-video', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ video }),
+    body: JSON.stringify({ welcomeVideo, rulesVideo }),
   })
-  const data = (await res.json()) as AdminWelcomeVideoResponse
-  if (!res.ok || !data.videoId) return { ok: false, error: data.error ?? 'save_failed' }
-  return { ok: true, videoId: data.videoId }
+  const data = (await res.json()) as FarmVideosResponse
+  if (!res.ok || !data.welcomeVideoId || !data.rulesVideoId) return { ok: false, error: data.error ?? 'save_failed' }
+  return { ok: true, videos: { welcomeVideoId: data.welcomeVideoId, rulesVideoId: data.rulesVideoId } }
 }

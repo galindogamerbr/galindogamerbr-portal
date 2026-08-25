@@ -32,13 +32,7 @@ export function Schedule() {
   const [message, setMessage] = useState<string | null>(null)
   const discordPortraitRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!email) return
-    void bootstrap()
-  }, [email])
-
   async function bootstrap() {
-    setLoading(true)
     try {
       const { versions } = await listVersions()
       let published = versions.find((v) => v.isPublished)
@@ -64,6 +58,11 @@ export function Schedule() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!email) return
+    void bootstrap()
+  }, [email])
 
   function addBlock(dayOfWeek: number, startTime: string, endTime: string) {
     setBlocks((prev) => [...prev, { cycleIndex: 0, dayOfWeek, startTime, endTime, note: null }])
@@ -94,7 +93,7 @@ export function Schedule() {
       setMessage(
         result.discordPublished
           ? 'Programação salva na home e publicada no Discord.'
-          : 'Programação salva — não houve alteração para publicar no Discord.',
+          : 'Programação salva. Não houve alteração para publicar no Discord.',
       )
     } finally {
       setSaving(false)
@@ -160,7 +159,7 @@ export function Schedule() {
                           onChange={(e) => updateBlock(index, 'startTime', e.target.value)}
                           className="bg-transparent text-sm text-white outline-none"
                         />
-                        <span className="text-white/40">–</span>
+                        <span className="text-white/40">até</span>
                         <input
                           type="time"
                           value={block.endTime}
