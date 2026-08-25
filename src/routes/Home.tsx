@@ -107,7 +107,23 @@ function FazendaTeaser() {
       <Reveal>
         <Container>
           <div className="rounded-lg border-2 border-gold bg-gradient-to-br from-panel to-panel2 p-8 shadow-[0_0_60px_-15px_rgba(217,177,79,0.35)] sm:p-10">
-            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col items-start gap-5 rounded-lg border border-gold bg-gold/10 p-5 shadow-[0_0_35px_-15px_rgba(217,177,79,0.65)] sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <div className="flex items-start gap-4">
+                <span className="text-4xl">👋</span>
+                <div>
+                  <Eyebrow>Comece por aqui</Eyebrow>
+                  <h2 className="text-2xl text-gold sm:text-3xl">NOVO POR AQUI?</h2>
+                  <p className="mt-1 max-w-xl text-sm text-white/80 sm:text-base">
+                    Dê uma olhada na mensagem de boas-vindas do nosso streamer e conheça a comunidade.
+                  </p>
+                </div>
+              </div>
+              <NavButton to="/boasvindas" variant="gold" className="shrink-0">
+                Assistir à mensagem →
+              </NavButton>
+            </div>
+
+            <div className="mt-8 flex flex-col items-start gap-6 border-t border-gold/30 pt-8 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
                 <span className="text-4xl">🚜</span>
                 <div>
@@ -119,21 +135,8 @@ function FazendaTeaser() {
                   </p>
                 </div>
               </div>
-              <NavButton to="/fazenda" variant="gold" className="shrink-0 text-base">
+              <NavButton to="/fazenda" variant="default" className="shrink-0 text-base">
                 Ver como participar →
-              </NavButton>
-            </div>
-
-            <div className="mt-8 flex flex-col items-start gap-4 border-t border-gold/30 pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">👋</span>
-                <div>
-                  <h3 className="text-lg">NOVO POR AQUI?</h3>
-                  <p className="mt-1 text-sm text-muted">Dê uma olhada na mensagem de boas-vindas do nosso streamer.</p>
-                </div>
-              </div>
-              <NavButton to="/boasvindas" variant="default" size="sm">
-                Assistir à mensagem →
               </NavButton>
             </div>
           </div>
