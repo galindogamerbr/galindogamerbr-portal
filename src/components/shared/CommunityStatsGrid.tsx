@@ -61,7 +61,7 @@ export function CommunityStatsGrid() {
               alt=""
               className="h-8 w-8 rounded object-contain transition duration-300 group-hover:scale-110"
             />
-            <span className="text-lg font-semibold">{count !== undefined ? formatCompactNumber(count) : '—'}</span>
+            <span className="text-lg font-semibold">{count !== undefined ? formatCompactNumber(count) : 'Indisponível'}</span>
             <span className="text-xs uppercase tracking-widest text-muted">{social.name}</span>
             {showLive && (
               <span className="inline-flex items-center gap-1 text-[11px] font-semibold" style={{ color: social.color }}>

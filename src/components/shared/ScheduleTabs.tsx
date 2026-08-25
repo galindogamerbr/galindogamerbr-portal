@@ -87,7 +87,7 @@ export function ScheduleTabs() {
                         alt=""
                         className="h-4 w-4"
                       />
-                      {b.startTime}–{b.endTime}
+                      {b.startTime} até {b.endTime}
                     </span>
                   ))}
                 </div>
@@ -99,7 +99,7 @@ export function ScheduleTabs() {
         })}
       </div>
 
-      <p className="mt-4 text-xs text-muted">Horários de Brasília (GMT-3).</p>
+      <p className="mt-4 text-xs text-muted">Horários de Brasília.</p>
     </div>
   )
 }

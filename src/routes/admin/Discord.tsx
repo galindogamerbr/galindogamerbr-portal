@@ -37,7 +37,7 @@ export function Discord() {
     const result = await setDiscordInvite(input.trim())
     setSaving(false)
     if (!result.ok) {
-      setError(result.error === 'invalid_url' ? 'Link inválido — precisa ser um link discord.com ou discord.gg.' : 'Falha ao salvar.')
+      setError(result.error === 'invalid_url' ? 'Link inválido. Use um endereço discord.com ou discord.gg.' : 'Falha ao salvar.')
       return
     }
     setUrl(result.url)

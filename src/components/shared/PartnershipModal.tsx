@@ -56,7 +56,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
             MENSAGEM ENVIADA
           </h2>
           <p className="mt-3 text-muted">
-            Recebemos seu contato e o Galindo vai responder direto no e-mail que você informou.
+            Recebemos seu contato e o Galindo vai responder direto no email que você informou.
           </p>
           <Button variant="gold" className="mt-6" onClick={handleClose}>
             Fechar
@@ -94,7 +94,7 @@ export function PartnershipModal({ open, onClose }: PartnershipModalProps) {
               />
             </label>
             <label className="flex flex-col gap-2 text-sm">
-              E-mail
+              Email
               <input
                 type="email"
                 required

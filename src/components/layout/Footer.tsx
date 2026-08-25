@@ -13,7 +13,7 @@ export function Footer() {
             </Link>
           ))}
         </nav>
-        <p className="text-xs text-muted">© 2026 GalindoGamerBR — Todos os direitos reservados.</p>
+        <p className="text-xs text-muted">© 2026 GalindoGamerBR. Todos os direitos reservados.</p>
       </Container>
     </footer>
   )

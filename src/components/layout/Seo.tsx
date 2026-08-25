@@ -15,7 +15,7 @@ type SeoData = {
 const ROUTE_SEO: Record<string, SeoData> = {
   '/': { description: DEFAULT_DESCRIPTION },
   '/boasvindas': {
-    title: 'Boas-vindas',
+    title: 'Boas vindas',
     description: 'Conheça o GalindoGamerBR e descubra como participar dos conteúdos, da fazenda e da comunidade.',
   },
   '/conteudos': {

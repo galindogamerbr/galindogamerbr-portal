@@ -21,7 +21,7 @@ const STORY = [
   {
     n: '02 • HOJE',
     title: 'TRANSFORMAR PAIXÃO EM HISTÓRIA',
-    text: 'Hoje essa paixão é compartilhada em Farming Simulator 25, Fúria Reborn GTA RP, SnowRunner, Euro Truck Simulator 2 e outros jogos. Cada transmissão vira uma nova história — e cada pessoa que chega pode fazer parte dela.',
+    text: 'Hoje essa paixão é compartilhada em Farming Simulator 25, Fúria Reborn GTA RP, SnowRunner, Euro Truck Simulator 2 e outros jogos. Cada transmissão vira uma nova história, e cada pessoa que chega pode fazer parte dela.',
   },
   {
     n: '03 • PESSOAS',
@@ -31,7 +31,7 @@ const STORY = [
   {
     n: '04 • PROPÓSITO',
     title: 'DEIXAR UMA BOA LEMBRANÇA',
-    text: 'A ideia é que quem passe por aqui leve alguma coisa: uma risada, uma história, uma amizade, uma dica, uma inspiração ou simplesmente um momento em que se sentiu bem-vindo.',
+    text: 'A ideia é que quem passe por aqui leve alguma coisa: uma risada, uma história, uma amizade, uma dica, uma inspiração ou simplesmente um momento em que se sentiu acolhido.',
   },
 ]
 

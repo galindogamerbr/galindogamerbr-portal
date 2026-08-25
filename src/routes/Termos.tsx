@@ -13,7 +13,7 @@ export function Termos() {
           <div>
             <h2 className="text-lg text-white">Sobre este site</h2>
             <p className="mt-2">
-              Este site (galindogamerbr.com.br) é a página institucional do canal GalindoGamerBR — mostra
+              Este site (galindogamerbr.com.br) é a página institucional do canal GalindoGamerBR. Ele mostra
               programação de lives, vídeos em destaque e números públicos da comunidade (seguidores/inscritos em
               cada rede). Ao usar o site, você concorda com estes termos.
             </p>

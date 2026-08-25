@@ -60,7 +60,7 @@ export function FarmWelcomeVideo() {
         <div className="mt-6 space-y-6 rounded-lg border border-line bg-panel p-6">
           <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-muted" htmlFor="farm-welcome-video">
-            Vídeo de boas-vindas
+            Vídeo de boas vindas
           </label>
           <input
             id="farm-welcome-video"
@@ -71,7 +71,7 @@ export function FarmWelcomeVideo() {
             className="mt-2 w-full rounded-lg border border-line bg-panel2 px-4 py-2 text-sm text-white outline-none focus:border-gold"
             disabled={loading}
           />
-            <p className="mt-2 text-xs text-muted">Exibido na página Boas-vindas.</p>
+            <p className="mt-2 text-xs text-muted">Exibido na página Boas vindas.</p>
           </div>
 
           <div>

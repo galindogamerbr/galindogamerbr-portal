@@ -69,7 +69,7 @@ function Hero() {
       />
       <Container className="relative z-10 flex h-full flex-col justify-center gap-4 py-16 xl:py-0">
         <div className="grid w-fit grid-cols-[auto_auto] items-center gap-x-3.5 gap-y-0.5">
-          <span className="col-span-2 text-xs font-bold uppercase tracking-widest text-gold">Bem-vindo ao universo</span>
+          <span className="col-span-2 text-xs font-bold uppercase tracking-widest text-gold">Boas vindas ao universo</span>
           <Logo alt="" className="row-span-2 h-16 w-16 sm:h-20 sm:w-20" />
           <h1 className="max-w-[600px] text-[clamp(32px,5.4vw,64px)] leading-[0.95]">
             GALINDO<span className="text-gold">GAMER</span>BR
@@ -114,7 +114,7 @@ function FazendaTeaser() {
                   <Eyebrow>Comece por aqui</Eyebrow>
                   <h2 className="text-2xl text-gold sm:text-3xl">NOVO POR AQUI?</h2>
                   <p className="mt-1 max-w-xl text-sm text-white/80 sm:text-base">
-                    Dê uma olhada na mensagem de boas-vindas do nosso streamer e conheça a comunidade.
+                    Veja a mensagem de boas vindas do nosso streamer e conheça a comunidade.
                   </p>
                 </div>
               </div>
@@ -273,24 +273,39 @@ function ParceirosTeaser() {
     <section className="pb-16 sm:pb-24">
       <Reveal>
         <Container>
-          <div className="flex flex-col items-start gap-6 rounded-lg border border-gold/40 bg-panel p-6 sm:flex-row sm:items-center sm:p-8">
-            <div>
-              <Eyebrow>Parceiros e marcas</Eyebrow>
-              <h2 className="text-2xl sm:text-3xl">UMA MARCA PRESENTE. UMA COMUNIDADE QUE RECONHECE.</h2>
-              <p className="mt-3 max-w-2xl text-muted">
-                Sua marca pode ganhar espaço onde o público já está: nas lives, nos vídeos e nas conversas que movem
-                o universo GalindoGamerBR.
-              </p>
-              <p className="mt-3 max-w-2xl text-muted">
-                Criamos ações com contexto, proximidade e propósito — muito mais do que apenas colocar uma logo na
-                tela.
-              </p>
-              <NavButton to="/parceiros" variant="gold" className="mt-6">
-                Conheça as possibilidades →
-              </NavButton>
-            </div>
-            <div className="sm:flex sm:flex-1 sm:justify-center">
-              <Logo alt="" className="h-28 w-28 shrink-0 sm:h-36 sm:w-36" />
+          <div className="relative isolate overflow-hidden rounded-xl border border-gold/60 bg-panel shadow-[0_20px_70px_-35px_rgba(217,177,79,0.55)]">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_50%,rgba(217,177,79,0.18),transparent_28%),linear-gradient(120deg,transparent_45%,rgba(217,177,79,0.05))]" />
+            <div className="grid items-center gap-8 p-7 sm:p-10 lg:grid-cols-[1.35fr_0.65fr] lg:p-12">
+              <div>
+                <Eyebrow>Parceiros e marcas</Eyebrow>
+                <h2 className="mt-1 max-w-3xl text-3xl sm:text-4xl">SUA MARCA PODE FAZER PARTE DESTA HISTÓRIA.</h2>
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted">
+                  Conectamos marcas ao público por meio de lives, vídeos e experiências que combinam com o universo
+                  GalindoGamerBR. Cada ação nasce com contexto, proximidade e propósito.
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {['Conteúdo com contexto', 'Presença nas lives', 'Comunidade engajada'].map((item) => (
+                    <span key={item} className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-semibold text-gold">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+
+                <NavButton to="/parceiros" variant="gold" className="mt-7">
+                  Criar uma parceria →
+                </NavButton>
+              </div>
+
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative flex h-52 w-52 items-center justify-center rounded-full border border-gold/30 bg-bg/50 shadow-[0_0_70px_-18px_rgba(217,177,79,0.75)] sm:h-60 sm:w-60">
+                  <div className="absolute inset-3 rounded-full border border-gold/15" />
+                  <Logo alt="" className="relative h-36 w-36 sm:h-44 sm:w-44" />
+                  <span className="absolute -bottom-3 rounded-full border border-gold/40 bg-panel px-4 py-2 text-xs font-bold uppercase tracking-widest text-gold">
+                    Vamos crescer juntos
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </Container>
@@ -327,8 +342,8 @@ function Newsletter() {
                 <input
                   type="email"
                   required
-                  placeholder="Seu melhor e-mail"
-                  aria-label="Seu melhor e-mail"
+                  placeholder="Seu melhor email"
+                  aria-label="Seu melhor email"
                   className="w-full rounded-md border border-line bg-panel2 px-4 py-3 text-sm text-white outline-none focus:border-gold sm:w-64"
                 />
                 <button
@@ -339,7 +354,7 @@ function Newsletter() {
                 </button>
               </form>
             ) : (
-              <p className="text-sm text-muted">Cadastro em breve — essa área ainda está sendo conectada.</p>
+              <p className="text-sm text-muted">Cadastro em breve. Esta área ainda está sendo conectada.</p>
             )}
           </div>
         </Container>

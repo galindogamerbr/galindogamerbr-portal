@@ -11,7 +11,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-bg/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-container items-center justify-between gap-4 px-5 py-3 sm:px-8">
-        <Link to="/" className="flex items-center gap-3" aria-label="GalindoGamerBR — início">
+        <Link to="/" className="flex items-center gap-3" aria-label="GalindoGamerBR, início">
           <Logo className="h-[52px] w-[52px]" />
           <div className="text-center leading-tight">
             <strong className="block text-sm tracking-wide">

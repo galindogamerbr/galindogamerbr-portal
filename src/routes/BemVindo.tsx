@@ -86,7 +86,7 @@ export function BemVindo() {
                     <h2 className="text-lg">COMECE POR AQUI</h2>
                   </div>
                 </div>
-                <VideoEmbed videoId={welcomeVideoId} title="Vídeo de boas-vindas — GalindoGamerBR" />
+                <VideoEmbed videoId={welcomeVideoId} title="Vídeo de boas vindas do GalindoGamerBR" />
               </div>
             </Reveal>
           </div>

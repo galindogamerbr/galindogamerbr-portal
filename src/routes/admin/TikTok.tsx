@@ -68,7 +68,7 @@ export function TikTok() {
             <>
               <p className="text-sm text-white">Ainda não conectado.</p>
               <p className="mt-1 text-xs text-muted">
-                Clica no botão abaixo, loga com a conta do TikTok do canal e autoriza — só precisa fazer isso uma vez.
+                Clique no botão abaixo, entre com a conta do TikTok do canal e autorize. Isso só precisa ser feito uma vez.
               </p>
               <LinkButton variant="gold" size="sm" className="mt-4" href="/api/admin/tiktok/authorize">
                 Conectar TikTok

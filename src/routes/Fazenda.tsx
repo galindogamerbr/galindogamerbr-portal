@@ -200,7 +200,7 @@ export function Fazenda() {
             Fechar
           </button>
         </div>
-        <VideoEmbed videoId={rulesVideoId} title="Regras da Fazenda Nova Aliança — GalindoGamerBR" />
+        <VideoEmbed videoId={rulesVideoId} title="Regras da Fazenda Nova Aliança do GalindoGamerBR" />
       </Modal>
     </>
   )

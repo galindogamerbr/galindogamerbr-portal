@@ -94,7 +94,7 @@ export function Schedule() {
       setMessage(
         result.discordPublished
           ? 'Programação salva na home e publicada no Discord.'
-          : 'Programação salva — não houve alteração para publicar no Discord.',
+          : 'Programação salva. Não houve alteração para publicar no Discord.',
       )
     } finally {
       setSaving(false)
@@ -160,7 +160,7 @@ export function Schedule() {
                           onChange={(e) => updateBlock(index, 'startTime', e.target.value)}
                           className="bg-transparent text-sm text-white outline-none"
                         />
-                        <span className="text-white/40">–</span>
+                        <span className="text-white/40">até</span>
                         <input
                           type="time"
                           value={block.endTime}

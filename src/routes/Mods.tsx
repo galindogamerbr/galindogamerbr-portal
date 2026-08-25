@@ -23,8 +23,8 @@ const FEATURES = [
   { icon: '🔄', title: 'Sincronização automática', text: 'Pasta de mods e servidor sempre alinhados, sem esforço manual.' },
   { icon: '📦', title: 'Direto da fonte oficial', text: 'Sempre a mesma versão usada nas lives, sem garimpar link perdido.' },
   { icon: '🧹', title: 'Limpeza automática', text: 'Remove sozinho os mods antigos que não estão mais no servidor.' },
-  { icon: '🎯', title: 'Configura uma vez', text: 'Aponta a pasta e o servidor uma única vez — depois é só jogar.' },
-  { icon: '🖥️', title: 'Código aberto', text: 'Projeto open-source, qualquer um pode conferir como funciona.' },
+  { icon: '🎯', title: 'Configura uma vez', text: 'Aponte a pasta e o servidor uma única vez. Depois é só jogar.' },
+  { icon: '🖥️', title: 'Código aberto', text: 'O código do projeto é aberto e qualquer pessoa pode conferir como funciona.' },
 ] as const
 
 // Formato confirmado direto na API real: {"version":"v1.1.0","url":"..."}
@@ -64,10 +64,10 @@ export function Mods() {
     <section className="py-16 sm:py-24">
       <Container className="max-w-2xl">
         <Eyebrow>Farming Simulator 25</Eyebrow>
-        <h1 className="text-4xl sm:text-5xl">MOD SYNC — MODS DA FAZENDA</h1>
+        <h1 className="text-4xl sm:text-5xl">MOD SYNC | MODS DA FAZENDA</h1>
         <p className="mt-3 text-muted">
-          App feito pra manter os mods da Fazenda Nova Aliança sempre sincronizados e atualizados, sem complicação —
-          baixe, instale e jogue com exatamente os mesmos mods usados nas lives.
+          App feito pra manter os mods da Fazenda Nova Aliança sempre sincronizados e atualizados. Baixe, instale e
+          jogue com exatamente os mesmos mods usados nas lives.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -101,8 +101,8 @@ export function Mods() {
           </p>
           <p>
             O Mod Sync acabou com isso. Aponta ele pra sua pasta de mods e ele cuida do resto: baixa o que falta,
-            remove o que não bate mais e mantém tudo sincronizado direto com a versão oficial usada nas lives — sem
-            link pra procurar, sem versão pra adivinhar, sem surpresa na hora de jogar. E o download é bem mais
+            remove o que não bate mais e mantém tudo sincronizado direto com a versão oficial usada nas lives. Não
+            tem link pra procurar, versão pra adivinhar ou surpresa na hora de jogar. E o download é bem mais
             rápido do que baixar cada mod pelo gerenciador do próprio Farming Simulator.
           </p>
         </div>

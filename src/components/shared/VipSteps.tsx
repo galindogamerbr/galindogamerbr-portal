@@ -27,11 +27,11 @@ export function VipSteps({ variant = 'full' }: VipStepsProps) {
       <Eyebrow>Área VIP</Eyebrow>
       <h2 className="text-3xl sm:text-4xl">GRUPO VIP DO CANAL</h2>
       <p className="mt-3 max-w-2xl text-muted">
-        Um espaço exclusivo e propositalmente seleto — reconhece quem fortalece o canal e ajuda a manter vivo o
+        Um espaço exclusivo e propositalmente seleto que reconhece quem fortalece o canal e ajuda a manter vivo o
         servidor, os projetos e toda a resenha que construímos juntos.
       </p>
       <p className="mt-2 max-w-2xl text-muted">
-        Já se qualifica? Bora fazer parte dessa comunidade — chega junto e ajuda a manter a resenha viva!
+        Já se qualifica? Bora fazer parte dessa comunidade. Chega junto e ajuda a manter a resenha viva!
       </p>
 
       {variant === 'full' && (

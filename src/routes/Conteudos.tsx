@@ -49,7 +49,7 @@ export function Conteudos() {
     {
       slug: 'furia-reborn-rp',
       image: FURIA_REBORN.image,
-      title: 'FÚRIA REBORN — GTA RP',
+      title: 'FÚRIA REBORN | GTA RP',
       badgeEmoji: '🎮',
       badgeLabel: 'Roleplay do canal',
       description: FURIA_REBORN.description,
@@ -73,7 +73,7 @@ export function Conteudos() {
       image: SNOWRUNNER.image,
       title: 'SNOWRUNNER',
       badgeEmoji: '🚛',
-      badgeLabel: 'Simulação off-road',
+      badgeLabel: 'Simulação fora de estrada',
       description: SNOWRUNNER.description,
       href: SNOWRUNNER.href,
       variant: 'blue' as const,
@@ -147,7 +147,7 @@ export function Conteudos() {
                       <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
                     </span>
                   )}
-                  <h2 className="mt-3 text-2xl sm:text-3xl">Farming Simulator 25 — Fazenda Nova Aliança</h2>
+                  <h2 className="mt-3 text-2xl sm:text-3xl">Farming Simulator 25 | Fazenda Nova Aliança</h2>
                   {flagship?.title && (
                     <span className="mt-1 block text-xs font-semibold uppercase tracking-widest text-gold">
                       {flagship.title}

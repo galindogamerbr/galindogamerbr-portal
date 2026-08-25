@@ -156,7 +156,7 @@ export const ScheduleExportTemplate = forwardRef<HTMLDivElement, ScheduleExportT
             >
               {isOffline ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', alignItems: 'center', width: '100%' }}>
-                  <div style={{ justifySelf: 'center', fontSize: template.offlineTitleSize, fontWeight: 800, color: OFFLINE_RED, letterSpacing: 1 }}>OFF-LINE</div>
+                  <div style={{ justifySelf: 'center', fontSize: template.offlineTitleSize, fontWeight: 800, color: OFFLINE_RED, letterSpacing: 1 }}>OFFLINE</div>
                   <div style={{ justifySelf: 'center', textAlign: 'center', fontSize: template.offlineTextSize, fontWeight: 600, color: '#f3f5f7', lineHeight: 1.3 }}>
                     Descanso e preparação
                     <br />

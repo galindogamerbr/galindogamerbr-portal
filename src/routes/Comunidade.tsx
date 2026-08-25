@@ -38,7 +38,7 @@ export function Comunidade() {
           <Container>
             <Eyebrow>Comunidade em números</Eyebrow>
             <h2 className="text-3xl sm:text-4xl">A GALERA CRESCENDO</h2>
-            <p className="mt-3 max-w-xl text-muted">Seguidores em cada rede, atualizados a cada hora — tudo num só lugar.</p>
+            <p className="mt-3 max-w-xl text-muted">Veja em um só lugar os seguidores de cada rede, com atualização a cada hora.</p>
             <div className="mt-8">
               <CommunityStatsGrid />
             </div>
