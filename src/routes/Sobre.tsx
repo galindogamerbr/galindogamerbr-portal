@@ -2,10 +2,7 @@ import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { Reveal } from '../components/ui/Reveal'
 import { NavButton } from '../components/ui/Button'
-import { PageBackground } from '../components/layout/PageBackground'
 import { PartnershipTeaser } from '../components/shared/PartnershipTeaser'
-
-const ABOUT_OVERLAY = 'linear-gradient(90deg, rgba(3,7,11,0.2) 0%, rgba(3,7,11,0.72) 42%, rgba(3,7,11,0.12) 82%)'
 
 const CHIPS = ['41 anos', 'Casado', 'Gamer desde criança', 'Windows 95', 'Simuladores', 'Roleplay', 'Comunidade']
 
@@ -39,10 +36,9 @@ const STORY = [
 export function Sobre() {
   return (
     <>
-      <PageBackground image="/assets/about-bg.webp" overlay={ABOUT_OVERLAY} />
-
       <section className="relative isolate flex min-h-[680px] items-center overflow-hidden py-16 sm:py-24">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_40%,rgba(217,177,79,0.14),transparent_38%)]" />
+        <div className="pointer-events-none absolute inset-0 -z-20 bg-cover bg-[position:64%_top] lg:bg-center" style={{ backgroundImage: 'url(/assets/about-bg.webp)' }} />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,7,11,0.22)_0%,rgba(3,7,11,0.88)_38%,rgba(3,7,11,0.16)_78%),radial-gradient(circle_at_20%_40%,rgba(217,177,79,0.14),transparent_38%)]" />
         <Container>
           <Reveal>
             <div className="max-w-2xl">
@@ -66,9 +62,16 @@ export function Sobre() {
       <section id="historia" className="border-y border-line bg-panel/45 py-16 sm:py-24">
         <Reveal>
           <Container>
-            <div className="relative min-h-[520px] overflow-hidden rounded-xl border border-gold/40 bg-panel bg-[url('/assets/about-galindo.webp')] bg-cover bg-[position:35%_center] shadow-[0_24px_70px_-38px_rgba(217,177,79,0.65)] lg:bg-center">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bg/35 to-bg/95" />
-              <div className="relative ml-auto flex min-h-[520px] max-w-2xl flex-col justify-center p-7 sm:p-10 lg:w-[58%] lg:p-12">
+            <div className="relative overflow-hidden rounded-xl border border-gold/40 bg-gradient-to-br from-panel via-panel to-panel2 p-7 shadow-[0_24px_70px_-38px_rgba(217,177,79,0.65)] sm:p-10 lg:p-12">
+              <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+              <div className="relative grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-16">
+                <div>
+                  <span className="block text-8xl font-black leading-none text-gold/15 sm:text-9xl">41</span>
+                  <p className="-mt-3 max-w-sm text-2xl leading-tight text-white sm:text-3xl">anos de histórias antes mesmo da primeira live.</p>
+                  <div className="mt-7 h-px w-24 bg-gold" />
+                  <p className="mt-5 text-sm font-semibold uppercase tracking-[0.18em] text-gold">Games • Família • Comunidade</p>
+                </div>
+                <div>
                 <Eyebrow>Quem é o Galindo?</Eyebrow>
                 <h2 className="mt-1 text-3xl sm:text-4xl">UM CARA COMUM. UMA PAIXÃO QUE NUNCA FICOU PARA TRÁS.</h2>
                 <div className="mt-5 space-y-4 leading-relaxed text-muted">
@@ -82,6 +85,7 @@ export function Sobre() {
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2">
                   {CHIPS.map((chip) => <span key={chip} className="rounded-full border border-gold/45 bg-bg/65 px-3 py-1.5 text-xs font-semibold text-gold">{chip}</span>)}
+                </div>
                 </div>
               </div>
             </div>
