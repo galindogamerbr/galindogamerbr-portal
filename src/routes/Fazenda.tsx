@@ -80,11 +80,7 @@ export function Fazenda() {
                 <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted">
                   Entre para a Fazenda Nova Aliança, jogue ao lado da comunidade e ajude a construir um projeto que continua crescendo dentro e fora das lives.
                 </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <a href="#participar" className="inline-flex items-center justify-center rounded-md bg-gold px-5 py-3 text-sm font-bold uppercase text-bg transition hover:brightness-110">Quero participar</a>
-                  <NavButton variant="green" to="/mods">Preparar meus mods</NavButton>
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
+                <div className="mt-7 flex flex-wrap gap-2">
                   {['Servidor sempre ativo', 'Comunidade acolhedora', 'Não exige experiência'].map((item) => (
                     <span key={item} className="rounded-full border border-line bg-panel/80 px-3 py-1.5 text-xs font-semibold text-white/75">{item}</span>
                   ))}
