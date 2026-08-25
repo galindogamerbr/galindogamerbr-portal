@@ -235,11 +235,20 @@ function SobreTeaser() {
               src="/assets/about-galindo.webp"
               alt="GalindoGamerBR"
               loading="lazy"
-              className="aspect-[4/3] w-full object-cover object-left lg:absolute lg:inset-0 lg:aspect-auto lg:h-full lg:w-full"
+              className="hidden lg:absolute lg:inset-0 lg:block lg:h-full lg:w-full lg:object-cover lg:object-left"
             />
             <div className="absolute inset-0 hidden bg-gradient-to-r from-transparent via-bg/40 to-bg/90 lg:block" />
             <div className="p-6 sm:p-8 lg:absolute lg:inset-y-0 lg:right-0 lg:z-10 lg:flex lg:w-full lg:max-w-lg lg:flex-col lg:justify-center lg:p-10">
-              <Eyebrow>Sobre o Galindo</Eyebrow>
+              <div className="mb-6 flex items-center gap-4 lg:hidden">
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-gold/50 bg-panel2">
+                  <img src="/assets/galindo.webp" alt="GalindoGamerBR" loading="lazy" className="h-28 w-full object-cover object-top" />
+                </div>
+                <div>
+                  <Eyebrow>Sobre o Galindo</Eyebrow>
+                  <span className="mt-1 block text-xs font-semibold uppercase tracking-widest text-white/50">Conheça quem está por trás do canal</span>
+                </div>
+              </div>
+              <Eyebrow className="hidden lg:block">Sobre o Galindo</Eyebrow>
               <h2 className="text-3xl sm:text-4xl">POR TRÁS DA LIVE, EXISTE UMA HISTÓRIA.</h2>
               <p className="mt-3 text-muted">
                 Sou apaixonado por simuladores e jogos desde sempre. Criei o GalindoGamerBR para compartilhar minha
@@ -286,7 +295,7 @@ function ParceirosTeaser() {
                 </NavButton>
               </div>
 
-              <div className="flex justify-center lg:justify-end">
+              <div className="hidden justify-end lg:flex">
                 <div className="relative flex h-52 w-52 items-center justify-center rounded-full border border-gold/30 bg-bg/50 shadow-[0_0_70px_-18px_rgba(217,177,79,0.75)] sm:h-60 sm:w-60">
                   <div className="absolute inset-3 rounded-full border border-gold/15" />
                   <Logo alt="" className="relative h-36 w-36 sm:h-44 sm:w-44" />
