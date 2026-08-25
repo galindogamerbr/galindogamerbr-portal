@@ -94,13 +94,12 @@ export function Comunidade() {
       <section id="numeros" className="border-y border-line bg-panel/40 py-16 sm:py-20">
         <Reveal>
           <Container>
-            <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
               <div className="max-w-2xl">
                 <Eyebrow>Comunidade em números</Eyebrow>
                 <h2 className="mt-1 text-3xl sm:text-4xl">CADA REDE. A MESMA GALERA.</h2>
                 <p className="mt-3 text-muted">Acompanhe o crescimento e encontre o GalindoGamerBR na sua plataforma favorita.</p>
               </div>
-              <span className="w-fit rounded-full border border-green/40 bg-green/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-green">Atualização a cada hora</span>
             </div>
             <div className="mt-9"><CommunityStatsGrid /></div>
           </Container>
