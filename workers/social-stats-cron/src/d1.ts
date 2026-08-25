@@ -21,6 +21,15 @@ export async function upsertToAllDatabases(env: Env, write: (db: D1Database) => 
   )
 }
 
+// Remove identificadores de segurança antes de completarem 24 horas. O
+// worker executa a cada 20 minutos; a margem cobre o intervalo entre ciclos.
+export async function purgeExpiredSecurityData(db: D1Database): Promise<void> {
+  await db.batch([
+    db.prepare("DELETE FROM rate_limit_events WHERE created_at <= datetime('now', '-23 hours')"),
+    db.prepare("DELETE FROM otp_codes WHERE created_at <= datetime('now', '-23 hours')"),
+  ])
+}
+
 // count = seguidores/inscritos/membros (social_stats_cache); postCount =
 // quantidade de posts/vídeos (post_counts_cache), quando a rede/chamada
 // já traz esse dado de graça (YouTube/TikTok/Instagram) — undefined pras

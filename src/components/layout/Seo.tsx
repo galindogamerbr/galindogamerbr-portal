@@ -44,11 +44,11 @@ const ROUTE_SEO: Record<string, SeoData> = {
   },
   '/privacidade': {
     title: 'Política de Privacidade',
-    description: 'Saiba como o site GalindoGamerBR trata dados e protege a privacidade dos visitantes.',
+    description: 'Entenda como o portal GalindoGamerBR trata dados, utiliza cookies técnicos, compartilha informações e atende aos direitos da LGPD.',
   },
   '/termos': {
     title: 'Termos de Uso',
-    description: 'Consulte os termos e condições de uso do site GalindoGamerBR.',
+    description: 'Consulte as regras para utilizar o portal, seus conteúdos, formulários e espaços ligados à comunidade GalindoGamerBR.',
   },
   '/creditos': {
     title: 'Créditos',
