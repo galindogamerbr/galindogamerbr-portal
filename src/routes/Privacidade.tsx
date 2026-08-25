@@ -23,7 +23,7 @@ const SECTIONS: LegalSection[] = [
         <ul className="space-y-3">
           <li><strong className="text-white">Dados técnicos e de segurança:</strong> endereço IP, data e hora, rota acessada, informações básicas do navegador e eventos usados para proteção contra abuso, estabilidade e diagnóstico.</li>
           <li><strong className="text-white">Métricas agregadas:</strong> visualizações de páginas, origem aproximada e características gerais de acesso por meio do Cloudflare Web Analytics.</li>
-          <li><strong className="text-white">Contato comercial:</strong> empresa ou marca, nome, email, telefone opcional, tipo de parceria e mensagem enviados voluntariamente no formulário de Parceiros.</li>
+          <li><strong className="text-white">Contato comercial:</strong> empresa ou marca, nome, email, telefone opcional, tipo de parceria e mensagem enviados voluntariamente no formulário de Parceiros. Esses dados são encaminhados por email e não são gravados no banco de dados do portal.</li>
           <li><strong className="text-white">Administração:</strong> email autorizado, tentativas de autenticação, IP, agente do navegador, sessão e registros técnicos relacionados ao acesso restrito.</li>
         </ul>
         <p>As métricas públicas exibidas na página Comunidade são totais agregados obtidos de fontes públicas ou APIs oficiais. O portal não recebe a lista de seguidores nem os dados pessoais de cada integrante dessas redes.</p>
@@ -54,7 +54,7 @@ const SECTIONS: LegalSection[] = [
     title: 'Serviços externos e compartilhamento',
     content: (
       <div className="space-y-3">
-        <p>Dados são compartilhados apenas quando necessário para a operação. A Cloudflare fornece hospedagem, banco de dados, proteção e métricas; a Resend realiza o envio de emails administrativos e de propostas comerciais.</p>
+        <p>Dados são compartilhados apenas quando necessário para a operação. A Cloudflare fornece hospedagem, banco de dados, proteção e métricas; a Resend realiza o envio dos emails administrativos e das propostas comerciais. O conteúdo do formulário segue diretamente para a caixa de email responsável pelo contato.</p>
         <p>Ao escolher reproduzir um vídeo, o conteúdo é carregado pelo YouTube, que poderá tratar dados conforme sua própria política. Links para YouTube, Twitch, Discord, TikTok, Kick, Instagram, WhatsApp e outros serviços levam a ambientes controlados por essas empresas.</p>
         <p>Alguns fornecedores podem processar informações fora do Brasil. Nesses casos, o tratamento fica sujeito às salvaguardas contratuais e às regras de proteção de dados aplicáveis ao serviço.</p>
       </div>
@@ -64,7 +64,8 @@ const SECTIONS: LegalSection[] = [
     title: 'Conservação e segurança',
     content: (
       <div className="space-y-3">
-        <p>Os dados são mantidos somente pelo tempo necessário para cumprir as finalidades descritas, atender obrigações legais, prevenir fraude e exercer direitos. Mensagens comerciais permanecem nas caixas de email pelo período necessário ao relacionamento e podem ser eliminadas mediante solicitação quando não houver motivo legítimo para conservá-las.</p>
+        <p>O portal não mantém um banco de propostas comerciais. As mensagens permanecem na caixa de email do destinatário e podem constar nos registros operacionais do serviço de envio pelo período necessário à entrega, ao relacionamento comercial, ao atendimento de obrigações legais e ao exercício de direitos.</p>
+        <p>Para prevenir abuso, o banco do portal registra eventos técnicos associados ao endereço IP usado no envio. Esses registros não incluem o conteúdo da proposta e são utilizados para limitar tentativas excessivas.</p>
         <p>Registros de autenticação e segurança possuem acesso restrito. São adotadas medidas técnicas compatíveis com o serviço, incluindo conexão criptografada, cookies seguros, autenticação por código temporário e limitação de tentativas. Nenhum ambiente conectado à internet, porém, pode oferecer segurança absoluta.</p>
       </div>
     ),
