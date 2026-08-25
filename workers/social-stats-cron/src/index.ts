@@ -1,5 +1,5 @@
 import type { Env } from './env'
-import { upsertSocialStat, upsertPostCount, upsertToAllDatabases, type SocialPlatform, type Stats } from './d1'
+import { purgeExpiredSecurityData, upsertSocialStat, upsertPostCount, upsertToAllDatabases, type SocialPlatform, type Stats } from './d1'
 import { cacheSocialStats } from './cache'
 import { fetchYoutubeStats } from './youtube'
 import { fetchTwitchFollowers } from './twitch'
@@ -35,6 +35,7 @@ const FETCHERS: Fetcher[] = [
 // upsert daquela rede nesta rodada. postCount (YouTube/TikTok/Instagram)
 // é independente de count — grava o que vier, mesmo se o outro faltar.
 async function collectAll(env: Env): Promise<void> {
+  await upsertToAllDatabases(env, purgeExpiredSecurityData)
   await renewYoutubeSubscriptionIfNeeded(env)
 
   const results = await Promise.allSettled(

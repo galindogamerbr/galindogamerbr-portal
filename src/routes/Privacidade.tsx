@@ -65,7 +65,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <div className="space-y-3">
         <p>O portal não mantém um banco de propostas comerciais. As mensagens permanecem na caixa de email do destinatário e podem constar nos registros operacionais do serviço de envio pelo período necessário à entrega, ao relacionamento comercial, ao atendimento de obrigações legais e ao exercício de direitos.</p>
-        <p>Para prevenir abuso, o banco do portal registra eventos técnicos associados ao endereço IP usado no envio. Esses registros não incluem o conteúdo da proposta e são utilizados para limitar tentativas excessivas.</p>
+        <p>Para prevenir abuso, o banco do portal registra eventos técnicos associados ao endereço IP usado no envio. Esses registros não incluem o conteúdo da proposta e são utilizados para limitar tentativas excessivas. Uma rotina automática elimina esses eventos e remove endereços IP dos registros de autenticação antes que completem 24 horas.</p>
         <p>Registros de autenticação e segurança possuem acesso restrito. São adotadas medidas técnicas compatíveis com o serviço, incluindo conexão criptografada, cookies seguros, autenticação por código temporário e limitação de tentativas. Nenhum ambiente conectado à internet, porém, pode oferecer segurança absoluta.</p>
       </div>
     ),

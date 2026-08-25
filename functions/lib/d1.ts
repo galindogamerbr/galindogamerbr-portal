@@ -100,6 +100,16 @@ export async function revokeSession(db: D1Database, id: string): Promise<void> {
   await db.prepare("UPDATE sessions SET revoked_at = datetime('now') WHERE id = ?").bind(id).run()
 }
 
+// O cron roda a cada 20 minutos. Usamos uma margem de uma hora para que,
+// mesmo entre duas execuções, nenhum IP complete 24 horas armazenado.
+export async function purgeExpiredSecurityData(db: D1Database): Promise<void> {
+  await db.batch([
+    db.prepare("DELETE FROM rate_limit_events WHERE created_at <= datetime('now', '-23 hours')"),
+    db.prepare("DELETE FROM otp_codes WHERE created_at <= datetime('now', '-23 hours')"),
+    db.prepare("UPDATE sessions SET ip = NULL WHERE ip IS NOT NULL AND created_at <= datetime('now', '-23 hours')"),
+  ])
+}
+
 export async function recordRateLimitEvent(db: D1Database, scope: string): Promise<void> {
   await db.prepare('INSERT INTO rate_limit_events (scope) VALUES (?)').bind(scope).run()
 }
