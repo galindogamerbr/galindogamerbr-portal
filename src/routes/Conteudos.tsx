@@ -181,11 +181,12 @@ export function Conteudos() {
                     </span>
                   )}
                   <p className="mt-3 max-w-3xl leading-relaxed text-muted">{FAZENDA_NOVA_ALIANCA.description}</p>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <LinkButton variant="green" href={flagshipHref} target="_blank" rel="noopener noreferrer">
+                  <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <LinkButton className="w-full" variant="red" href={flagshipHref} target="_blank" rel="noopener noreferrer">
                       Assistir no YouTube
                     </LinkButton>
                     <LinkButton
+                      className="w-full"
                       variant="gold"
                       href="https://www.youtube.com/playlist?list=PLj6h86FobQUn2vIz-FSyMlL_ldV6_kzrN"
                       target="_blank"
@@ -193,10 +194,10 @@ export function Conteudos() {
                     >
                       Ver playlist completa
                     </LinkButton>
-                    <NavButton variant="blue" to="/mods">
+                    <NavButton className="w-full" variant="blue" to="/mods">
                       Sincronize seus mods
                     </NavButton>
-                    <NavButton variant="purple" to="/fazenda">
+                    <NavButton className="w-full" variant="purple" to="/fazenda">
                       Participe da Fazenda
                     </NavButton>
                   </div>
