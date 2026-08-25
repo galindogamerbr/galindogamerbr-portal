@@ -181,11 +181,11 @@ function JogosBannerCta() {
                 src="/assets/banners/jogos-banner.webp"
                 alt=""
                 loading="lazy"
-                className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
+                className="aspect-[2/3] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
               />
             </picture>
-            <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
-            <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-6 sm:p-10">
+            <div className="absolute inset-0 hidden bg-gradient-to-t from-bg via-bg/40 to-transparent sm:block" />
+            <div className="relative flex flex-col items-start gap-2 bg-panel p-6 sm:absolute sm:inset-0 sm:justify-end sm:bg-transparent sm:p-10">
               <Eyebrow className="text-sm sm:text-lg">Todos os conteúdos do canal</Eyebrow>
               <h2 className="text-2xl sm:text-5xl">CONHEÇA OS CONTEÚDOS DO CANAL</h2>
               <span className="text-sm font-semibold uppercase tracking-wide text-gold sm:text-base">Ver todos →</span>
