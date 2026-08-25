@@ -87,7 +87,7 @@ export function Creditos() {
                     ))}
                   </div>
                   <div className="mt-7 flex flex-wrap gap-3">
-                    <LinkButton variant="blue" href="https://phmoreira-dev.pedrogmoreira93.workers.dev/" target="_blank" rel="noopener noreferrer">
+                    <LinkButton variant="blue" href="https://phmoreira.dev/" target="_blank" rel="noopener noreferrer">
                       Conhecer o portfólio
                     </LinkButton>
                     <LinkButton variant="default" href="https://www.linkedin.com/in/pedrogmoreira/" target="_blank" rel="noopener noreferrer">
