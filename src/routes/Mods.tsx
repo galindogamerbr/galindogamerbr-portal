@@ -74,7 +74,7 @@ export function Mods() {
 
                 <div className="mt-7 flex flex-wrap items-center gap-3">
                   <LinkButton variant="green" href={DOWNLOAD_LATEST_URL}><DownloadIcon />Baixar versão mais recente</LinkButton>
-                  <LinkButton variant="default" href={MODSYNC_URL} target="_blank" rel="noopener noreferrer">Conhecer o aplicativo</LinkButton>
+                  <LinkButton variant="default" href={MODSYNC_URL} target="_blank" rel="noopener noreferrer">Release notes</LinkButton>
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-semibold uppercase tracking-widest text-muted">
@@ -88,10 +88,7 @@ export function Mods() {
               <div className="relative">
                 <div className="absolute -inset-5 -z-10 rounded-full bg-green/10 blur-3xl" />
                 <div className="overflow-hidden rounded-xl border border-green/40 bg-panel shadow-[0_25px_70px_-25px_rgba(56,163,90,0.5)]">
-                  <div className="flex items-center justify-between border-b border-line bg-panel2/90 px-4 py-3">
-                    <div className="flex gap-1.5" aria-hidden="true">
-                      <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" /><span className="h-2.5 w-2.5 rounded-full bg-gold/70" /><span className="h-2.5 w-2.5 rounded-full bg-green/70" />
-                    </div>
+                  <div className="flex items-center justify-end border-b border-line bg-panel2/90 px-4 py-3">
                     <span className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-muted">Mod Sync em ação</span>
                   </div>
                   <img src="/assets/mod-sync-demo.gif" alt="Mod Sync sincronizando os mods da fazenda" className="w-full" />
