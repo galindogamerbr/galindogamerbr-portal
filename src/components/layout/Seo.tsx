@@ -52,7 +52,7 @@ const ROUTE_SEO: Record<string, SeoData> = {
   },
   '/creditos': {
     title: 'Créditos',
-    description: 'Créditos de desenvolvimento, identidade visual e recursos utilizados no site GalindoGamerBR.',
+    description: 'Conheça os créditos do portal GalindoGamerBR, desenvolvido por Pedro Henrique Moreira, e as atribuições dos recursos visuais utilizados.',
   },
   '/mapa-do-site': {
     title: 'Mapa do Site',
