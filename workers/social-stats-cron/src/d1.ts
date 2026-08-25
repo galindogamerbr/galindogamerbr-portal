@@ -27,7 +27,6 @@ export async function purgeExpiredSecurityData(db: D1Database): Promise<void> {
   await db.batch([
     db.prepare("DELETE FROM rate_limit_events WHERE created_at <= datetime('now', '-23 hours')"),
     db.prepare("DELETE FROM otp_codes WHERE created_at <= datetime('now', '-23 hours')"),
-    db.prepare("UPDATE sessions SET ip = NULL WHERE ip IS NOT NULL AND created_at <= datetime('now', '-23 hours')"),
   ])
 }
 

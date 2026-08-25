@@ -24,7 +24,7 @@ const SECTIONS: LegalSection[] = [
           <li><strong className="text-white">Dados técnicos e de segurança:</strong> endereço IP, data e hora, rota acessada, informações básicas do navegador e eventos usados para proteção contra abuso, estabilidade e diagnóstico.</li>
           <li><strong className="text-white">Métricas agregadas:</strong> visualizações de páginas, origem aproximada e características gerais de acesso por meio do Cloudflare Web Analytics.</li>
           <li><strong className="text-white">Contato comercial:</strong> empresa ou marca, nome, email, telefone opcional, tipo de parceria e mensagem enviados voluntariamente no formulário de Parceiros. Esses dados são encaminhados por email e não são gravados no banco de dados do portal.</li>
-          <li><strong className="text-white">Administração:</strong> email autorizado, tentativas de autenticação, IP, agente do navegador, sessão e registros técnicos relacionados ao acesso restrito.</li>
+          <li><strong className="text-white">Administração:</strong> email autorizado, tentativas de autenticação, sessão e registros técnicos necessários para proteger o acesso restrito.</li>
         </ul>
         <p>As métricas públicas exibidas na página Comunidade são totais agregados obtidos de fontes públicas ou APIs oficiais. O portal não recebe a lista de seguidores nem os dados pessoais de cada integrante dessas redes.</p>
       </div>
@@ -65,7 +65,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <div className="space-y-3">
         <p>O portal não mantém um banco de propostas comerciais. As mensagens permanecem na caixa de email do destinatário e podem constar nos registros operacionais do serviço de envio pelo período necessário à entrega, ao relacionamento comercial, ao atendimento de obrigações legais e ao exercício de direitos.</p>
-        <p>Para prevenir abuso, o banco do portal registra eventos técnicos associados ao endereço IP usado no envio. Esses registros não incluem o conteúdo da proposta e são utilizados para limitar tentativas excessivas. Uma rotina automática elimina esses eventos e remove endereços IP dos registros de autenticação antes que completem 24 horas.</p>
+        <p>Para prevenir abuso, o banco do portal registra eventos técnicos associados ao endereço IP usado no envio. Esses registros não incluem o conteúdo da proposta, são utilizados apenas para limitar tentativas excessivas e são eliminados automaticamente em até 24 horas.</p>
         <p>Registros de autenticação e segurança possuem acesso restrito. São adotadas medidas técnicas compatíveis com o serviço, incluindo conexão criptografada, cookies seguros, autenticação por código temporário e limitação de tentativas. Nenhum ambiente conectado à internet, porém, pode oferecer segurança absoluta.</p>
       </div>
     ),
