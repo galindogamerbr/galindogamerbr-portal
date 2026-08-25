@@ -61,17 +61,21 @@ export function Creditos() {
           <Container>
             <div className="relative overflow-hidden rounded-xl border border-gold/40 bg-gradient-to-br from-panel via-panel to-panel2 p-7 shadow-[0_24px_70px_-38px_rgba(217,177,79,0.55)] sm:p-10">
               <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue/10 blur-3xl" />
-              <div className="relative">
-                <img
-                  src="/assets/pedro-og.jpg"
-                  alt="Pedro Henrique Moreira, engenheiro de software especializado em backend, Azure e sistemas distribuídos"
-                  width="1200"
-                  height="630"
-                  className="aspect-[1200/630] w-full rounded-xl border border-line object-cover"
-                />
-                <div className="mx-auto max-w-4xl pt-8 sm:pt-10">
+              <div className="relative grid gap-9 lg:grid-cols-[0.72fr_1.28fr] lg:items-center lg:gap-14">
+                <div className="relative mx-auto w-full max-w-sm overflow-hidden rounded-xl border border-line bg-bg">
+                  <img
+                    src="/assets/pedro-profile.webp"
+                    alt="Pedro Henrique Moreira"
+                    width="900"
+                    height="900"
+                    className="aspect-square w-full object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-bg/75 to-transparent" />
+                </div>
+                <div>
                   <Eyebrow>Desenvolvimento do portal</Eyebrow>
-                  <p className="mt-3 text-lg leading-relaxed text-white/85">
+                  <h2 className="mt-2 text-4xl leading-none sm:text-5xl">PEDRO HENRIQUE MOREIRA</h2>
+                  <p className="mt-5 text-lg leading-relaxed text-white/85">
                     Software Engineer com mais de sete anos construindo backends e sistemas cloud native seguros e escaláveis.
                   </p>
                   <p className="mt-4 leading-relaxed text-muted">
