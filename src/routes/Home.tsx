@@ -181,7 +181,7 @@ function JogosBannerCta() {
                 src="/assets/banners/jogos-banner.webp"
                 alt=""
                 loading="lazy"
-                className="aspect-[2/3] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
+                className="aspect-[1/2] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
               />
             </picture>
             <div className="absolute inset-0 hidden bg-gradient-to-t from-bg via-bg/40 to-transparent sm:block" />
