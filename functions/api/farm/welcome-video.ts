@@ -1,12 +1,12 @@
 import type { Env } from '../../lib/env'
-import { getFarmWelcomeVideoId } from '../../lib/d1-farm'
+import { getFarmVideoIds } from '../../lib/d1-farm'
 import { json } from '../../lib/http'
 
-const FALLBACK_VIDEO_ID = 'tfoJW_5GJ3A'
+const FALLBACK_VIDEOS = { welcomeVideoId: 'tfoJW_5GJ3A', rulesVideoId: 'TcBrAo_A1Lc' }
 
-// Leitura pública: a página Fazenda precisa abrir o vídeo, mas só o endpoint
-// /api/admin/farm/welcome-video pode trocá-lo.
+// Leitura pública para Boas-vindas e Fazenda; somente o endpoint admin pode
+// trocar as duas configurações.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const videoId = (await getFarmWelcomeVideoId(context.env.DB)) ?? FALLBACK_VIDEO_ID
-  return json({ videoId })
+  const videos = (await getFarmVideoIds(context.env.DB)) ?? FALLBACK_VIDEOS
+  return json(videos)
 }

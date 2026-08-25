@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { SectionHead } from '../components/ui/SectionHead'
@@ -8,6 +8,7 @@ import { FarmStatusCard } from '../components/shared/FarmStatusCard'
 import { VipSteps } from '../components/shared/VipSteps'
 import { Modal } from '../components/ui/Modal'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
+import { getFarmVideos } from '../lib/api/farm'
 
 const FARM_RULES_VIDEO_ID = 'TcBrAo_A1Lc'
 
@@ -58,6 +59,11 @@ const PLAIN_REQUIREMENTS = [
 export function Fazenda() {
   const rulesVideoTitleId = useId()
   const [rulesVideoOpen, setRulesVideoOpen] = useState(false)
+  const [rulesVideoId, setRulesVideoId] = useState(FARM_RULES_VIDEO_ID)
+
+  useEffect(() => {
+    getFarmVideos().then((videos) => setRulesVideoId(videos.rulesVideoId)).catch(() => {})
+  }, [])
 
   return (
     <>
@@ -194,7 +200,7 @@ export function Fazenda() {
             Fechar
           </button>
         </div>
-        <VideoEmbed videoId={FARM_RULES_VIDEO_ID} title="Regras da Fazenda Nova Aliança — GalindoGamerBR" />
+        <VideoEmbed videoId={rulesVideoId} title="Regras da Fazenda Nova Aliança — GalindoGamerBR" />
       </Modal>
     </>
   )

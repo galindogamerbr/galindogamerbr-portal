@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Container } from '../components/ui/Container'
 import { Eyebrow } from '../components/ui/Eyebrow'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
-import { getFarmWelcomeVideo } from '../lib/api/farm'
+import { getFarmVideos } from '../lib/api/farm'
 
 const FALLBACK_WELCOME_VIDEO_ID = 'tfoJW_5GJ3A'
 
@@ -35,7 +35,7 @@ export function BemVindo() {
   const [welcomeVideoId, setWelcomeVideoId] = useState(FALLBACK_WELCOME_VIDEO_ID)
 
   useEffect(() => {
-    getFarmWelcomeVideo().then(setWelcomeVideoId).catch(() => {})
+    getFarmVideos().then((videos) => setWelcomeVideoId(videos.welcomeVideoId)).catch(() => {})
   }, [])
 
   return (

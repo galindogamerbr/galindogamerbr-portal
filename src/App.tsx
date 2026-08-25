@@ -67,8 +67,9 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/boas-vindas', element: <BemVindo /> },
-      { path: '/comece-aqui', element: <Navigate to="/boas-vindas" replace /> },
+      { path: '/boasvindas', element: <BemVindo /> },
+      { path: '/boas-vindas', element: <Navigate to="/boasvindas" replace /> },
+      { path: '/comece-aqui', element: <Navigate to="/boasvindas" replace /> },
       { path: '/conteudos', element: <Conteudos /> },
       { path: '/jogos', element: <Navigate to="/conteudos" replace /> },
       { path: '/fazenda', element: <Fazenda /> },

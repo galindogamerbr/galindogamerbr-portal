@@ -26,8 +26,8 @@ const SECTIONS = [
     icon: '/assets/icons/discord.svg',
   },
   {
-    label: 'Vídeo de boas-vindas',
-    description: 'Trocar o vídeo exibido na página Boas-vindas.',
+    label: 'Configuração de vídeos',
+    description: 'Configurar os vídeos de boas-vindas e das regras da Fazenda.',
     to: '/admin/fazenda/video',
     icon: '/assets/icons/youtube.svg',
   },
