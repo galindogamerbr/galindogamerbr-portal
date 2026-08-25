@@ -5,7 +5,7 @@ import { Eyebrow } from '../components/ui/Eyebrow'
 import { VideoEmbed } from '../components/shared/VideoEmbed'
 import { getFarmWelcomeVideo } from '../lib/api/farm'
 
-const FALLBACK_WELCOME_VIDEO_ID = 'TcBrAo_A1Lc'
+const FALLBACK_WELCOME_VIDEO_ID = 'tfoJW_5GJ3A'
 
 const LINK_CARDS = [
   {

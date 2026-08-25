@@ -3,7 +3,7 @@ import { getFarmWelcomeVideoId, upsertFarmWelcomeVideoId } from '../../../lib/d1
 import { json } from '../../../lib/http'
 import { requireSession } from '../../../lib/requireSession'
 
-const FALLBACK_VIDEO_ID = 'TcBrAo_A1Lc'
+const FALLBACK_VIDEO_ID = 'tfoJW_5GJ3A'
 const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/
 
 export function parseYouTubeVideoId(value: string): string | null {
