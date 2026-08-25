@@ -175,12 +175,15 @@ function JogosBannerCta() {
       <Reveal>
         <Container>
           <Link to="/conteudos" className="group relative block overflow-hidden rounded-lg border border-line">
-            <img
-              src="/assets/banners/jogos-banner.webp"
-              alt=""
-              loading="lazy"
-              className="aspect-[21/9] w-full object-cover transition duration-500 group-hover:scale-105"
-            />
+            <picture>
+              <source media="(max-width: 639px)" srcSet="/assets/banners/jogos-banner-mobile.webp" />
+              <img
+                src="/assets/banners/jogos-banner.webp"
+                alt=""
+                loading="lazy"
+                className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105 sm:aspect-[21/9]"
+              />
+            </picture>
             <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
             <div className="absolute inset-0 flex flex-col items-start justify-end gap-2 p-6 sm:p-10">
               <Eyebrow className="text-sm sm:text-lg">Todos os conteúdos do canal</Eyebrow>
