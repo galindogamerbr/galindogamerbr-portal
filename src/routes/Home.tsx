@@ -155,9 +155,10 @@ function TransmissoesTeaser() {
                 <PublicScheduleExportButton />
               </div>
               <p className="mt-4 rounded-md border border-line bg-panel p-4 text-sm text-muted sm:p-5">
-                <strong className="text-white">Importante:</strong> por causa do trabalho na cidade, o cronograma
-                pode sofrer alterações. Todos os domingos, a programação é atualizada no TikTok, Instagram e
-                YouTube.
+                <strong className="text-white">IMPORTANTE:</strong> por causa do trabalho na cidade, o cronograma
+                pode sofrer alterações.{' '}
+                <strong className="text-white">A programação oficial é atualizada todos os domingos aqui no site.</strong>{' '}
+                Consulte sempre a versão mais recente antes da sua próxima live.
               </p>
             </div>
           </div>
