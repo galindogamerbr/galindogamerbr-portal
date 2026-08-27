@@ -145,13 +145,17 @@ function TransmissoesTeaser() {
         <Container>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             <div className="flex-1">
-              <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
-              <div className="mt-8">
+              <div className="lg:h-20">
+                <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
+              </div>
+              <div className="mt-8 lg:mt-0">
                 <LiveBanner />
               </div>
             </div>
             <div className="w-full lg:max-w-md lg:shrink-0">
-              <h3 className="mb-4 text-2xl">Programação da semana</h3>
+              <div className="lg:h-20">
+                <h3 className="mb-4 text-2xl">Programação da semana</h3>
+              </div>
               <ScheduleTabs />
               <div className="mt-4">
                 <PublicScheduleExportButton />
