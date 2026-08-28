@@ -143,22 +143,32 @@ function TransmissoesTeaser() {
     <section className="pb-16 sm:pb-24">
       <Reveal>
         <Container>
-          <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
-          <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch">
-            <div className="flex-1">
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_28rem] lg:gap-x-6 lg:gap-y-8">
+            <div className="lg:col-start-1 lg:row-start-1 lg:self-end">
+              <SectionHead eyebrow="Transmissões" title="AO VIVO E EM DESTAQUE" />
+            </div>
+            <div className="mt-8 lg:col-start-1 lg:row-start-2 lg:mt-0">
               <LiveBanner />
             </div>
-            <div className="w-full lg:max-w-md lg:shrink-0">
-              <h3 className="mb-4 text-2xl">Programação da semana</h3>
+            <div className="mt-6 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:self-end">
+              <SectionHead eyebrow="Agenda" title="PROGRAMAÇÃO DA SEMANA" />
+            </div>
+            <div className="mt-4 lg:col-start-2 lg:row-start-2 lg:mt-0">
               <ScheduleTabs />
               <div className="mt-4">
                 <PublicScheduleExportButton />
               </div>
-              <p className="mt-4 rounded-md border border-line bg-panel p-4 text-sm text-muted sm:p-5">
-                <strong className="text-white">Importante:</strong> por causa do trabalho na cidade, o cronograma
-                pode sofrer alterações. Todos os domingos, a programação é atualizada no TikTok, Instagram e
-                YouTube.
-              </p>
+              <div className="mt-4 rounded-lg border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-4">
+                <div className="flex gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-xs font-bold text-gold">!</span>
+                  <div className="min-w-0">
+                    <strong className="block text-xs uppercase tracking-[0.16em] text-gold">Importante</strong>
+                    <p className="mt-1 text-xs leading-relaxed text-muted">Por causa do trabalho na cidade, o cronograma pode sofrer alterações.</p>
+                    <p className="mt-2 border-l-2 border-gold pl-3 text-xs font-semibold leading-relaxed text-white">A programação oficial é atualizada todos os domingos aqui no site e no discord.</p>
+                    <p className="mt-2 text-xs leading-relaxed text-muted">Consulte sempre a versão mais recente antes da próxima live.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </Container>
