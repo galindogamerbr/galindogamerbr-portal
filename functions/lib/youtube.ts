@@ -35,9 +35,28 @@ async function getLiveVideoId(channelId: string): Promise<string | null> {
     cf: { cacheTtl: 0, cacheEverything: false },
   })
   const body = await res.text()
+  return extractLiveVideoId(body)
+}
+
+// O HTML entregue pelo YouTube varia conforme região, dispositivo e IP.
+// Em algumas respostas a live aparece nos dados do player, mas o canonical
+// continua apontando para o canal. Aceita os dois formatos para o polling
+// não depender exclusivamente do WebSub.
+export function extractLiveVideoId(body: string): string | null {
   const canonical = body.match(/<link rel="canonical" href="([^"]+)"/)
-  const videoId = canonical?.[1].match(/[?&]v=([^&"]+)/)
-  return videoId ? videoId[1] : null
+  const canonicalVideoId = canonical?.[1].match(/[?&]v=([^&"]+)/)?.[1]
+  if (canonicalVideoId) return canonicalVideoId
+
+  const marker = '"liveBroadcastDetails":{"isLiveNow":true'
+  let markerIndex = body.indexOf(marker)
+  while (markerIndex !== -1) {
+    const liveMetadata = body.slice(markerIndex, markerIndex + 2_000)
+    const externalVideoId = liveMetadata.match(/"externalVideoId":"([^"]+)"/)?.[1]
+    if (externalVideoId) return externalVideoId
+    markerIndex = body.indexOf(marker, markerIndex + marker.length)
+  }
+
+  return null
 }
 
 // Fallback oficial (search.list, eventType=live) — só chamado quando o
@@ -193,7 +212,23 @@ async function buildVideoState(env: Env, videoId: string): Promise<VideoState | 
 // mudou de verdade (evita reestourar a cota de write, ver af8b05a).
 export async function resolveChannelLiveState(env: Env): Promise<VideoState | null> {
   const cached = await env.PUBLIC_CACHE.get<VideoState>(LIVE_STATE_CACHE_KEY, 'json')
-  if (cached && !cached.isLive) return cached
+  if (cached && !cached.isLive) {
+    let liveVideoId: string | null
+    try {
+      liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
+    } catch (err) {
+      logError('youtube', 'Revalidação da live falhou, caindo pro endpoint oficial', { err })
+      liveVideoId = await findLiveVideoIdViaApi(env)
+    }
+
+    if (!liveVideoId || liveVideoId === cached.videoId) return cached
+
+    const liveState = await buildVideoState(env, liveVideoId)
+    if (!liveState?.isLive) return cached
+
+    await putIfChanged(env.PUBLIC_CACHE, LIVE_STATE_CACHE_KEY, liveState)
+    return liveState
+  }
 
   if (cached) {
     const { isLive, viewerCount, resolved } = await fetchLiveStreamingDetails(env, cached.videoId)
