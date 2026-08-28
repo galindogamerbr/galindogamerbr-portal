@@ -160,9 +160,9 @@ function TransmissoesTeaser() {
               </div>
               <div className="mt-4 rounded-lg border border-gold/30 bg-gradient-to-br from-gold/10 via-panel to-panel p-4">
                 <div className="flex gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-xs font-bold text-gold">!</span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-red/40 bg-red/10 text-xs font-bold text-red">!</span>
                   <div className="min-w-0">
-                    <strong className="block text-xs uppercase tracking-[0.16em] text-gold">Importante</strong>
+                    <strong className="block text-xs uppercase tracking-[0.16em] text-red">Importante</strong>
                     <p className="mt-1 text-xs leading-relaxed text-muted">Por causa do trabalho na cidade, o cronograma pode sofrer alterações.</p>
                     <p className="mt-2 border-l-2 border-gold pl-3 text-xs font-semibold leading-relaxed text-white">A programação oficial é atualizada todos os domingos aqui no site e no discord.</p>
                     <p className="mt-2 text-xs leading-relaxed text-muted">Consulte sempre a versão mais recente antes da próxima live.</p>
