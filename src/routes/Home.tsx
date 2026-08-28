@@ -164,8 +164,8 @@ function TransmissoesTeaser() {
                   <div className="min-w-0">
                     <strong className="block text-xs uppercase tracking-[0.16em] text-gold">Importante</strong>
                     <p className="mt-1 text-xs leading-relaxed text-muted">Por causa do trabalho na cidade, o cronograma pode sofrer alterações.</p>
-                    <p className="mt-2 border-l-2 border-gold pl-3 text-xs font-semibold leading-relaxed text-white">A programação oficial é atualizada todos os domingos aqui no site.</p>
-                    <p className="mt-2 text-xs leading-relaxed text-muted">Consulte sempre a versão mais recente antes da sua próxima live.</p>
+                    <p className="mt-2 border-l-2 border-gold pl-3 text-xs font-semibold leading-relaxed text-white">A programação oficial é atualizada todos os domingos aqui no site e no discord.</p>
+                    <p className="mt-2 text-xs leading-relaxed text-muted">Consulte sempre a versão mais recente antes da próxima live.</p>
                   </div>
                 </div>
               </div>
