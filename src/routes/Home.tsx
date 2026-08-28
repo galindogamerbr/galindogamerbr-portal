@@ -154,7 +154,7 @@ function TransmissoesTeaser() {
             </div>
             <div className="w-full lg:max-w-md lg:shrink-0">
               <div className="lg:h-20">
-                <h3 className="mb-4 text-2xl">Programação da semana</h3>
+                <h3 className="text-2xl">Programação da semana</h3>
               </div>
               <ScheduleTabs />
               <div className="mt-4">
