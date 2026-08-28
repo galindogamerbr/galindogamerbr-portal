@@ -151,7 +151,7 @@ function TransmissoesTeaser() {
               <LiveBanner />
             </div>
             <div className="mt-6 lg:col-start-2 lg:row-start-1 lg:mt-0 lg:self-end">
-              <h3 className="text-2xl">Programação da semana</h3>
+              <SectionHead eyebrow="Agenda" title="PROGRAMAÇÃO DA SEMANA" />
             </div>
             <div className="mt-4 lg:col-start-2 lg:row-start-2 lg:mt-0">
               <ScheduleTabs />
