@@ -56,7 +56,7 @@ export function ScheduleTabs() {
         </div>
       )}
 
-      <div className="mt-4 divide-y divide-line rounded-md border border-line bg-panel">
+      <div className={`${schedule.weeks.length > 1 ? 'mt-4 ' : ''}divide-y divide-line rounded-md border border-line bg-panel`}>
         {DAYS.map((day) => {
           const dayBlocks = week.blocks.filter((b) => b.dayOfWeek === day.value)
           const isToday = day.value === today

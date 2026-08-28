@@ -13,9 +13,9 @@ export function LiveBanner() {
 
   if (status?.isLive && status.videoId) {
     return (
-      <div className="overflow-hidden rounded-lg border border-line bg-panel">
+      <div className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-panel">
         <VideoEmbed videoId={status.videoId} title={status.title ?? 'GalindoGamerBR'} autoplay />
-        <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
+        <div className="flex flex-1 flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-red px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
               <span className="h-2 w-2 animate-pulse rounded-full bg-white" /> Ao vivo agora
@@ -59,7 +59,7 @@ export function LiveBanner() {
 
   // Carregando (status === null) ou offline com último vídeo (status.videoId).
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-panel">
+    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-line bg-panel">
       {status?.videoId ? (
         <VideoEmbed videoId={status.videoId} title={status.title ?? 'GalindoGamerBR'} autoplay={false} />
       ) : (
@@ -67,7 +67,7 @@ export function LiveBanner() {
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-gold" />
         </div>
       )}
-      <div className="flex flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
+      <div className="flex flex-1 flex-col justify-between gap-3 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0">
           {status ? (
             <>
