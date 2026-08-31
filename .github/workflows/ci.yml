@@ -38,7 +38,10 @@ jobs:
         run: npm test
 
       - name: Build
-        run: npm run build
+        # O typecheck acima já executou `tsc -b`. Rodar `npm run build`
+        # repetiria toda a compilação TypeScript; aqui basta validar o bundle
+        # do Vite (e, no push da main, gerar o dist usado pelo deploy).
+        run: npx vite build
 
       # deploy.yml (workflow_run, só dispara depois desse CI passar em main)
       # reusa esse artefato em vez de buildar de novo.
