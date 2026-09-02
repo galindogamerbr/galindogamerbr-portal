@@ -24,21 +24,21 @@
     "html-to-image": "^1.11.13",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260823.1",
-    "@types/node": "^26.2.0",
+    "@cloudflare/workers-types": "^5.20260830.1",
+    "@types/node": "^26.4.0",
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.1.0",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.1",
     "concurrently": "^10.0.5",
-    "oxlint": "^1.75.0",
+    "oxlint": "^1.80.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
     "vite": "^8.2.2",
     "vitest": "^4.1.11",
-    "wrangler": "^4.125.0"
+    "wrangler": "^4.127.1"
   }
 }
