@@ -59,16 +59,46 @@ export function extractLiveVideoId(body: string): string | null {
   return null
 }
 
-// Fallback oficial (search.list, eventType=live) — só chamado quando o
-// scrape acima falha/trava. Custa 100 unidades de cota por chamada, mas
-// como só roda no caminho de erro (raro), não é um problema na prática.
+const LIVE_DISCOVERY_CACHE_KEY = 'youtube:live-discovery'
+const LIVE_DISCOVERY_INTERVAL_MS = 3 * 60 * 1000
+const LIVE_DISCOVERY_TTL_SECONDS = 5 * 60
+
+type LiveDiscoveryCache = { checkedAt: number; videoId: string | null }
+
+// Fallback oficial barato: a playlist implícita de uploads custa 1 unidade
+// e videos.list custa mais 1. Entre os vídeos recentes, uma transmissão está
+// ao vivo quando já tem actualStartTime e ainda não tem actualEndTime.
+// Evita search.list (100 unidades por chamada) e permite confirmar também o
+// caso em que o YouTube responde 200 ao scrape, mas entrega HTML incompleto.
+// A trava compartilhada no KV impede que cada PoP da Cloudflare faça a mesma
+// confirmação: no pior caso normal são 480 verificações/dia (960 unidades da
+// API), bem abaixo das 10.000 unidades gratuitas.
 async function findLiveVideoIdViaApi(env: Env): Promise<string | null> {
   try {
-    const url = `https://www.googleapis.com/youtube/v3/search?part=id&channelId=${env.YOUTUBE_CHANNEL_ID}&eventType=live&type=video&key=${env.YOUTUBE_API_KEY}`
-    const res = await fetchWithTimeout(url)
-    if (!res.ok) return null
-    const data = (await res.json()) as { items?: [{ id?: { videoId?: string } }] }
-    return data.items?.[0]?.id?.videoId ?? null
+    const cached = await env.PUBLIC_CACHE.get<LiveDiscoveryCache>(LIVE_DISCOVERY_CACHE_KEY, 'json')
+    if (cached && Date.now() - cached.checkedAt < LIVE_DISCOVERY_INTERVAL_MS) return cached.videoId
+
+    const uploadsPlaylistId = `UU${env.YOUTUBE_CHANNEL_ID.slice(2)}`
+    const recentVideos = await getRecentPlaylistVideos(env, uploadsPlaylistId, 10)
+    let videoId: string | null = null
+
+    if (recentVideos.length > 0) {
+      const ids = recentVideos.map((video) => video.videoId).join(',')
+      const url = `https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${ids}&key=${env.YOUTUBE_API_KEY}`
+      const res = await fetchWithTimeout(url)
+      if (!res.ok) return null
+      const data = (await res.json()) as {
+        items?: Array<{ id?: string; liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string } }>
+      }
+      videoId =
+        data.items?.find((item) => item.id && item.liveStreamingDetails?.actualStartTime && !item.liveStreamingDetails.actualEndTime)
+          ?.id ?? null
+    }
+
+    await env.PUBLIC_CACHE.put(LIVE_DISCOVERY_CACHE_KEY, JSON.stringify({ checkedAt: Date.now(), videoId }), {
+      expirationTtl: LIVE_DISCOVERY_TTL_SECONDS,
+    })
+    return videoId
   } catch {
     return null
   }
@@ -218,8 +248,13 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
       liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
     } catch (err) {
       logError('youtube', 'Revalidação da live falhou, caindo pro endpoint oficial', { err })
-      liveVideoId = await findLiveVideoIdViaApi(env)
+      liveVideoId = null
     }
+
+    // `null` também pode significar HTML incompleto do YouTube (HTTP 200),
+    // não necessariamente canal offline. Confirma pela API barata antes de
+    // devolver o cache offline.
+    liveVideoId ??= await findLiveVideoIdViaApi(env)
 
     if (!liveVideoId || liveVideoId === cached.videoId) return cached
 
@@ -252,8 +287,10 @@ export async function resolveChannelLiveState(env: Env): Promise<VideoState | nu
     liveVideoId = await getLiveVideoId(env.YOUTUBE_CHANNEL_ID)
   } catch (err) {
     logError('youtube', 'Scrape de /live falhou, caindo pro endpoint oficial', { err })
-    liveVideoId = await findLiveVideoIdViaApi(env)
+    liveVideoId = null
   }
+
+  liveVideoId ??= await findLiveVideoIdViaApi(env)
 
   const candidateVideoId = liveVideoId ?? (await getLatestUploadedVideoId(env))
   if (!candidateVideoId) return null
